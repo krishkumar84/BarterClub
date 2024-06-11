@@ -28,7 +28,7 @@ export default function Header() {
           className="sm:hidden"
         />
         <NavbarBrand>
-            <Image src={logo} alt="ACME" width={76} height={76} />
+            <Image src={logo} alt="ACME" width={56} height={56} />
         </NavbarBrand>
       </NavbarContent>
 
@@ -71,10 +71,12 @@ export default function Header() {
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem className="hidden lg:flex">
-          <Link href="#">Login</Link>
+        <Button as={Link} color="primary" href="#" radius="full" variant="flat">
+            Login
+          </Button>
         </NavbarItem>
         <NavbarItem>
-          <Button as={Link} color="primary" href="#" variant="flat">
+          <Button as={Link} color="primary" href="#" radius="full" variant="flat">
             Sign Up
           </Button>
         </NavbarItem>
