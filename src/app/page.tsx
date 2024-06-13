@@ -2,6 +2,8 @@ import Image from "next/image";
 import Searchbar from "./components/Searchbar";
 import HeroCarousel from "./components/HeroCarousel";
 import Clients from "./components/Clients";
+import { AboutUs } from "./components/About";
+import { Affiliate } from "./components/Affiliate";
 // import HeroCarousel from "./components/HeroCarousel";
 
 const  Home = async () => {
@@ -32,6 +34,8 @@ const  Home = async () => {
 
        <Clients/>
         </div>
+       <AboutUs/>
+       <Affiliate/>
       </section>
    </>
   );
