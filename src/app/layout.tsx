@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 };
 import {Providers} from "./providers";
 import Header from "./components/navbar"
+import { ClerkProvider } from '@clerk/nextjs'
 
 export default function RootLayout({
   children,
@@ -18,6 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <ClerkProvider>
     <html lang="en">
       <body className={inter.className}>
       <Providers>
@@ -26,5 +28,6 @@ export default function RootLayout({
     </Providers>
         </body>
     </html>
+    </ClerkProvider>
   );
 }

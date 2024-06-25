@@ -10,7 +10,7 @@ const  Home = async () => {
   return (
    <>
    <section className="  " style={{
-    // backgroundImage: `url(${'/bg.png'})`,
+    //  backgroundImage: `url(${'/bg.png'})`,
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover'
   }}>

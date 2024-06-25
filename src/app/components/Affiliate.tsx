@@ -2,7 +2,7 @@
 export function Affiliate() {
     return (
       <section>
-        <div className="px-12 lg:flex lg:flex-row lg:items-center">
+        <div className="px-12 pt-12 lg:flex lg:flex-row lg:items-center">
           <div className="w-full flex items-center justify-center lg:w-1/2">
             <img
               src="/affiliate.png"
