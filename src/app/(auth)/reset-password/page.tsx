@@ -2,7 +2,6 @@
 import Link from 'next/link'
 import React, { useState } from 'react';
 import { useAuth, useSignIn } from '@clerk/nextjs';
-import type { NextPage } from 'next';
 import { useRouter } from 'next/navigation';
 
 export default function ResetPassword() {
@@ -77,7 +76,7 @@ export default function ResetPassword() {
 
   return (
     <main className="bg-white dark:bg-slate-900">
-      <div className="relative md:flex">
+      <div className="relative md:flex items-center justify-center">
         {/* Content */}
         <div className="md:w-1/2">
           <div className="min-h-[100dvh] h-full flex flex-col after:flex-1">
@@ -98,7 +97,7 @@ export default function ResetPassword() {
                   </div>
 
                     <div className="flex justify-end mt-6">
-                      <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white whitespace-nowrap">
+                      <button className="btn bg-indigo-500 px-3 py-2 rounded-xl  hover:bg-indigo-600 text-white ml-3 whitespace-nowrap">
                         Send Reset Link
                       </button>
                     </div>
@@ -126,7 +125,7 @@ export default function ResetPassword() {
                       onChange={(e) => setCode(e.target.value)}
                     />
 
-                    <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white  whitespace-nowrap">Reset</button>
+                    <button className="btn bg-indigo-500 px-3 py-2 rounded-xl  hover:bg-indigo-600 text-white ml-3 whitespace-nowrap">Reset</button>
                     {error && <p>{error}</p>}
                   </div>
                 )}

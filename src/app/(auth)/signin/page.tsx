@@ -15,23 +15,7 @@ export default function SignIn() {
   const [toastOpen, setToastOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
-  const [companyEmail, setCompanyEmail] = useState('');
-  const [isValidEmail, setIsValidEmail] = useState(true);
-
-  const validateEmail = (email:string) => {
-    const commonDomains = ['gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com'];
-    const emailDomain = email.split('@')[1];
-    if (emailDomain) {
-      return !commonDomains.includes(emailDomain);
-    }
-    return true;
-  };
-
-  const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
-    const email = (e.target as HTMLInputElement).value;
-    setCompanyEmail(email);
-    setIsValidEmail(validateEmail(email));
-  };
+  const [email, setEmail] = useState('');
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -43,7 +27,7 @@ export default function SignIn() {
 
     try {
       const signInAttempt = await signIn.create({
-        identifier: companyEmail,
+        identifier: email,
         password,
       });
 
@@ -69,7 +53,7 @@ export default function SignIn() {
   return (
     <main className="bg-white dark:bg-slate-900">
 
-      <div className="relative md:flex">
+      <div className="relative md:flex items-center justify-center">
 
         {/* Content */}
         <div className="md:w-1/2">
@@ -84,10 +68,7 @@ export default function SignIn() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium mb-1" htmlFor="email">Email Address</label>
-                    <input  required id="company-email" value={companyEmail} onChange={handleChange} className={`form-input w-full ${isValidEmail ? '' : 'border-red-500'}`} type="email" placeholder='Company Email Address' />
-                    {!isValidEmail && (
-                          <p className="text-red-500 text-sm mt-1">Please enter a valid company email address.</p>
-                        )}
+                    <input  required id="company-email" value={email}  onChange={(e) => setEmail(e.target.value)} className={`form-input w-full `} type="email" placeholder=' Email Address' />
                   </div>
                   <div>
                   <div>
@@ -108,7 +89,7 @@ export default function SignIn() {
                   </div>
                   <button
                       type="submit"
-                      className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3 whitespace-nowrap"
+                      className="btn bg-indigo-500 px-3 py-2 rounded-xl  hover:bg-indigo-600 text-white ml-3 whitespace-nowrap"
                     >
                       Sign In
                     </button>
@@ -119,20 +100,10 @@ export default function SignIn() {
               </form>
               {/* Footer */}
               <div className="pt-5 mt-6 border-t border-slate-200 dark:border-slate-700">
-                {/* <div className="text-sm">
-                  Don't you have an account? <Link className="font-medium text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400" href="/signup">Sign Up</Link>
-                </div> */}
-                {/* Warning */}
-                <div className="mt-5">
-                  <div className="bg-amber-100 dark:bg-amber-400/30 text-amber-600 dark:text-amber-400 px-3 py-2 rounded">
-                    <svg className="inline w-3 h-3 shrink-0 fill-current mr-2" viewBox="0 0 12 12">
-                      <path d="M10.28 1.28L3.989 7.575 1.695 5.28A1 1 0 00.28 6.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28 1.28z" />
-                    </svg>
-                    <span className="text-sm">
-                      To support you during the pandemic super pro features are free until March 31st.
-                    </span>
-                  </div>
+                <div className="text-sm">
+                  Don&apos;t you have an account? <Link className="font-medium text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400" href="/signup">Sign Up</Link>
                 </div>
+                
               </div>
             </div>
 
