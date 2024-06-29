@@ -8,7 +8,6 @@ import { useRouter } from 'next/navigation';
 
 export default function SignUp() {
   const { isLoaded, signUp, setActive } = useSignUp();
-  const [username, setUsername] = useState('');
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
   const [pendingVerification, setPendingVerification] = useState(false);
@@ -17,6 +16,9 @@ export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [gst, setGst] = useState('');
+  const [address, setAddress] = useState('');
 
 
   const handleSignUp = async (e: any) => {
@@ -28,11 +30,16 @@ export default function SignUp() {
 
     try {
       await signUp.create({
-        username:username,
         emailAddress: email,
         password,
         firstName: fullName.split(' ')[0],
         lastName: fullName.split(' ')[1],
+        phoneNumber: phone,
+        unsafeMetadata: {
+          gst: gst,
+          address: address,
+        },
+        
         
       });
 
@@ -84,20 +91,20 @@ export default function SignUp() {
               {!pendingVerification ? (
                 <form onSubmit={handleSignUp}>
                   <div className="space-y-4">
-                    <div>
+                  <div>
                       <label
                         className="block text-sm font-medium mb-1"
-                        htmlFor="username"
+                        htmlFor="fullName"
                       >
-                        Username <span className="text-rose-500">*</span>
+                        Full Name <span className="text-rose-500">*</span>
                       </label>
                       <input
-                        id="username"
+                        id="fullName"
                         className="form-input w-full"
                         type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="Username"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="Full Name"
                         required
                       />
                     </div>
@@ -121,17 +128,50 @@ export default function SignUp() {
                     <div>
                       <label
                         className="block text-sm font-medium mb-1"
-                        htmlFor="fullName"
+                        htmlFor="Phone no"
                       >
-                        Full Name <span className="text-rose-500">*</span>
+                        Phone no <span className="text-rose-500">*</span>
                       </label>
                       <input
-                        id="fullName"
+                        id="phone"
                         className="form-input w-full"
                         type="text"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        placeholder="Full Name"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="phone no"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label
+                        className="block text-sm font-medium mb-1"
+                        htmlFor="GST"
+                      >
+                        Gst no
+                      </label>
+                      <input
+                        id="gst"
+                        className="form-input w-full"
+                        type="number"
+                        value={gst}
+                        onChange={(e) => setGst(e.target.value)}
+                        placeholder="Gst no"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        className="block text-sm font-medium mb-1"
+                        htmlFor="Address"
+                      >
+                        Address <span className="text-rose-500">*</span>
+                      </label>
+                      <input
+                        id="address"
+                        className="form-input w-full"
+                        type="text"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        placeholder="Address"
                         required
                       />
                     </div>
