@@ -1,5 +1,4 @@
 import { Schema, model, models } from "mongoose";
-import { getStaticPaths } from "next/dist/build/templates/pages";
 
 const UserSchema = new Schema({
   clerkId: {
@@ -30,7 +29,7 @@ const UserSchema = new Schema({
         type: String,
         required: true,
     },
-});
+},{ timestamps: true });
 
 const User = models?.User || model("User", UserSchema);
 
