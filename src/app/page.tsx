@@ -1,9 +1,11 @@
 import Image from "next/image";
-import Searchbar from "./components/Searchbar";
-import HeroCarousel from "./components/HeroCarousel";
-import Clients from "./components/Clients";
-import { AboutUs } from "./components/About";
-import { Affiliate } from "./components/Affiliate";
+import Searchbar from "../components/Searchbar";
+import HeroCarousel from "../components/HeroCarousel";
+import Clients from "../components/Clients";
+import { AboutUs } from "../components/About";
+import { Affiliate } from "../components/Affiliate";
+import MaxWidthWrapper from "../components/MaxWidthWrapper";
+import ProductReel from "../components/ProductReel";
 // import HeroCarousel from "./components/HeroCarousel";
 
 const  Home = async () => {
@@ -37,6 +39,12 @@ const  Home = async () => {
        <AboutUs/>
        <Affiliate/>
       </section>
+      <MaxWidthWrapper>
+      <ProductReel
+          href='/products?sort=recent'
+          title='Brand new'
+        />
+       </MaxWidthWrapper> 
    </>
   );
 }

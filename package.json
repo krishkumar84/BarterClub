@@ -14,14 +14,19 @@
     "@nextui-org/react": "^2.4.1",
     "@nextui-org/system": "^2.2.1",
     "@nextui-org/theme": "^2.2.5",
+    "@radix-ui/react-slot": "^1.1.0",
     "@types/mongoose": "^5.11.97",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
     "framer-motion": "^11.2.10",
     "lucide-react": "^0.400.0",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
     "svix": "^1.24.0",
-    "swiper": "^11.1.4"
+    "swiper": "^11.1.4",
+    "tailwind-merge": "^2.4.0",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/node": "^20",

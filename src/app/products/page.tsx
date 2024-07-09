@@ -1,5 +1,5 @@
-import MaxWidthWrapper from '@/app/components/MaxWidthWrapper'
-import ProductReel from '@/app/components/ProductReel'
+import MaxWidthWrapper from '@/components/MaxWidthWrapper'
+import ProductReel from '@/components/ProductReel'
 import { PRODUCT_CATEGORIES } from '@/config'
 
 type Param = string | string[] | undefined
