@@ -7,9 +7,14 @@ import { connect } from '@/lib/db';
 
 connect();
 
+async function parseRequestBody(req: NextRequest) {
+  const body = await req.json();
+  return body;
+}
 
 export async function POST(req: NextRequest, res: NextResponse) {
-  const body = req.body;
+  const body = await parseRequestBody(req);
+  console.log(body);
   const newProduct = new Product(body);
 
   try {
