@@ -93,7 +93,7 @@ const ProductReel = (props: ProductReelProps) => {
             {map.map((product, i) => (
               <ProductListing
                 key={`product-${i}`}
-                product={product}
+                //  product={product}
                 index={i}
               />
             ))}
