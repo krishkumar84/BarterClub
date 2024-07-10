@@ -6,6 +6,7 @@ import { AboutUs } from "../components/About";
 import { Affiliate } from "../components/Affiliate";
 import MaxWidthWrapper from "../components/MaxWidthWrapper";
 import ProductReel from "../components/ProductReel";
+import GetApp from "@/components/joinSection";
 // import HeroCarousel from "./components/HeroCarousel";
 
 const  Home = async () => {
@@ -36,6 +37,7 @@ const  Home = async () => {
 
        <Clients/>
         </div>
+       <GetApp/>
        <AboutUs/>
        <Affiliate/>
       </section>
