@@ -7,12 +7,13 @@ import { Affiliate } from "../components/Affiliate";
 import MaxWidthWrapper from "../components/MaxWidthWrapper";
 import ProductReel from "../components/ProductReel";
 import GetApp from "@/components/joinSection";
+import { Contact } from "@/components/Contactus";
 // import HeroCarousel from "./components/HeroCarousel";
 
 const  Home = async () => {
   return (
    <>
-   <section className="  " style={{
+   <section className=" " style={{
     //  backgroundImage: `url(${'/bg.png'})`,
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover'
@@ -33,11 +34,12 @@ const  Home = async () => {
 
           <HeroCarousel />
         </div>
-        <div className="flex items-center justify-center">
+        <div className="flex-col flex items-center justify-center">
 
        <Clients/>
-        </div>
        <GetApp/>
+        <Contact/>
+        </div>
        <AboutUs/>
        <Affiliate/>
       </section>
