@@ -8,6 +8,7 @@ import MaxWidthWrapper from "../components/MaxWidthWrapper";
 import ProductReel from "../components/ProductReel";
 import GetApp from "@/components/joinSection";
 import { Contact } from "@/components/Contactus";
+import { Footer } from "@/components/Footer";
 // import HeroCarousel from "./components/HeroCarousel";
 
 const  Home = async () => {
@@ -42,13 +43,14 @@ const  Home = async () => {
         </div>
        <AboutUs/>
        <Affiliate/>
+       <Footer/>
       </section>
-      <MaxWidthWrapper>
+      {/* <MaxWidthWrapper>
       <ProductReel
           href='/products?sort=recent'
           title='Brand new'
         />
-       </MaxWidthWrapper> 
+       </MaxWidthWrapper>  */}
    </>
   );
 }

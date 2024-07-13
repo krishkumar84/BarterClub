@@ -4,15 +4,15 @@ import { UserRound,Mail,MessageCircleMore } from 'lucide-react'
 export function Contact() {
   return (
     <section className='w-[85%]'>
-      <div className="px-2 lg:flex lg:flex-row lg:items-center ">
-        <div className="w-full bg-zinc-900 py-8 lg:w-1/2 rounded-tl-3xl rounded-tr-3xl sm:rounded-tr-none sm:rounded-bl-3xl">
-          <div className="my-10 lg:my-0 px-10">
+      <div className="px-2 lg:flex justify-center lg:flex-row lg:items-center ">
+        <div className="w-full bg-zinc-900 py-8 lg:w-1/2 rounded-tl-3xl rounded-tr-3xl lg:rounded-tr-none lg:rounded-bl-3xl">
+          <div className="my-10 lg:my-0 px-6 md:px-10">
           <h2 className="text-3xl font-bold  text-white sm:text-2xl lg:text-3xl">
              If you have Questions, Feel free to contact us
               </h2>
             <form action="#" method="POST" className="mt-8 max-w-xl">
               <div className="flex flex-col justify-center  gap-1">
-                <div className="flex w-full max-w-sm items-center space-x-6">
+                <div className="flex w-full lg:max-w-lg items-center space-x-6">
                   <div className="flex items-center justify-center space-x-1">
                   <UserRound color='#FD4677' size={24} />
                   <input
@@ -30,10 +30,10 @@ export function Contact() {
                   />
                   </div>
                 </div>
-                <div className="flex items-center justify-center sm:pr-10 mt-6">
+                <div className="flex items-center justify-start lg:pr-10 mt-6">
                   <MessageCircleMore color='#FD4677' size={24} />
                   <textarea
-                   className="w-full p-3 bg-zinc-900 text-white rounded-lg border-b-2 border-white focus:outline-none"
+                   className="w-[95%] p-3 bg-zinc-900 text-white rounded-lg border-b-2 border-white focus:outline-none"
                    id="message"
                    name="message"
                    placeholder="Message"
@@ -45,7 +45,7 @@ export function Contact() {
                     style={{
                         background: 'linear-gradient(180deg, rgb(253, 70, 119) 0%, rgb(137.24, 82.95, 222.57) 100%)'
                       }}
-                    className="rounded-3xl w-full sm:w-[80%] mt-12 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                    className="rounded-3xl w-full md:w-[80%] lg:max-w-lg mt-12 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
                   >
                     Read More
                   </button>
@@ -57,8 +57,8 @@ export function Contact() {
          style={{
             background: 'linear-gradient(180deg, rgb(253, 70, 119) 0%, rgb(137.24, 82.95, 222.57) 100%)'
           }} 
-          className="w-full p-5 pb-[6.1rem] pt-16 lg:w-1/2 rounded-bl-3xl sm:rounded-bl-none sm:rounded-tr-3xl rounded-br-3xl ">
-          <div className="flex flex-wrap gap-7">
+          className="w-full  p-5 pb-[6.1rem] pt-16 lg:w-1/2 rounded-bl-3xl lg:rounded-bl-none lg:rounded-tr-3xl rounded-br-3xl ">
+          <div className="flex flex-wrap items-center justify center md:justify-start gap-7">
           <div className="h-10 w-10 flex-shrink-0">
                  <img
                      className="h-10 w-10 rounded-full object-cover ring-4 ring-white ring-opacity-15"
@@ -72,10 +72,10 @@ export function Contact() {
             </div>
           </div>
           <div className="two">
-          <p className="mt-4  max-w-md text-base leading-relaxed text-slate-100">
+          <p className="mt-4 w-full lg:max-w-md text-base leading-relaxed text-slate-100">
            Being a member of the barter club has been an incredible experience. I've exchanged my handmade crafts for essentials
-            like groceries and even got professional services for my business without spending a rupee.
-            It's not just about saving money; it's about building relationships and supporting local businesses
+            like groceries and even got professional services for business without spending a rupee.
+            It's not just about saving money it's about building relationships and supporting local businesses
               </p>
           </div>
         </div>
