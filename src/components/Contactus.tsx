@@ -1,34 +1,54 @@
 import React from 'react'
+import { UserRound,Mail,MessageCircleMore } from 'lucide-react'
 
 export function Contact() {
   return (
     <section className='w-[85%]'>
       <div className="px-2 lg:flex lg:flex-row lg:items-center ">
-        <div className="w-full bg-zinc-900 py-8 lg:w-1/2 rounded-3xl">
-          <div className="my-10 lg:my-0 lg:px-10">
-          <h2 className="text-3xl font-bold  text-white sm:text-4xl lg:text-5xl">
+        <div className="w-full bg-zinc-900 py-8 lg:w-1/2 rounded-tl-3xl rounded-tr-3xl sm:rounded-tr-none sm:rounded-bl-3xl">
+          <div className="my-10 lg:my-0 px-10">
+          <h2 className="text-3xl font-bold  text-white sm:text-2xl lg:text-3xl">
              If you have Questions, Feel free to contact us
               </h2>
-            <p className="mt-4 max-w-xl text-base leading-relaxed text-gray-600">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur nesciunt eos facilis
-              debitis voluptas iure consectetur odit fugit voluptate recusandae?
-            </p>
-
             <form action="#" method="POST" className="mt-8 max-w-xl">
-              <div className="flex flex-col sm:flex-row sm:items-center">
-                <div className="flex w-full max-w-sm items-center space-x-2">
+              <div className="flex flex-col justify-center  gap-1">
+                <div className="flex w-full max-w-sm items-center space-x-6">
+                  <div className="flex items-center justify-center space-x-1">
+                  <UserRound color='#FD4677' size={24} />
                   <input
-                    className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 "
+                    className="flex h-10 w-full border-b-2 border-white focus:outline-none  bg-transparent px-3 py-2 text-sm text-slate-100"
+                    type="text"
+                    placeholder="Full Name"
+                  />
+                  </div>
+                  <div className="flex items-center justify-center space-x-1">
+                  <Mail color='#FD4677' size={24} />
+                  <input
+                    className="flex h-10 w-full border-b-2 border-white focus:outline-none bg-transparent px-3 py-2 text-sm text-slate-100"
                     type="email"
                     placeholder="Email"
                   />
+                  </div>
+                </div>
+                <div className="flex items-center justify-center sm:pr-10 mt-6">
+                  <MessageCircleMore color='#FD4677' size={24} />
+                  <textarea
+                   className="w-full p-3 bg-zinc-900 text-white rounded-lg border-b-2 border-white focus:outline-none"
+                   id="message"
+                   name="message"
+                   placeholder="Message"
+                   rows={1}
+                  ></textarea>
+                  </div>
                   <button
                     type="button"
-                    className="rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                    style={{
+                        background: 'linear-gradient(180deg, rgb(253, 70, 119) 0%, rgb(137.24, 82.95, 222.57) 100%)'
+                      }}
+                    className="rounded-3xl w-full sm:w-[80%] mt-12 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
                   >
-                    Subscribe
+                    Read More
                   </button>
-                </div>
               </div>
             </form>
           </div>
@@ -37,7 +57,7 @@ export function Contact() {
          style={{
             background: 'linear-gradient(180deg, rgb(253, 70, 119) 0%, rgb(137.24, 82.95, 222.57) 100%)'
           }} 
-          className="w-full p-5 pb-28 pt-20 lg:w-1/2 rounded-3xl ">
+          className="w-full p-5 pb-[6.1rem] pt-16 lg:w-1/2 rounded-bl-3xl sm:rounded-bl-none sm:rounded-tr-3xl rounded-br-3xl ">
           <div className="flex flex-wrap gap-7">
           <div className="h-10 w-10 flex-shrink-0">
                  <img
@@ -52,7 +72,7 @@ export function Contact() {
             </div>
           </div>
           <div className="two">
-          <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-100">
+          <p className="mt-4  max-w-md text-base leading-relaxed text-slate-100">
            Being a member of the barter club has been an incredible experience. I've exchanged my handmade crafts for essentials
             like groceries and even got professional services for my business without spending a rupee.
             It's not just about saving money; it's about building relationships and supporting local businesses

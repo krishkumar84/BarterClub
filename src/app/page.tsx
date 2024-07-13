@@ -34,7 +34,7 @@ const  Home = async () => {
 
           <HeroCarousel />
         </div>
-        <div className="flex-col flex items-center justify-center">
+        <div className="flex-col flex items-center justify-cente mb-24">
 
        <Clients/>
        <GetApp/>
