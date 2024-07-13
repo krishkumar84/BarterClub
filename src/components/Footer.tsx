@@ -3,7 +3,7 @@ import React from 'react'
 
 export function Footer() {
   return (
-      <section className="bg-white">
+      <section className="bg-transparent">
          <div className="max-w-screen-xl px-4 py-12 mx-auto space-y-8 overflow-hidden sm:px-6 lg:px-8">
             <div className="w-full flex items-center justify-center">
          <Image src={"/logo.png"} alt="ACME" width={132} height={132} />
