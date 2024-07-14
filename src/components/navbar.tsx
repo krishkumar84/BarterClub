@@ -130,7 +130,7 @@ export default function Header() {
                       <a
                         key={item.name}
                         href={item.href}
-                        className="-m-3 flex items-center rounded-md p-3 text-sm font-semibold hover:bg-gray-50"
+                        className="-m-3 flex items-center rounded-md p-3 text-sm font-semibold"
                       >
                         <span className="ml-3 text-base font-medium text-slate-300">
                           {item.name}
