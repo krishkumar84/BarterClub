@@ -12,10 +12,10 @@ export function Affiliate() {
           </div>
           <div className="w-full lg:w-1/2">
             <div className="my-10 lg:my-0 lg:px-10">
-              <h2 className="text-3xl font-bold  text-black sm:text-4xl lg:text-5xl">
+              <h2 className="text-3xl font-bold  text-slate-300 sm:text-4xl lg:text-5xl">
                 Join Our Affiliate Program
               </h2>
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-gray-600">
+              <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-400">
                 Sed vulputate risus efficitur metus placerat ultricies. Mauris
                 ultrices ultricies nisl sit amet luctus. Maecenas id dictum
                 nulla. Nullam condimentum purus id tincidunt dapibus. Vestibulum
@@ -23,7 +23,7 @@ export function Affiliate() {
                 velit. Nunc in urna mi. Aenean a sollicitudin sem, quis egestas
                 lectus. Donec ultricies justo laoreet mattis vehicula.
               </p>
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-gray-600">
+              <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-400">
                 Suspendisse commodo a erat ut aliquet. Phasellus nec nisl sit
                 amet eros pretium venenatis nec non massa. Ut sed ligula purus.
                 Praesent posuere orci vel ultrices efficitur. 

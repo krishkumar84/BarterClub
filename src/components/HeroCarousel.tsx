@@ -14,7 +14,7 @@ import Image from "next/image";
 
 const HeroCarousel = () => {
   return (
-    <div className="relative hidden sm:flex  max-w-[700px]  h-[600px] w-full bg-transparent rounded-[30px] ">
+    <div className="relative hidden sm:flex  max-w-[700px]  h-[530px] w-full bg-transparent rounded-[30px] ">
        {/* <Carousel
         showThumbs={false}
          autoPlay

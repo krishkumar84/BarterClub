@@ -100,16 +100,16 @@ const Pricing = () => {
     <section className="flex flex-col justify-center items-center py-3 min-h-screen">
       {/* heading section  */}
       <div className="flex flex-col w-auto px-6 text-center text-2xl sm:text-3xl md:text-4xl">
-        <span className="text-3xl font-bold  text-black sm:text-2xl lg:text-3xl">Pricing</span>
+        <span className="font-bold text-slate-300 text-xl">Pricing</span>
         <span
-          className="text-3xl font-bol sm:text-2xl lg:text-3xl text-[#365CCE]"
+          className="text-3xl  text-slate-200 font-bold sm:text-2xl lg:text-4xl "
         >
           Simple, Transparent Pricing
         </span>
-        <span className="text-base leading-relaxed text-gray-800 mt-4">
+        <span className="text-base leading-relaxed text-slate-300 mt-4">
           Chose a plan that&apos;s right for you
         </span>
-        <div className="text-base mt-8 mb-8 md:mt-12 gap-4 flex items-center justify-center pl-5">
+        <div className="text-base mb-8 sm:mt-5 gap-4 flex items-center justify-center pl-5">
         <label className='themeSwitcherTwo relative inline-flex cursor-pointer select-none items-center'>
         <input
           type='checkbox'
@@ -117,7 +117,7 @@ const Pricing = () => {
           onChange={handleCheckboxChange}
           className='sr-only'
         />
-        <span className='label flex items-center text-sm font-normal text-black'>
+        <span className='label flex items-center text-sm font-medium text-slate-300'>
           Monthly
         </span>
         <span
@@ -131,7 +131,7 @@ const Pricing = () => {
             }`}
           ></span>
         </span>
-        <span className='label flex items-center text-sm font-normal text-black'>
+        <span className='label flex items-center text-sm font-medium text-slate-300'>
           Anually
         </span>
       </label>
@@ -147,7 +147,7 @@ const Pricing = () => {
             className={`flex flex-col h-full  max-w-[378px] py-6 px-5 sm:px-10 lg:w-auto xl:w-[378px] rounded-3xl ${
               data?.isSelected
                 ? `bg-gradient-to-b from-[#FD4677] to-[#6557FF] text-white `
-                : "bg-[#1A1A1A] text-white mt-12"
+                : "bg-[#1A1A1A] text-white mt-4 sm:mt-12"
             }`
         }
         

@@ -12,10 +12,10 @@ export function AboutUs() {
         </div>
         <div className="w-full lg:w-1/2">
           <div className="my-10 lg:my-0 lg:px-10">
-            <h2 className="text-3xl font-bold  text-black sm:text-4xl lg:text-5xl">
+            <h2 className="text-3xl font-bold  text-slate-300 sm:text-4xl lg:text-5xl">
               About Us
             </h2>
-            <p className="mt-4 max-w-xl text-base leading-relaxed text-gray-600">
+            <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-400">
               At BarterClub, we believe in the power of collaboration and
               community. Our platform is designed to connect business owners,
               professionals, service providers, and entrepreneurs who want to
