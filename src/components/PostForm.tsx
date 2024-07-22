@@ -1,50 +1,110 @@
 "use client"
-
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { eventFormSchema } from "@/lib/validator"
+import { productSchema } from "@/lib/validator"
 import * as z from 'zod'
-import { eventDefaultValues } from "@/constants"
+import { productDefaultValues } from "@/constants"
 import Dropdown from "./Dropdown"
 import { Textarea } from "@/components/ui/textarea"
-// import { FileUploader } from "./FileUploader"
 import { useState } from "react"
 import Image from "next/image"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useRouter } from "next/navigation"
 // import { createEvent, updateEvent } from "@/lib/actions/event.actions"
-import { IEvent } from "@/lib/models/event.model"
+import { IProduct } from "@/lib/models/product.model"
+import axios from "axios"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import ImageSlider from "./ImageSlider"
+import { get } from "http"
 
 
 type EventFormProps = {
   userId: string
   type: "Create" | "Update"
-  event?: IEvent,
+  event?: IProduct,
   eventId?: string
 }
+
 
 const PostForm = ({ userId, type, event, eventId }: EventFormProps) => {
   const [files, setFiles] = useState<File[]>([])
   const initialValues = event && type === 'Update' 
     ? { 
-      ...event
+      ...event,
     }
-    : eventDefaultValues;
+    : productDefaultValues;
   const router = useRouter();
 
-//   const { startUpload } = useUploadThing('imageUploader')
 
-  const form = useForm<z.infer<typeof eventFormSchema>>({
-    resolver: zodResolver(eventFormSchema),
+  const form = useForm<z.infer<typeof productSchema>>({
+    resolver: zodResolver(productSchema),
     defaultValues: initialValues
   })
+
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [uploadedUrls, GlobalImageUrls] = useState<string[]>([]);
+  const maxFiles = 3; // Limit to 3 files
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files ? Array.from(event.target.files) as File[] : [];
+    if (files.length > maxFiles) {
+      alert(`You can only select up to ${maxFiles} files.`);
+      return;
+    }
+    setSelectedFiles(files);
+}
+
+const handleUpload = async () => {
+  const uploadedUrls = await Promise.all(
+    selectedFiles.map(async (file, index) => {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await axios.post('/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      const fileUrl = response.data.url;
+      localStorage.setItem(`img${index + 1}`, fileUrl); // Store URLs in localStorage as img1, img2, img3
+      getStoredImageUrls();
+      return fileUrl;
+    })
+  )
+  // GlobalImageUrls(uploadedUrls);
+   console.log("hello")
+  //  alert(uploadedUrls)
+}
+
+const urls: string[] = [];
+const getStoredImageUrls = (): string[] => {
+  for (let i = 1; i <= localStorage.length; i++) {
+    const url = localStorage.getItem(`img${i}`);
+    if (url) {
+      urls.push(url);
+    }
+  }
+  console.log(urls)
+  alert(urls);
+  return urls;
+};
+
  
-  async function onSubmit(values: z.infer<typeof eventFormSchema>) {
-    let uploadedImageUrl = values.imageUrl;
+  async function onSubmit(values: z.infer<typeof productSchema>) {
+    // let uploadedImageUrl = values.imageUrl;
 
     if(files.length > 0) {
     //   const uploadedImages = await startUpload(files)
@@ -140,26 +200,173 @@ const PostForm = ({ userId, type, event, eventId }: EventFormProps) => {
                 </FormItem>
               )}
             />
+            
           <FormField
               control={form.control}
-              name="imageUrl"
+              name="images"
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormControl className="h-72">
-                    {/* <FileUploader 
-                      onFieldChange={field.onChange}
-                      imageUrl={field.value}
-                      setFiles={setFiles}
-                    /> */}
-                    <div className="grid w-full max-w-sm items-center gap-1.5">
-                     <Label htmlFor="picture">Picture</Label>
-                     <Input id="picture" type="file" />
+                    <div className="flex flex-row">
+                    <div className="flex w-full max-w-sm items-start gap-1.5">
+                     <Input  id="pictures"
+                      type="file"
+                      multiple
+                     onChange={handleFileChange}
+                       />
+                     <Button onClick={handleUpload} disabled={selectedFiles.length === 0}>
+                     Upload
+                   </Button>
+                   <div className='flex flex-col w-full'>
+                     <ImageSlider urls={["/uploads/78bf00ef.png",]} />
+                   </div>
+                   </div>
                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
-            />
+              />
+              </div>
+
+
+        <div className="flex flex-col gap-5 md:flex-row">
+          <FormField
+            control={form.control}
+            name="condition"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormControl>
+                <Select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Condition" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Condition</SelectLabel>
+                        <SelectItem value="new">New</SelectItem>
+                        <SelectItem value="old">Old</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                 </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="condition"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormControl>
+                <Select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Product Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Product Type</SelectLabel>
+                        <SelectItem value="product">Product</SelectItem>
+                        <SelectItem value="service">Service</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                 </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="flex flex-col mt-5 gap-5 md:flex-row">
+          <FormField
+            control={form.control}
+            name="availableQty"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormControl>
+                <div className="grid w-full max-w-sm items-center gap-1.5">
+                     <Label>Available Quantity</Label>
+                     <Input type="number" placeholder="Available Quantity" {...field} className="input-field" />
+                   </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="deliveryTime"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormControl>
+                <div className="grid w-full max-w-sm items-center gap-1.5">
+                     <Label>Delivery time(in days)</Label>
+                     <Input type="number" placeholder="Delivery Time" {...field} className="input-field" />
+                   </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="flex flex-col mt-5 gap-5 md:flex-row">
+          <FormField
+            control={form.control}
+            name="gst"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormControl>
+                <div className="grid w-full max-w-sm items-center gap-1.5">
+                     <Label>Gst(in %)</Label>
+                     <Input placeholder="Gst" {...field} className="input-field" />
+                   </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="price"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormControl>
+                <div className="grid w-full max-w-sm items-center gap-1.5">
+                     <Label>Price(in Inr)</Label>
+                     <Input type="number" placeholder="Price" {...field} className="input-field" />
+                   </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="flex flex-col mt-5 gap-5 md:flex-row">
+        <FormField
+            control={form.control}
+            name="delivery"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormControl>
+                <Select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Delivery" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Delivery</SelectLabel>
+                        <SelectItem value="Free">Free</SelectItem>
+                        <SelectItem value="Inr">Inr</SelectItem>
+                        <SelectItem value="Barter">Barter Point</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                 </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
         <Button 
           type="submit"

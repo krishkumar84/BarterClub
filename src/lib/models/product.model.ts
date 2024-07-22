@@ -1,83 +1,77 @@
-import { Schema, model, models, Model } from "mongoose";
+import { Document, Schema, model, models } from "mongoose";
 
-const productSchema = new Schema({
-  clerkId: {
-    type: String,
-    required: true,
-  },
-  userId: {
-    type: String,
-    required: true,
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
+// Define the interface for the Product document
+export interface IProduct extends Document {
+  clerkId: string;
+  userId: string;
+  title: string;
+  description: string;
+  condition: 'new' | 'old';
+  type: 'product' | 'service';
+  availableQty: number;
+  deliveryTime: number;
+  category: { _id: string };
+  price: number;
+  gst?: number;
+  rating?: number;
+  delivery: 'free' | 'INR' | 'Barter points';
+  images?: string[];
+  video?: string;
+}
+
+// Define the schema for the Product model
+const ProductSchema = new Schema<IProduct>({
+  clerkId: { type: String, required: true },
+  userId: { type: String, required: true },
+  title: { type: String, required: true },
+  description: { type: String, required: true },
   condition: {
     type: String,
     enum: ['new', 'old'],
-    required: true,
+    required: true
   },
   type: {
     type: String,
     enum: ['product', 'service'],
-    required: true,
+    required: true
   },
-  availableQty: {
-    type: Number,
-    required: true,
-  },
-  deliveryTime: {
-    type: String,
-    required: true,
-  },
-  category: { 
-    type: Schema.Types.ObjectId,
-     ref: 'Category'
-     },
-  price: {
-    type: Number,
-    required: true,
-  },
-  gst: {
-    type: Number,
-    default: 0,
-  },
+  availableQty: { type: Number, required: true },
+  deliveryTime: { type: Number, required: true },
+  category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
+  price: { type: Number, required: true },
+  gst: { type: Number, default: 0 },
   rating: {
     type: Number,
     min: 1,
     max: 5,
-    default: 3,
+    default: 3
   },
   delivery: {
     type: String,
     enum: ['free', 'INR', 'Barter points'],
-    required: true,
+    required: true
   },
   images: {
     type: [String],
-    validate: [arrayLimit, '{PATH} exceeds the limit of 3 images'],
+    validate: {
+      validator: function(v: string[]) {
+        return v.length <= 3;
+      },
+      message: '{PATH} exceeds the limit of 3 images'
+    }
   },
   video: {
     type: String,
     validate: {
-      validator: function(v:any) {
+      validator: function(v: string | null) {
         return v == null || v.length > 0;
       },
       message: 'Video URL cannot be empty'
     }
-  },
+  }
 }, { timestamps: true });
 
-function arrayLimit(val:string[]) {
-  return val.length <= 3;
-}
-
 // Check if the model already exists before defining it
-const Product: Model<any> = models.Product || model('Product', productSchema);
+const Product = models.Product || model<IProduct>('Product', ProductSchema);
 
 export default Product;
