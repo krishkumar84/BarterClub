@@ -4,7 +4,8 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { Webhook } from "svix";
 
-import { createUser } from "@/lib/actions/user.action";
+import { createUser ,updateUser,deleteUser} from "@/lib/actions/user.action";
+
 
 export async function POST(req: Request) {
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
@@ -89,11 +90,10 @@ export async function POST(req: Request) {
   }
 
   if (eventType === 'user.updated') {
-    const {id, image_url, first_name, last_name, username } = evt.data
+    const {id, image_url, first_name, username } = evt.data
 
     const user = {
-      firstName: first_name,
-      lastName: last_name,
+      Name: first_name,
       username: username!,
       photo: image_url,
     }

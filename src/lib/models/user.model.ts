@@ -21,6 +21,11 @@ const UserSchema = new Schema({
     required: true,
     unique: true,
   },
+  photo:{
+    type: String,
+    required: false,
+    unique: true,
+  },
   Gst:{
     type: Number,
     unique: true,

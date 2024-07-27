@@ -9,10 +9,8 @@ export type CreateUserParams = {
   }
   
   export type UpdateUserParams = {
-    firstName: string
-    lastName: string
-    username: string
-    photo: string
+    Name: string | null
+    username: string | null
   }
   
   // ====== EVENT PARAMS
