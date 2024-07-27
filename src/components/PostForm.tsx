@@ -14,7 +14,6 @@ import { useState } from "react"
 import Image from "next/image"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useRouter } from "next/navigation"
-// import { createEvent, updateEvent } from "@/lib/actions/event.actions"
 import { IProduct } from "@/lib/models/product.model"
 import axios from "axios"
 import {
@@ -27,7 +26,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import ImageSlider from "./ImageSlider"
-import { get } from "http"
 
 
 type EventFormProps = {
@@ -54,7 +52,7 @@ const PostForm = ({ userId, type, event, eventId }: EventFormProps) => {
   })
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [uploadedUrls, GlobalImageUrls] = useState<string[]>([]);
+  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
   const maxFiles = 3; // Limit to 3 files
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,7 +65,7 @@ const PostForm = ({ userId, type, event, eventId }: EventFormProps) => {
 }
 
 const handleUpload = async () => {
-  const uploadedUrls = await Promise.all(
+  const urls = await Promise.all(
     selectedFiles.map(async (file, index) => {
       const formData = new FormData();
       formData.append('file', file);
@@ -80,13 +78,11 @@ const handleUpload = async () => {
 
       const fileUrl = response.data.url;
       localStorage.setItem(`img${index + 1}`, fileUrl); // Store URLs in localStorage as img1, img2, img3
-      getStoredImageUrls();
       return fileUrl;
     })
   )
-  // GlobalImageUrls(uploadedUrls);
-   console.log("hello")
-  //  alert(uploadedUrls)
+  // setUploadedUrls(urls);
+  getStoredImageUrls();
 }
 
 const urls: string[] = [];
@@ -97,24 +93,16 @@ const getStoredImageUrls = (): string[] => {
       urls.push(url);
     }
   }
+  setUploadedUrls(urls);
   console.log(urls)
-  alert(urls);
+  // alert(urls);
   return urls;
 };
 
  
   async function onSubmit(values: z.infer<typeof productSchema>) {
-    // let uploadedImageUrl = values.imageUrl;
-
-    if(files.length > 0) {
-    //   const uploadedImages = await startUpload(files)
-
-    //   if(!uploadedImages) {
-    //     return
-    //   }
-
-    //   uploadedImageUrl = uploadedImages[0].url
-    }
+    const postData = values;
+    let uploadedImageUrl = uploadedUrls;
 
     if(type === 'Create') {
       try {
@@ -193,7 +181,7 @@ const getStoredImageUrls = (): string[] => {
               name="description"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormControl className="h-72">
+                  <FormControl className="h-72 w-full">
                     <Textarea placeholder="Description" {...field} className="textarea rounded-2xl" />
                   </FormControl>
                   <FormMessage />
@@ -207,8 +195,8 @@ const getStoredImageUrls = (): string[] => {
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormControl className="h-72">
-                    <div className="flex flex-row">
-                    <div className="flex w-full max-w-sm items-start gap-1.5">
+                    <div className="flex flex-col ">
+                    <div className="flex flex-row w-full max-w-sm items-start gap-1.5">
                      <Input  id="pictures"
                       type="file"
                       multiple
@@ -217,9 +205,9 @@ const getStoredImageUrls = (): string[] => {
                      <Button onClick={handleUpload} disabled={selectedFiles.length === 0}>
                      Upload
                    </Button>
-                   <div className='flex flex-col w-full'>
-                     <ImageSlider urls={["/uploads/78bf00ef.png",]} />
                    </div>
+                   <div className='flex mt-3 flex-col w-64'>
+                     <ImageSlider urls={uploadedUrls} />
                    </div>
                    </div>
                   </FormControl>

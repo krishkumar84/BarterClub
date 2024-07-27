@@ -19,7 +19,6 @@ import {
     AlertDialogTrigger,
   } from "@/components/ui/alert-dialog"
   import { Input } from "@/components/ui/input"
-//   import { createCategory, getAllCategories } from "@/lib/actions/category.actions"
   
   type DropdownProps = {
     value?: string
@@ -29,25 +28,42 @@ import {
   const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
     const [categories, setCategories] = useState<ICategory[]>([])
     const [newCategory, setNewCategory] = useState('');
+    const [trigger, setTrigger] = useState(false);
   
     const handleAddCategory = () => {
-    //   createCategory({
-    //     categoryName: newCategory.trim()
-    //   })
-    //     .then((category) => {
-    //       setCategories((prevState) => [...prevState, category])
-    //     })
+     try{
+      const createCategory = async () => {
+        await fetch('/api/category', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ categoryName: newCategory.trim() }),
+        })
+      }
+      createCategory();
+      setTrigger(!trigger);
+     }catch(error){
+       console.log(error)
+     }   
     }
   
     useEffect(() => {
       const getCategories = async () => {
-        // const categoryList = await getAllCategories();
-  
-        // categoryList && setCategories(categoryList as ICategory[])
-      }
+        try {
+          const response = await fetch('/api/category');
+          if (!response.ok) {
+            throw new Error('Failed to fetch categories');
+          }
+          const data = await response.json();
+          data && setCategories(data as ICategory[])
+        } catch (error) {
+          console.error(error);
+        }
+      };
   
       getCategories();
-    }, [])
+    }, [trigger]);
   
     return (
       <Select onValueChange={onChangeHandler} defaultValue={value}>
