@@ -4,6 +4,9 @@ import { auth } from "@clerk/nextjs/server";
 const CreatePost = () => {
   const { sessionClaims} = auth();
   const userId = sessionClaims?.userId as string
+  const { userId:clerkId } : { userId: string | null } = auth();
+
+  if (!clerkId) return null;
 
   return (
     <div className="px-10">
@@ -12,7 +15,7 @@ const CreatePost = () => {
       </section>
 
       <div className="wrapper my-8">
-      <PostForm userId={userId ?? ""} type="Create" />
+      <PostForm clerkId={clerkId} userId={userId ?? ""} type="Create" />
       </div>
     </div>
   )

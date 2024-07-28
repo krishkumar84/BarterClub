@@ -9,13 +9,25 @@ connect();
 
 
 export async function POST(req: NextRequest, res: NextResponse) {
-  const {clerkId,userId,body} = await req.json();
+  console.log("hitted");
+  // console.log(req.json());
+  const {clerkId,userId,imageUrl,body} = await req.json();
+  console.log(clerkId,userId,imageUrl,body);
+  console.log(userId.userId);
   const { userId: clerkUserId } : { userId: string | null } = auth();
-  if(clerkUserId !== clerkId){
+  const { sessionClaims} = auth();
+  const mongoId: string = sessionClaims?.userId as string;
+  if(clerkUserId !== clerkId && mongoId !== userId.userId){
     return NextResponse.json(createError(403, 'Unauthorized'));
   }
   console.log(body);
-  const newProduct = new Product(body);
+  const newProduct = new Product({
+    clerkId,
+    userId:userId.userId,
+    category: body.categoryId,
+    images: imageUrl,
+    ...body
+  });
 
   try {
     const savedProduct = await newProduct.save();

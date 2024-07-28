@@ -11,8 +11,6 @@ import { productDefaultValues } from "@/constants"
 import Dropdown from "./Dropdown"
 import { Textarea } from "@/components/ui/textarea"
 import { useState } from "react"
-import Image from "next/image"
-import { Checkbox } from "@/components/ui/checkbox"
 import { useRouter } from "next/navigation"
 import { IProduct } from "@/lib/models/product.model"
 import axios from "axios"
@@ -30,7 +28,7 @@ import ImageSlider from "./ImageSlider"
 
 type PostFormProps = {
   userId: string
-  clerkId:string
+  clerkId:string | null
   type: "Create" | "Update"
   post?: IProduct,
   postId?: string
@@ -45,7 +43,6 @@ const PostForm = ({ userId,clerkId, type, post, postId }: PostFormProps) => {
     }
     : productDefaultValues;
   const router = useRouter();
-
 
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
@@ -102,11 +99,23 @@ const getStoredImageUrls = (): string[] => {
 
  
   async function onSubmit(values: z.infer<typeof productSchema>) {
+    console.log('Form Submitted', values);
     const postData = values;
     let uploadedImageUrl = uploadedUrls;
+    if(uploadedImageUrl.length === 0) {
+      return alert('Please upload images');
+    }
 
     if(type === 'Create') {
       try {
+        const newPost = await fetch('/api/products', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ clerkId, userId,imageUrl: uploadedImageUrl, body: postData })
+        }).then(res => res.json())
+        console.log(newPost)
       //   const newEvent = await createEvent({
       //     event: { ...values, imageUrl: uploadedImageUrl },
       //     userId,
@@ -114,10 +123,10 @@ const getStoredImageUrls = (): string[] => {
       //   }
       // )
 
-        // if(newEvent) {
-        //   form.reset();
-        //   router.push(`/events/${newEvent._id}`)
-        // }
+        if(newPost) {
+          form.reset();
+          // router.push(`/events/${newEvent._id}`)
+        }
       } catch (error) {
         console.log(error);
       }
@@ -365,7 +374,7 @@ const getStoredImageUrls = (): string[] => {
         >
           {form.formState.isSubmitting ? (
             'Submitting...'
-          ): `${type} Event `}</Button>
+          ): `${type} Post `}</Button>
       </form>
     </Form>
   )

@@ -10,7 +10,7 @@ export interface IProduct extends Document {
   type: 'product' | 'service';
   availableQty: number;
   deliveryTime: number;
-  category: { _id: string };
+  category: { _id: string ,name: string };
   price: number;
   gst?: number;
   rating?: number;
