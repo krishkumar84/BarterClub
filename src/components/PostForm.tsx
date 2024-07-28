@@ -28,19 +28,20 @@ import {
 import ImageSlider from "./ImageSlider"
 
 
-type EventFormProps = {
+type PostFormProps = {
   userId: string
+  clerkId:string
   type: "Create" | "Update"
-  event?: IProduct,
-  eventId?: string
+  post?: IProduct,
+  postId?: string
 }
 
 
-const PostForm = ({ userId, type, event, eventId }: EventFormProps) => {
-  const [files, setFiles] = useState<File[]>([])
-  const initialValues = event && type === 'Update' 
+const PostForm = ({ userId,clerkId, type, post, postId }: PostFormProps) => {
+  // const [files, setFiles] = useState<File[]>([])
+  const initialValues = post && type === 'Update' 
     ? { 
-      ...event,
+      ...post,
     }
     : productDefaultValues;
   const router = useRouter();
@@ -123,7 +124,7 @@ const getStoredImageUrls = (): string[] => {
     }
 
     if(type === 'Update') {
-      if(!eventId) {
+      if(!postId) {
         router.back()
         return;
       }

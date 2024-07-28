@@ -2,12 +2,8 @@ import PostForm from "@/components/PostForm"
 import { auth } from "@clerk/nextjs/server";
 
 const CreatePost = () => {
-  const { userId } = auth();
-  // console.log(sessionClaims)
-
-  // const userId = sessionClaims?.userId as string;
-  console.log(userId)
-  // alert(userId)
+  const { sessionClaims} = auth();
+  const userId = sessionClaims?.userId as string
 
   return (
     <div className="px-10">
