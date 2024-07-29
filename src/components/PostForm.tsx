@@ -2,7 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { productSchema } from "@/lib/validator"
@@ -81,6 +81,7 @@ const handleUpload = async () => {
   )
   // setUploadedUrls(urls);
   getStoredImageUrls();
+  
 }
 
 const urls: string[] = [];
@@ -102,8 +103,9 @@ const getStoredImageUrls = (): string[] => {
     console.log('Form Submitted', values);
     const postData = values;
     let uploadedImageUrl = uploadedUrls;
-    if(uploadedImageUrl.length === 0) {
-      return alert('Please upload images');
+    if(uploadedUrls.length === 0) {
+      alert('Please upload images');
+      return;
     }
 
     if(type === 'Create') {
@@ -116,13 +118,9 @@ const getStoredImageUrls = (): string[] => {
           body: JSON.stringify({ clerkId, userId,imageUrl: uploadedImageUrl, body: postData })
         }).then(res => res.json())
         console.log(newPost)
-      //   const newEvent = await createEvent({
-      //     event: { ...values, imageUrl: uploadedImageUrl },
-      //     userId,
-      //     path: '/profile'
-      //   }
-      // )
-
+        for(let i =0;i<3;i++){
+          localStorage.removeItem(`img${i + 1}`);
+        }
         if(newPost) {
           form.reset();
           // router.push(`/events/${newEvent._id}`)
@@ -199,12 +197,8 @@ const getStoredImageUrls = (): string[] => {
               )}
             />
             
-          <FormField
-              control={form.control}
-              name="images"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormControl className="h-72">
+                <div className="w-full">
+                  <div className="h-72">
                     <div className="flex flex-col ">
                     <div className="flex flex-row w-full max-w-sm items-start gap-1.5">
                      <Input  id="pictures"
@@ -212,19 +206,17 @@ const getStoredImageUrls = (): string[] => {
                       multiple
                      onChange={handleFileChange}
                        />
-                     <Button onClick={handleUpload} disabled={selectedFiles.length === 0}>
+                      {/* <Form.Input class="hidden" /> */}
+                     <Button type="button"  onClick={handleUpload} disabled={selectedFiles.length === 0}>
                      Upload
-                   </Button>
+                     </Button>
                    </div>
                    <div className='flex mt-3 flex-col w-64'>
                      <ImageSlider urls={uploadedUrls} />
                    </div>
                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-              />
+                   </div>
+              </div>
               </div>
 
 
@@ -317,7 +309,7 @@ const getStoredImageUrls = (): string[] => {
                 <FormControl>
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                      <Label>Gst(in %)</Label>
-                     <Input placeholder="Gst" {...field} className="input-field" />
+                     <Input type="number" placeholder="Gst" {...field} className="input-field" />
                    </div>
                 </FormControl>
                 <FormMessage />

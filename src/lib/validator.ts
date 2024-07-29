@@ -14,6 +14,6 @@ export const productSchema = z.object({
   gst: z.coerce.number().nonnegative({ message: "GST must be a non-negative number" }).optional(),
   rating: z.coerce.number().min(1, { message: 'Rating must be at least 1' }).max(5, { message: 'Rating must be at most 5' }).optional(),
   delivery: z.enum(['free', 'INR', 'Barter points'], { message: 'Delivery must be one of: free, INR, Barter points' }),
-  images: z.array(z.string().url()).max(3, { message: 'Images array must not exceed 3 URLs' }).optional(),
+  // images: z.array(z.string().url()).max(3, { message: 'Images array must not exceed 3 URLs' }).optional(),
   // video: z.string().url().optional().nullable()
 });
