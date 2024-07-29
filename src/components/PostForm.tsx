@@ -115,7 +115,7 @@ const getStoredImageUrls = (): string[] => {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ clerkId, userId,imageUrl: uploadedImageUrl, body: postData })
+          body: JSON.stringify({ clerkId, userId,owner:userId, imageUrl: uploadedImageUrl, body: postData })
         }).then(res => res.json())
         console.log(newPost)
         for(let i =0;i<3;i++){

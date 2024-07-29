@@ -4,14 +4,21 @@ import createError from '@/lib/createError';
 import { NextRequest,NextResponse } from "next/server";
 import { connect } from '@/lib/db';
 import {auth } from '@clerk/nextjs/server';
+import User from '@/lib/models/user.model'
+import Category from '@/lib/models/category.model';
 
 connect();
 
+const populateProduct = (query: any) => {
+  return query
+    .populate({ path: 'owner', model: User, select: '_id Name' })
+    .populate({ path: 'category', model: Category, select: '_id name' })
+}
 
 export async function POST(req: NextRequest, res: NextResponse) {
   console.log("hitted");
   // console.log(req.json());
-  const {clerkId,userId,imageUrl,body} = await req.json();
+  const {clerkId,userId,imageUrl,owner,body} = await req.json();
   console.log(clerkId,userId,imageUrl,body);
   console.log(userId.userId);
   const { userId: clerkUserId } : { userId: string | null } = auth();
@@ -25,6 +32,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     clerkId,
     userId:userId.userId,
     category: body.categoryId,
+    owner:owner.userId,
     images: imageUrl,
     ...body
   });
@@ -37,10 +45,22 @@ export async function POST(req: NextRequest, res: NextResponse) {
   }
 }
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextApiRequest, res: NextResponse) {
+  const { id } = req.query as { id: string };
+  console.log(id);
+  if (!id || typeof id !== 'string') {
+    return NextResponse.json(createError(400, 'Invalid or missing product ID'));
+  }
+
   try {
-    const products = await Product.find({});
-    return NextResponse.json(products);
+    const product = await populateProduct(Product.findById(id));
+
+    if (!product) {
+      return NextResponse.json(createError(404, 'Product not found'));
+    }
+    console.log(product);
+
+    return NextResponse.json(product);
   } catch (error: any) {
     return NextResponse.json(createError(500, error.message));
   }

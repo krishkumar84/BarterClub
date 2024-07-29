@@ -11,6 +11,7 @@ export interface IProduct extends Document {
   availableQty: number;
   deliveryTime: number;
   category: { _id: string ,name: string };
+  owner: { _id: string,Name: string };
   price: number;
   gst?: number;
   rating?: number;
@@ -38,6 +39,7 @@ const ProductSchema = new Schema<IProduct>({
   availableQty: { type: Number, required: true },
   deliveryTime: { type: Number, required: true },
   category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
+  owner: { type: Schema.Types.ObjectId, ref: 'User' },
   price: { type: Number, required: true },
   gst: { type: Number, default: 0 },
   rating: {

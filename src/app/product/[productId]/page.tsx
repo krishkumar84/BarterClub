@@ -20,6 +20,23 @@ const BREADCRUMBS = [
 
 const Page = async ({ params }: PageProps) => {
   const { productId } = params
+  console.log(params);
+  console.log(productId);
+  
+  const productDetails = await fetch('https://potential-space-succotash-5j7wgv6jpp6f7575-3000.app.github.dev/api/products/66a791a5db02bf27f9b5d443',{
+    method: 'GET',
+  }).then((response) => {
+    console.log("hello");
+    console.log(response.json());
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
+    return response.json()
+  }).catch((error) => {
+    console.error('There was an error!', error)
+  })  
+
+  console.log(productDetails);
 
   // Static product details
   const staticProduct = {
