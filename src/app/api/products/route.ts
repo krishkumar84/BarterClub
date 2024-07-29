@@ -9,11 +9,6 @@ import Category from '@/lib/models/category.model';
 
 connect();
 
-const populateProduct = (query: any) => {
-  return query
-    .populate({ path: 'owner', model: User, select: '_id Name' })
-    .populate({ path: 'category', model: Category, select: '_id name' })
-}
 
 export async function POST(req: NextRequest, res: NextResponse) {
   console.log("hitted");
@@ -40,27 +35,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
   try {
     const savedProduct = await newProduct.save();
     return NextResponse.json(savedProduct);
-  } catch (error: any) {
-    return NextResponse.json(createError(500, error.message));
-  }
-}
-
-export async function GET(req: NextApiRequest, res: NextResponse) {
-  const { id } = req.query as { id: string };
-  console.log(id);
-  if (!id || typeof id !== 'string') {
-    return NextResponse.json(createError(400, 'Invalid or missing product ID'));
-  }
-
-  try {
-    const product = await populateProduct(Product.findById(id));
-
-    if (!product) {
-      return NextResponse.json(createError(404, 'Product not found'));
-    }
-    console.log(product);
-
-    return NextResponse.json(product);
   } catch (error: any) {
     return NextResponse.json(createError(500, error.message));
   }

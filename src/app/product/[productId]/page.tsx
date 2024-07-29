@@ -6,7 +6,10 @@ import { PRODUCT_CATEGORIES } from '@/config'
 import { formatPrice } from '@/lib/utils'
 import { Check, Shield } from 'lucide-react'
 import Link from 'next/link'
+import { config } from '@/constants/index'
 
+
+const apiUrl = config.apiUrl;
 interface PageProps {
   params: {
     productId: string
@@ -22,21 +25,31 @@ const Page = async ({ params }: PageProps) => {
   const { productId } = params
   console.log(params);
   console.log(productId);
-  
-  const productDetails = await fetch('https://potential-space-succotash-5j7wgv6jpp6f7575-3000.app.github.dev/api/products/66a791a5db02bf27f9b5d443',{
-    method: 'GET',
-  }).then((response) => {
-    console.log("hello");
-    console.log(response.json());
+  let productDetails = null;
+  try {
+    const response = await fetch(`${apiUrl}/api/product/${productId}`, {
+      method: 'GET',
+    });
+    
+    // Check if the response is OK
     if (!response.ok) {
-      throw new Error('Network response was not ok')
+      throw new Error('Network response was not ok');
     }
-    return response.json()
-  }).catch((error) => {
-    console.error('There was an error!', error)
-  })  
 
-  console.log(productDetails);
+    // Log raw response
+    console.log('Raw response:', response);
+
+    // Parse JSON from response
+     productDetails = await response.json();
+    
+    // Log parsed product details
+    console.log('Product details:', productDetails);
+
+    return productDetails;
+  } catch (error) {
+    console.error('There was an error!', error);
+  }
+
 
   // Static product details
   const staticProduct = {
@@ -89,7 +102,7 @@ const Page = async ({ params }: PageProps) => {
 
             <div className='mt-4'>
               <h1 className='text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>
-                {staticProduct.name}
+                {productDetails.title}
               </h1>
             </div>
 
@@ -106,7 +119,7 @@ const Page = async ({ params }: PageProps) => {
 
               <div className='mt-4 space-y-6'>
                 <p className='text-base text-muted-foreground'>
-                  {staticProduct.description}
+                  {productDetails.description}
                 </p>
               </div>
 
@@ -125,7 +138,7 @@ const Page = async ({ params }: PageProps) => {
           {/* Product images */}
           <div className='mt-10 lg:col-start-2 lg:row-span-2 lg:mt-0 lg:self-center'>
             <div className='aspect-square rounded-lg'>
-              <ImageSlider urls={validUrls} />
+              <ImageSlider urls={productDetails.images} />
             </div>
           </div>
 

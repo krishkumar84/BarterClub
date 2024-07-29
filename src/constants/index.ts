@@ -48,4 +48,12 @@ export const headerLinks = [
     video: null
   };
   
+const dev = process.env.NODE_ENV !== 'production';
+
+export const config = {
+  apiUrl: dev 
+    ? 'https://potential-space-succotash-5j7wgv6jpp6f7575-3000.app.github.dev'
+    : 'https://barter-club.vercel.app',
+};
+
   
