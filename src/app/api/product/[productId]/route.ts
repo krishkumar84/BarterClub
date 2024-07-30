@@ -16,7 +16,7 @@ const populateProduct = (query: any) => {
       .populate({ path: 'category', model: Category, select: '_id name' })
   };
 
-export async function GET(req: NextApiRequest, { params }: { params: { productId: string }}) {
+export async function GET(req: NextRequest , { params }: { params: { productId: string }}) {
     const { productId } = params;
 
   // Validate the productId
