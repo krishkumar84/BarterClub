@@ -30,7 +30,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { productId
       if (!product) {
         return NextResponse.json(createError(404, 'Product not found'));
       }
-      console.log(product);
+      // console.log("hello",product);
   
       return NextResponse.json(product);
     } catch (error: any) {

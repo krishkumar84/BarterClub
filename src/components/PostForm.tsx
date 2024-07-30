@@ -123,7 +123,7 @@ const getStoredImageUrls = (): string[] => {
         }
         if(newPost) {
           form.reset();
-          // router.push(`/events/${newEvent._id}`)
+         router.push(`/product/${newPost._id}`)
         }
       } catch (error) {
         console.log(error);
@@ -163,7 +163,7 @@ const getStoredImageUrls = (): string[] => {
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl>
-                  <Input placeholder="Event title" {...field} className="input-field" />
+                  <Input placeholder="Product title" {...field} className="input-field" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

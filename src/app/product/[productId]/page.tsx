@@ -7,6 +7,7 @@ import { formatPrice } from '@/lib/utils'
 import { Check, Shield } from 'lucide-react'
 import Link from 'next/link'
 import { config } from '@/constants/index'
+import axios from 'axios'
 
 
 const apiUrl = config.apiUrl;
@@ -23,53 +24,12 @@ const BREADCRUMBS = [
 
 const Page = async ({ params }: PageProps) => {
   const { productId } = params
-  console.log(params);
-  console.log(productId);
-  let productDetails = null;
-  try {
-    const response = await fetch(`${apiUrl}/api/product/${productId}`, {
-      method: 'GET',
-    });
-    
-    // Check if the response is OK
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-
-    // Log raw response
-    console.log('Raw response:', response);
-
-    // Parse JSON from response
-     productDetails = await response.json();
-    
-    // Log parsed product details
-    console.log('Product details:', productDetails);
-
-    return productDetails;
-  } catch (error) {
-    console.error('There was an error!', error);
-  }
-
-
-  // Static product details
-  const staticProduct = {
-    id: productId, // Use the productId from params
-    name: 'Static Product Name',
-    price: 19.99,
-    category: 'electronics',
-    description: 'This is a description for the static product.',
-    images: [
-      'https://images.pexels.com/photos/206959/pexels-photo-206959.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-      'https://images.pexels.com/photos/70746/strawberries-red-fruit-royalty-free-70746.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-      'https://images.pexels.com/photos/327098/pexels-photo-327098.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
-    ]
-  }
-
-  const label = PRODUCT_CATEGORIES.find(
-    ({ value }) => value === staticProduct.category
-  )?.label
-
-  const validUrls = staticProduct.images
+  // console.log(params);
+  // console.log(productId);
+  console.log("Fetching:", `${apiUrl}/api/product/${productId}`);
+  const response = await axios.get(`${apiUrl}/api/product/${productId}`);
+  console.log(response.data);
+  const productDetails = response.data;
 
   return (
     <MaxWidthWrapper className='bg-white'>
@@ -108,14 +68,17 @@ const Page = async ({ params }: PageProps) => {
 
             <section className='mt-4'>
               <div className='flex items-center'>
-                <p className='font-medium text-gray-900'>
-                  {formatPrice(staticProduct.price)}
+                <p className='font-bold text-gray-900'>
+                ₹{productDetails.price}
                 </p>
 
                 <div className='ml-4 border-l text-muted-foreground border-gray-300 pl-4'>
-                  {label}
+                  {productDetails.category.name}
                 </div>
               </div>
+              <div className='text-muted-foreground border-gray-300 mt-2'>
+                  {productDetails.delivery} Delivery
+                </div>
 
               <div className='mt-4 space-y-6'>
                 <p className='text-base text-muted-foreground'>
@@ -129,7 +92,30 @@ const Page = async ({ params }: PageProps) => {
                   className='h-5 w-5 flex-shrink-0 text-green-500'
                 />
                 <p className='ml-2 text-sm text-muted-foreground'>
-                  Eligible for instant delivery
+                  Available Quantity: {productDetails.availableQty} 
+                </p>
+              </div>
+              <div className='mt-2 flex items-center'>
+                <Check
+                  aria-hidden='true'
+                  className='h-5 w-5 flex-shrink-0 text-green-500'
+                />
+                <p className='ml-2 text-sm text-muted-foreground'>
+                   {productDetails.condition} condition
+                </p>
+              </div>
+              <div className='flex mt-3 items-center'>
+                <p className='font-sm text-gray-900'>
+                {productDetails.gst}% Gst
+                </p>
+
+                <div className='ml-4 border-l text-muted-foreground border-gray-300 pl-4'>
+                 Type: {productDetails.type}
+                </div>
+              </div>
+              <div className='mt-4 space-y-6'>
+                <p className='text-base text-muted-foreground'>
+                  Seller: {productDetails.owner.Name}
                 </p>
               </div>
             </section>
@@ -143,10 +129,10 @@ const Page = async ({ params }: PageProps) => {
           </div>
 
           {/* add to cart part */}
-          <div className='mt-10 lg:col-start-1 lg:row-start-2 lg:max-w-lg lg:self-start'>
+          <div className='mt-6 lg:col-start-1 lg:row-start-2 lg:max-w-lg lg:self-start'>
             <div>
               <div className='mt-10'>
-                <AddToCartButton product={staticProduct} />
+                <AddToCartButton product={productDetails} />
               </div>
               <div className='mt-6 text-center'>
                 <div className='group inline-flex text-sm text-medium'>
@@ -155,7 +141,7 @@ const Page = async ({ params }: PageProps) => {
                     className='mr-2 h-5 w-5 flex-shrink-0 text-gray-400'
                   />
                   <span className='text-muted-foreground hover:text-gray-700'>
-                    30 Day Return Guarantee
+                    Eligible for {productDetails.deliveryTime} day delivery
                   </span>
                 </div>
               </div>
@@ -164,12 +150,12 @@ const Page = async ({ params }: PageProps) => {
         </div>
       </div>
 
-      <ProductReel
+      {/* <ProductReel
         href='/products'
         // query={{ category: staticProduct.category, limit: 4 }}
         title={`Similar ${label}`}
         subtitle={`Browse similar high-quality ${label} just like '${staticProduct.name}'`}
-      />
+      /> */}
     </MaxWidthWrapper>
   )
 }
