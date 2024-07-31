@@ -54,7 +54,7 @@ export type CreateUserParams = {
     path: string
   }
   
-  export type GetAllEventsParams = {
+  export type GetAllPostParams = {
     query: string
     category: string
     limit: number

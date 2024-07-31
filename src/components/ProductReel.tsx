@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import ProductListing from './ProductListing'
 import { useEffect, useState } from 'react'
+import { IProduct } from '@/lib/models/product.model'
 
 interface Product {
     id: string
@@ -10,16 +11,28 @@ interface Product {
     }
 
 interface ProductReelProps {
-  title: string
-  subtitle?: string
-  href?: string
-//   query: TQueryValidator
+  data: IProduct[],
+  emptyTitle: string,
+  emptyStateSubtext: string,
+  limit: number,
+  page: number | string,
+  totalPages?: number,
+  urlParamName?: string,
+  collectionType?: 'My_Post' | 'All_Posts'
 }
 
 const FALLBACK_LIMIT = 4
 
-const ProductReel = (props: ProductReelProps) => {
-  const { title, subtitle, href } = props
+const ProductReel = ({
+  data,
+  emptyTitle,
+  emptyStateSubtext,
+  page,
+  totalPages = 0,
+  collectionType,
+  urlParamName,
+}: ProductReelProps) => {
+  // const { title, subtitle, href } = props
 
   // Dummy data for initial display
   const [products, setProducts] = useState<Product[]>([])
@@ -64,7 +77,7 @@ const ProductReel = (props: ProductReelProps) => {
   return (
     <section className='py-12'>
       <div className='md:flex md:items-center md:justify-between mb-4'>
-        <div className='max-w-2xl px-4 lg:max-w-4xl lg:px-0'>
+        {/* <div className='max-w-2xl px-4 lg:max-w-4xl lg:px-0'>
           {title ? (
             <h1 className='text-2xl font-bold text-gray-900 sm:text-3xl'>
               {title}
@@ -75,16 +88,16 @@ const ProductReel = (props: ProductReelProps) => {
               {subtitle}
             </p>
           ) : null}
-        </div>
+        </div> */}
 
-        {href ? (
+        {/* {href ? (
           <Link
             href={href}
             className='hidden text-sm font-medium text-blue-600 hover:text-blue-500 md:block'>
             Shop the collection{' '}
             <span aria-hidden='true'>&rarr;</span>
           </Link>
-        ) : null}
+        ) : null} */}
       </div>
 
       <div className='relative'>
