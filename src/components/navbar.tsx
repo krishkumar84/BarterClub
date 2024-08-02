@@ -90,6 +90,16 @@ export default function Header() {
             </Link>
           </SignedOut>
           <SignedIn>
+          <Link href="/addProduct">
+          <button
+           type="button"
+           className="rounded-3xl mr-6 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-300 hover:text-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+            >
+                Add Post
+              </button>
+          </Link>
+          </SignedIn>
+          <SignedIn>
            <SignOutButton>
            <button
                 type="button"
@@ -183,20 +193,6 @@ export default function Header() {
         )}
       </div>
     </div>
-    // <SignedOut>
-    //   <Button as={Link} color="primary" href="/signin" radius="full">
-    //       Login
-    //     </Button>
-    //     <Button as={Link} color="primary" href="/signup" radius="full">
-    //       Sign Up
-    //     </Button>
-    // </SignedOut>
-    // <SignedIn>
-    //   <SignOutButton>
-    //   <Button color="primary" radius="full" >Sign out</Button>
-    // </SignOutButton>
-    // <UserButton />
-    // </SignedIn>
   );
 }
 

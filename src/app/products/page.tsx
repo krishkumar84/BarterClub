@@ -9,8 +9,8 @@ type Param = string | string[] | undefined
 
 interface ProductsPageProps {
   searchParams: { [key: string]: Param }
-  posts: any[] 
-  totalPages: number
+  // posts: any[] 
+  // totalPages: number
 }
 
 const parse = (param: Param) => {
@@ -32,6 +32,8 @@ const ProductsPage = async ({
   const categoryParam = parse(searchParams.category) || ''
 
   // Server-side fetch
+  // console.log('Fetching posts...')
+  // console.log(apiUrl)
   const response = await fetch(`${apiUrl}/api/products?` + new URLSearchParams({
     query: queryParam,
     limit: limitParam,
@@ -54,12 +56,12 @@ const ProductsPage = async ({
   const data = await response.json()
   const posts = data.data
   const totalPages = data.totalPages
-  console.log(posts)
+  // console.log(posts)
 
   return (
     <MaxWidthWrapper>
       <ProductReel
-        data={posts?.data}
+        data={posts}
         emptyTitle="No Events Found"
         emptyStateSubtext="Come back later"
         collectionType="All_Posts"

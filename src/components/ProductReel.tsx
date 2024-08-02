@@ -4,11 +4,6 @@ import ProductListing from './ProductListing'
 import { useEffect, useState } from 'react'
 import { IProduct } from '@/lib/models/product.model'
 
-interface Product {
-    id: string
-    name: string
-    price: number
-    }
 
 interface ProductReelProps {
   data: IProduct[],
@@ -20,7 +15,6 @@ interface ProductReelProps {
   urlParamName?: string,
   collectionType?: 'My_Post' | 'All_Posts'
 }
-
 const FALLBACK_LIMIT = 4
 
 const ProductReel = ({
@@ -32,81 +26,77 @@ const ProductReel = ({
   collectionType,
   urlParamName,
 }: ProductReelProps) => {
-  // const { title, subtitle, href } = props
-
+  // console.log(data)
+  // console.log("hitted")
   // Dummy data for initial display
-  const [products, setProducts] = useState<Product[]>([])
+  const [products, setProducts] = useState<IProduct[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
-
   useEffect(() => {
-    // Simulate a data fetch with a timeout
-    const fetchProducts = async () => {
-      setIsLoading(true)
-      try {
-        // Replace this with your actual API call
-        const response = await new Promise<Product[]>((resolve) => {
-          setTimeout(() => {
-            resolve([
-              { id: '1', name: 'Product 1', price: 100 },
-              { id: '2', name: 'Product 2', price: 200 },
-              { id: '3', name: 'Product 3', price: 300 },
-              { id: '4', name: 'Product 4', price: 400 },
-            ])
-          }, 1000)
-        })
-        setProducts(response)
-      } catch (error) {
-        console.error('Failed to fetch products:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
+    setProducts(data)
+    setIsLoading(false)
+  }, [data])
+  const href = "/products"
 
-    fetchProducts()
-  }, [])
+  const displayProducts = isLoading ? 
+    new Array(FALLBACK_LIMIT).fill(null) : 
+    (products.length ? products : new Array(FALLBACK_LIMIT).fill(null))
 
-  let map: (Product | null)[] = []
-  if (products && products.length) {
-    map = products
-  } else if (isLoading) {
-    map = new Array<null>(
-       FALLBACK_LIMIT
-    ).fill(null)
-  }
+    const BREADCRUMBS = [
+      { id: 1, name: 'Home', href: '/' },
+      { id: 2, name: 'Products', href: '/products' },
+    ]
+     
 
   return (
     <section className='py-12'>
-      <div className='md:flex md:items-center md:justify-between mb-4'>
-        {/* <div className='max-w-2xl px-4 lg:max-w-4xl lg:px-0'>
-          {title ? (
+      <ol className='flex items-center space-x-2'>
+              {BREADCRUMBS.map((breadcrumb, i) => (
+                <li key={breadcrumb.href}>
+                  <div className='flex items-center text-sm'>
+                    <Link
+                      href={breadcrumb.href}
+                      className='font-medium text-sm text-muted-foreground hover:text-gray-900'>
+                      {breadcrumb.name}
+                    </Link>
+                    {i !== BREADCRUMBS.length - 1 ? (
+                      <svg
+                        viewBox='0 0 20 20'
+                        fill='currentColor'
+                        aria-hidden='true'
+                        className='ml-2 h-5 w-5 flex-shrink-0 text-gray-300'>
+                        <path d='M5.555 17.776l8-16 .894.448-8 16-.894-.448z' />
+                      </svg>
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ol>
+      <div className='md:flex md:items-center mt-4 md:justify-between mb-4'>
+        <div className='max-w-2xl px-4 lg:max-w-4xl lg:px-0'>
+          {collectionType ? (
             <h1 className='text-2xl font-bold text-gray-900 sm:text-3xl'>
-              {title}
+              {collectionType}
             </h1>
           ) : null}
-          {subtitle ? (
-            <p className='mt-2 text-sm text-muted-foreground'>
-              {subtitle}
-            </p>
-          ) : null}
-        </div> */}
+        </div>
 
-        {/* {href ? (
+        {href ? (
           <Link
             href={href}
             className='hidden text-sm font-medium text-blue-600 hover:text-blue-500 md:block'>
             Shop the collection{' '}
             <span aria-hidden='true'>&rarr;</span>
           </Link>
-        ) : null} */}
+        ) : null}
       </div>
 
       <div className='relative'>
         <div className='mt-6 flex items-center w-full'>
           <div className='w-full grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-4 md:gap-y-10 lg:gap-x-8'>
-            {map.map((product, i) => (
+          {displayProducts.map((product, i) => (
               <ProductListing
                 key={`product-${i}`}
-                //  product={product}
+                product={product || { _id: '', title: '', price: 0, images: [] }}
                 index={i}
               />
             ))}
