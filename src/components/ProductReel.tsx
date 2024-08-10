@@ -3,6 +3,7 @@ import Link from 'next/link'
 import ProductListing from './ProductListing'
 import { useEffect, useState } from 'react'
 import { IProduct } from '@/lib/models/product.model'
+import { useAuth } from '@clerk/nextjs';
 
 
 interface ProductReelProps {
@@ -45,7 +46,8 @@ const ProductReel = ({
       { id: 1, name: 'Home', href: '/' },
       { id: 2, name: 'Products', href: '/products' },
     ]
-     
+    
+    const { userId } = useAuth();
 
   return (
     <section className='py-12'>
@@ -98,6 +100,7 @@ const ProductReel = ({
                 key={`product-${i}`}
                 product={product || { _id: '', title: '', price: 0, images: [] }}
                 index={i}
+                ActiveUserId={userId}
               />
             ))}
           </div>

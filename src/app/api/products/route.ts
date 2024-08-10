@@ -1,4 +1,3 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import Product from '@/lib/models/product.model';
 import createError from '@/lib/createError';
 import { NextRequest,NextResponse } from "next/server";

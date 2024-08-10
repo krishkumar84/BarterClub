@@ -34,6 +34,7 @@ const ProductsPage = async ({
   // Server-side fetch
   // console.log('Fetching posts...')
   // console.log(apiUrl)
+
   const response = await fetch(`${apiUrl}/api/products?` + new URLSearchParams({
     query: queryParam,
     limit: limitParam,

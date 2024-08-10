@@ -6,17 +6,19 @@ import Link from 'next/link'
 import { cn, formatPrice } from '@/lib/utils'
 import ImageSlider from './ImageSlider'
 import { IProduct } from '@/lib/models/product.model'
+import Image from 'next/image'
+import { DeleteConfirmation } from './DeleteConfirmation'
 
 interface ProductListingProps {
   product: IProduct | null
   index: number
+  ActiveUserId: string | null | undefined
 }
 
 const ProductListing = ({
-  index,product
+  index,product,ActiveUserId
 }: ProductListingProps) => {
   const [isVisible, setIsVisible] = useState<boolean>(false)
-   console.log("aagya yha tk bhi")
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(true)
@@ -25,23 +27,14 @@ const ProductListing = ({
     return () => clearTimeout(timer)
   }, [index])
 
-  // Static product details
-  // const staticProduct = {
-  //   id: '1',
-  //   name: 'Static Product Name',
-  //   price: 19.99,
-  //   category: 'electronics',
-  //   images: [
-  //     'https://images.pexels.com/photos/206959/pexels-photo-206959.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-  //     'https://images.pexels.com/photos/70746/strawberries-red-fruit-royalty-free-70746.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-  //     'https://images.pexels.com/photos/327098/pexels-photo-327098.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
-  //   ]
-  // }
+ const isPostCreater = ActiveUserId === product?.clerkId;
+
   if (!product) return <ProductPlaceholder />
 
   if (!isVisible) return <ProductPlaceholder />
 
   return (
+    <div className='flex flex-col w-full'>
     <Link
       className={cn(
         'invisible h-full w-full cursor-pointer group/main',
@@ -50,7 +43,6 @@ const ProductListing = ({
         }
       )}
       href={`/product/${product._id}`}>
-      <div className='flex flex-col w-full'>
       <ImageSlider urls={product.images || []} />
 
         <h3 className='mt-4 font-medium text-sm text-gray-700'>
@@ -62,8 +54,17 @@ const ProductListing = ({
         <p className='mt-1 font-medium text-sm text-gray-900'>
         ₹{product.price}
         </p>
-      </div>
     </Link>
+        {isPostCreater && (
+        <div className=" flex flex- gap-4 rounded-xl bg-white py-3 shadow-sm transition-all">
+          {/* <Link href={`/events/${event._id}/update`}> */}
+            <Image src="/edit.svg" alt="edit" width={20} height={20} />
+          {/* </Link> */}
+
+          <DeleteConfirmation clerkId={ActiveUserId} postId={product._id as string} />
+        </div>
+        )}
+      </div>
   )
 }
 
