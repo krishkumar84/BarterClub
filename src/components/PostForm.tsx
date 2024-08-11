@@ -10,7 +10,7 @@ import * as z from 'zod'
 import { productDefaultValues } from "@/constants"
 import Dropdown from "./Dropdown"
 import { Textarea } from "@/components/ui/textarea"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { IProduct } from "@/lib/models/product.model"
 import axios from "axios"
@@ -36,13 +36,16 @@ type PostFormProps = {
 
 
 const PostForm = ({ userId,clerkId, type, post, postId }: PostFormProps) => {
-  // const [files, setFiles] = useState<File[]>([])
   const initialValues = post && type === 'Update' 
     ? { 
       ...post,
     }
     : productDefaultValues;
   const router = useRouter();
+
+  useEffect(()=>{
+     setUploadedUrls(post?.images || []);
+  },[])
 
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
@@ -135,6 +138,23 @@ const getStoredImageUrls = (): string[] => {
         router.back()
         return;
       }
+      try {
+        const updatedPost = await fetch('/api/products', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ clerkId, userId,owner:userId,productId:post?._id , imageUrl: uploadedImageUrl, body: postData })
+        }).then(res => res.json())
+        console.log(updatedPost)
+
+      if(updatedPost) {
+        form.reset();
+        router.push(`/product/${post?._id}`)
+      }
+    } catch (error) {
+      console.log(error);
+    }
     }
   }
 
@@ -212,13 +232,15 @@ const getStoredImageUrls = (): string[] => {
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl>
-                <Select>
+                 <Select
+                     value={field.value}
+                     onValueChange={(value) => field.onChange(value)}>
+                    <Label>Condition</Label>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Condition" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectLabel>Condition</SelectLabel>
                         <SelectItem value="new">New</SelectItem>
                         <SelectItem value="old">Old</SelectItem>
                       </SelectGroup>
@@ -231,17 +253,19 @@ const getStoredImageUrls = (): string[] => {
           />
           <FormField
             control={form.control}
-            name="condition"
+            name="type"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl>
-                <Select>
+                <Select
+                value={field.value}
+                onValueChange={(value) => field.onChange(value)}>
+                  <Label>Product Type</Label>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Product Type" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectLabel>Product Type</SelectLabel>
                         <SelectItem value="product">Product</SelectItem>
                         <SelectItem value="service">Service</SelectItem>
                       </SelectGroup>
@@ -324,16 +348,18 @@ const getStoredImageUrls = (): string[] => {
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl>
-                <Select>
+                <Select
+                value={field.value}
+                onValueChange={(value) => field.onChange(value)}>
+                   <Label>Delivery</Label>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Delivery" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectLabel>Delivery</SelectLabel>
-                        <SelectItem value="Free">Free</SelectItem>
-                        <SelectItem value="Inr">Inr</SelectItem>
-                        <SelectItem value="Barter">Barter Point</SelectItem>
+                        <SelectItem value="free">Free</SelectItem>
+                        <SelectItem value="INR">Inr</SelectItem>
+                        <SelectItem value="Barter points">Barter Point</SelectItem>
                       </SelectGroup>
                     </SelectContent>
                  </Select>

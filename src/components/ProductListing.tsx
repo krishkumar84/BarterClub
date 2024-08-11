@@ -57,9 +57,9 @@ const ProductListing = ({
     </Link>
         {isPostCreater && (
         <div className=" flex flex- gap-4 rounded-xl bg-white py-3 shadow-sm transition-all">
-          {/* <Link href={`/events/${event._id}/update`}> */}
+          <Link href={`/addProduct/${product._id }/update`}>
             <Image src="/edit.svg" alt="edit" width={20} height={20} />
-          {/* </Link> */}
+           </Link>
 
           <DeleteConfirmation clerkId={ActiveUserId} postId={product._id as string} />
         </div>

@@ -71,3 +71,37 @@ export async function GET(req:Request){
   return NextResponse.json(createError(500, error.message));
 }
 }
+
+export async function PUT(req: NextRequest) {
+  try {
+    const { clerkId, userId, imageUrl, owner,productId, body } = await req.json();
+    console.log(clerkId, userId, imageUrl, owner,productId, body);
+    const { userId: clerkUserId } = auth();
+    const { sessionClaims } = auth();
+    const mongoId: string = sessionClaims?.userId as string;
+
+    if (clerkUserId !== clerkId && mongoId !== userId) {
+      return NextResponse.json(createError(403, 'Unauthorized'));
+    }
+
+    console.log(productId);
+
+    // Find the product by ID
+    const productToUpdate = await Product.findById(productId);
+    console.log(productToUpdate);
+    if (!productToUpdate || productToUpdate.userId !== userId) {
+      return NextResponse.json(createError(404, 'Product not found or unauthorized'));
+    }
+
+    // Update the product
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      { ...body, images: imageUrl, owner: owner.userId, category: body.categoryId },
+      { new: true }
+    )
+
+    return NextResponse.json(updatedProduct);
+  } catch (error: any) {
+    return NextResponse.json(createError(500, error.message));
+  }
+}
