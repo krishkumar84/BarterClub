@@ -75,7 +75,12 @@ export async function GET(req:Request){
 export async function PUT(req: NextRequest) {
   try {
     const { clerkId, userId, imageUrl, owner,productId, body } = await req.json();
-    console.log(clerkId, userId, imageUrl, owner,productId, body);
+    console.log('Clerk ID:', clerkId);
+    console.log('User ID:', userId);
+    console.log('Image URL:', imageUrl);
+    console.log('Owner:', owner);
+    console.log('Product ID:', productId);
+    console.log('Body:', body);
     const { userId: clerkUserId } = auth();
     const { sessionClaims } = auth();
     const mongoId: string = sessionClaims?.userId as string;
@@ -88,19 +93,22 @@ export async function PUT(req: NextRequest) {
 
     // Find the product by ID
     const productToUpdate = await Product.findById(productId);
-    console.log(productToUpdate);
-    if (!productToUpdate || productToUpdate.userId !== userId) {
+    console.log('Product to Update:', productToUpdate);
+    console.log(productToUpdate.userId);
+    console.log(userId.userId);
+    if (!productToUpdate || productToUpdate.userId !== userId.userId) {
       return NextResponse.json(createError(404, 'Product not found or unauthorized'));
     }
 
     // Update the product
+    console.log('Update Payload:', { ...body, images: imageUrl, owner: owner.userId, category: body.categoryId });
     const updatedProduct = await Product.findByIdAndUpdate(
       productId,
       { ...body, images: imageUrl, owner: owner.userId, category: body.categoryId },
       { new: true }
     )
-
-    return NextResponse.json(updatedProduct);
+    console.log('Updated Product:', updatedProduct);
+    return NextResponse.json(updatedProduct._id);
   } catch (error: any) {
     return NextResponse.json(createError(500, error.message));
   }

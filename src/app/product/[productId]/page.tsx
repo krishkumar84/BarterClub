@@ -32,6 +32,7 @@ const Page = async ({ params }: PageProps) => {
   const productDetails = response.data;
 
   return (
+    <>
     <MaxWidthWrapper className='bg-white'>
       <div className='bg-white'>
         <div className='mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:grid lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8'>
@@ -149,14 +150,20 @@ const Page = async ({ params }: PageProps) => {
           </div>
         </div>
       </div>
-
-      {/* <ProductReel
-        href='/products'
-        // query={{ category: staticProduct.category, limit: 4 }}
-        title={`Similar ${label}`}
-        subtitle={`Browse similar high-quality ${label} just like '${staticProduct.name}'`}
-      /> */}
     </MaxWidthWrapper>
+    <section className="wrapper my-8 flex flex-col gap-8 md:gap-12">
+      <h2 className="h2-bold">Related Events</h2>
+      {/* <ProductReel
+        data={posts}
+        emptyTitle="No Events Found"
+        emptyStateSubtext="Come back later"
+        collectionType="All_Posts"
+        limit={6}
+        page={pageParam}
+        totalPages={totalPages}
+      /> */}
+      </section>
+    </>
   )
 }
 

@@ -52,7 +52,8 @@ const dev = process.env.NODE_ENV !== 'production';
 
 export const config = {
   apiUrl: dev 
-    ? 'https://potential-space-succotash-5j7wgv6jpp6f7575-3000.app.github.dev'
+    // ? 'https://potential-space-succotash-5j7wgv6jpp6f7575-3000.app.github.dev'
+    ? 'http://localhost:3000'
     : 'https://barter-club.vercel.app',
 };
 
