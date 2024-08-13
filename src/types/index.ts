@@ -61,13 +61,13 @@ export type CreateUserParams = {
     page: number
   }
   
-  export type GetEventsByUserParams = {
+  export type GetPostByUserParams = {
     userId: string
     limit?: number
     page: number
   }
   
-  export type GetRelatedEventsByCategoryParams = {
+  export type GetRelatedPostsByCategoryParams = {
     categoryId: string
     eventId: string
     limit?: number

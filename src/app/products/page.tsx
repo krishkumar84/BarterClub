@@ -67,6 +67,7 @@ const ProductsPage = async ({
         emptyStateSubtext="Come back later"
         collectionType="All_Posts"
         limit={6}
+        hide={true}
         page={pageParam}
         totalPages={totalPages}
       />

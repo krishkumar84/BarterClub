@@ -14,7 +14,8 @@ interface ProductReelProps {
   page: number | string,
   totalPages?: number,
   urlParamName?: string,
-  collectionType?: 'My_Post' | 'All_Posts'
+  collectionType?: 'My_Post' | 'All_Posts' |'Related_Posts'
+  hide?: boolean
 }
 const FALLBACK_LIMIT = 4
 
@@ -26,6 +27,7 @@ const ProductReel = ({
   totalPages = 0,
   collectionType,
   urlParamName,
+  hide,
 }: ProductReelProps) => {
   // console.log(data)
   // console.log("hitted")
@@ -49,9 +51,18 @@ const ProductReel = ({
     
     const { userId } = useAuth();
 
+    if(products.length === 0){
+      return(
+        <div className='flex flex-col items-center'>
+        <h3 className='text-lg font-medium text-gray-900'>{emptyTitle}</h3>
+        <p className='mt-3 text-gray-500'>{emptyStateSubtext}</p>
+      </div>
+      )
+    }   
+
   return (
     <section className='py-12'>
-      <ol className='flex items-center space-x-2'>
+      {hide && <ol className='flex items-center space-x-2'>
               {BREADCRUMBS.map((breadcrumb, i) => (
                 <li key={breadcrumb.href}>
                   <div className='flex items-center text-sm'>
@@ -72,7 +83,7 @@ const ProductReel = ({
                   </div>
                 </li>
               ))}
-            </ol>
+            </ol>}   
       <div className='md:flex md:items-center mt-4 md:justify-between mb-4'>
         <div className='max-w-2xl px-4 lg:max-w-4xl lg:px-0'>
           {collectionType ? (

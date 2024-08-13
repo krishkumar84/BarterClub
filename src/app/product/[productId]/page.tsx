@@ -28,8 +28,14 @@ const Page = async ({ params }: PageProps) => {
   // console.log(productId);
   console.log("Fetching:", `${apiUrl}/api/product/${productId}`);
   const response = await axios.get(`${apiUrl}/api/product/${productId}`);
-  console.log(response.data);
+  // console.log(response.data);
   const productDetails = response.data;
+  // console.log(productDetails);
+
+  const getRelatedPost = await axios.get(`${apiUrl}/api/getRelatedPosts?categoryId=${productDetails.category._id}&postId=${productId}`);
+  const data = getRelatedPost.data.data;
+
+  // console.log(data);
 
   return (
     <>
@@ -152,16 +158,18 @@ const Page = async ({ params }: PageProps) => {
       </div>
     </MaxWidthWrapper>
     <section className="wrapper my-8 flex flex-col gap-8 md:gap-12">
-      <h2 className="h2-bold">Related Events</h2>
-      {/* <ProductReel
-        data={posts}
-        emptyTitle="No Events Found"
+      <MaxWidthWrapper>
+      <ProductReel
+        data={data}
+        emptyTitle="No Related Post Found"
         emptyStateSubtext="Come back later"
-        collectionType="All_Posts"
+        collectionType="Related_Posts"
         limit={6}
-        page={pageParam}
-        totalPages={totalPages}
-      /> */}
+         page={1}
+         hide={false}
+        totalPages={data.totalPages}
+      />
+      </MaxWidthWrapper>
       </section>
     </>
   )
