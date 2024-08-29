@@ -8,8 +8,8 @@ const pricingData = [
     secondTitle: "Basic",
     infoNote: "Ideal for individuals who need quick access to basic features.",
     isSelected: false,
-    monthlyPrice: 2,
-    yerlyPrice: 20,
+    monthlyPrice: 0,
+    yerlyPrice: 0,
     color : "bg-[#FD4677]",
     logo: "/pricing1.png",
     getIn: [

@@ -33,13 +33,42 @@ const getRelatedPostByUser = await axios.get(`${apiUrl}/api/getRelatedPostByUser
 const data = getRelatedPostByUser.data;
 console.log(data);
 
+const BREADCRUMBS = [
+  { id: 1, name: 'Home', href: '/' },
+  { id: 2, name: 'Products', href: '/products' },
+]
+
   return (
     <>
       <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-10">
-        <div className="wrapper flex items-center justify-center sm:justify-between">
-          <h3 className='h3-bold text-center sm:text-left'>My Orders</h3>
+          <ol className='flex items-center ml-12 mt-8 space-x-2'>
+              {BREADCRUMBS.map((breadcrumb, i) => (
+                <li key={breadcrumb.href}>
+                  <div className='flex items-center text-sm'>
+                    <Link
+                      href={breadcrumb.href}
+                      className='font-medium text-sm text-muted-foreground hover:text-gray-900'>
+                      {breadcrumb.name}
+                    </Link>
+                    {i !== BREADCRUMBS.length - 1 ? (
+                      <svg
+                        viewBox='0 0 20 20'
+                        fill='currentColor'
+                        aria-hidden='true'
+                        className='ml-2 h-5 w-5 flex-shrink-0 text-gray-300'>
+                        <path d='M5.555 17.776l8-16 .894.448-8 16-.894-.448z' />
+                      </svg>
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ol>
+        <div className="wrapper p-6 pl-20 flex items-center justify-center sm:justify-between">
+        <h1 className='text-2xl font-bold text-gray-900 sm:text-3xl'>
+        My Orders
+            </h1>
           <Button asChild size="lg" className="button hidden sm:flex">
-            <Link href="/#product">
+            <Link href="/products">
               Explore More Products
             </Link>
           </Button>
@@ -62,16 +91,15 @@ console.log(data);
       </section> */}
 
       {/* Events Organized */}
-      <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-10">
+      {/* <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-10">
         <div className="wrapper flex items-center justify-center sm:justify-between">
-          <h3 className='h3-bold text-center sm:text-left'>My Posts</h3>
           <Button asChild size="lg" className="button hidden sm:flex">
             <Link href="/addProduct">
               Create New Post
             </Link>
           </Button>
         </div>
-      </section>
+      </section> */}
 
       <section className="wrapper my-8">
       <MaxWidthWrapper>
@@ -82,7 +110,7 @@ console.log(data);
           collectionType="My_Post"
           limit={3}
           page={1}
-          hide={true}
+          hide={false}
           urlParamName="eventsPage"
           totalPages={2}
           />

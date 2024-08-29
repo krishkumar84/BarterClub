@@ -4,7 +4,7 @@ import {auth } from '@clerk/nextjs/server';
 import User from '@/lib/models/user.model'
 import Category from '@/lib/models/category.model';
 import { NextApiRequest } from 'next';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 connect();
 
@@ -14,7 +14,7 @@ const populateProduct = (query: any) => {
       .populate({ path: 'category', model: Category, select: '_id name' })
   };
 
-export async function GET(req: NextApiRequest) {
+export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url ?? '');
   const userId = searchParams.get('userId');
   console.log(userId);
@@ -40,6 +40,6 @@ export async function GET(req: NextApiRequest) {
     
     } catch (error) {
         console.error(error)
-        return { error: (error as Error).message }
+        return NextResponse.json({ error: (error as Error).message });
     }
   }

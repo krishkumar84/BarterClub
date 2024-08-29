@@ -90,6 +90,14 @@ export default function Header() {
             </Link>
           </SignedOut>
           <SignedIn>
+          <Link href="/profile">
+          <button
+           type="button"
+           className="rounded-3xl mr-6 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-300 hover:text-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+            >
+                Dashboard
+              </button>
+          </Link>
           <Link href="/addProduct">
           <button
            type="button"
