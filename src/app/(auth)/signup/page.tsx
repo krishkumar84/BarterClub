@@ -76,16 +76,23 @@ export default function SignUp() {
   };
 
   return (
-    <main className="bg-white dark:bg-slate-900">
+    <main style={{
+      backgroundImage: `url("${'/bg2.svg'}")`,
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'cover'
+    }} className="bg-white pt-12 dark:bg-slate-900">
       <div className="relative md:flex items-center justify-center">
         {/* Content */}
         <div className="w-full">
           <div className="min-h-[100dvh] h-full flex flex-col after:flex-1">
             {/* <AuthHeader /> */}
 
-            <div className="max-w-sm mx-auto w-full px-4 py-8">
-              <h1 className="text-3xl text-slate-800 dark:text-slate-100 font-bold mb-6">
-                Create your Account ✨
+            <div 
+              style={{
+                background: 'linear-gradient(180deg, rgb(253, 70, 119) 0%, rgb(137, 82, 222) 100%)'
+              }} className="max-w-sm rounded-2xl h-full mx-auto w-full px-4 py-4">
+              <h1 className="text-3xl text-slate-100  font-bold mb-6">
+                Create your Account
               </h1>
               {/* Form */}
               {!pendingVerification ? (
@@ -93,14 +100,14 @@ export default function SignUp() {
                   <div className="space-y-4">
                   <div>
                       <label
-                        className="block text-sm font-medium mb-1"
+                        className="block text-slate-100 text-sm font-medium mb-1"
                         htmlFor="fullName"
                       >
                         Full Name <span className="text-rose-500">*</span>
                       </label>
                       <input
                         id="fullName"
-                        className="form-input w-full"
+                        className="form-input rounded-xl py-2 pl-2 w-full"
                         type="text"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
@@ -110,7 +117,7 @@ export default function SignUp() {
                     </div>
                     <div>
                       <label
-                        className="block text-sm font-medium mb-1"
+                        className="block text-slate-100 text-sm font-medium mb-1"
                         htmlFor="email"
                       >
                         Email Address <span className="text-rose-500">*</span>
@@ -120,21 +127,21 @@ export default function SignUp() {
                        id="email"
                        value={email}
                        onChange={(e) => setEmail(e.target.value)}
-                       className={`form-input w-full`}
+                       className={`form-input rounded-xl py-2 pl-2 w-full`}
                        type="email"
                        placeholder='Company Email Address'
                       />
                     </div>
                     <div>
                       <label
-                        className="block text-sm font-medium mb-1"
+                        className="block text-slate-100 text-sm font-medium mb-1"
                         htmlFor="Phone no"
                       >
                         Phone no <span className="text-rose-500">*</span>
                       </label>
                       <input
                         id="phone"
-                        className="form-input w-full"
+                        className="form-input rounded-xl py-2 pl-2 w-full"
                         type="text"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
@@ -144,14 +151,14 @@ export default function SignUp() {
                     </div>
                     <div>
                       <label
-                        className="block text-sm font-medium mb-1"
+                        className="block text-slate-100 text-sm font-medium mb-1"
                         htmlFor="GST"
                       >
                         Gst no
                       </label>
                       <input
                         id="gst"
-                        className="form-input w-full"
+                        className="form-input  rounded-xl py-2 pl-2 w-full"
                         type="number"
                         value={gst}
                         onChange={(e) => setGst(e.target.value)}
@@ -160,14 +167,14 @@ export default function SignUp() {
                     </div>
                     <div>
                       <label
-                        className="block text-sm font-medium mb-1"
+                        className="block text-slate-100 text-sm font-medium mb-1"
                         htmlFor="Address"
                       >
                         Address <span className="text-rose-500">*</span>
                       </label>
                       <input
                         id="address"
-                        className="form-input w-full"
+                        className="form-input rounded-xl py-2 pl-2 w-full"
                         type="text"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
@@ -176,9 +183,9 @@ export default function SignUp() {
                       />
                     </div>
                     <div>
-                    <label className="block text-sm font-medium mb-1" htmlFor="password">Password</label>
+                    <label className="block text-slate-100 text-sm font-medium mb-1" htmlFor="password">Password</label>
                     <div className="relative">
-                    <input id="password" placeholder='password' value={password} onChange={(e)=>setPassword(e.target.value)} className="form-input w-full"  type={showPassword ? "text" : "password"} autoComplete="on" />
+                    <input id="password" placeholder='password' value={password} onChange={(e)=>setPassword(e.target.value)} className="form-input rounded-xl py-2 pl-2 w-full"  type={showPassword ? "text" : "password"} autoComplete="on" />
                     <button  type="button"  className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5" onClick={() => setShowPassword(!showPassword)}
                      >
                      {showPassword ? 'Hide' : 'Show'}
@@ -195,14 +202,14 @@ export default function SignUp() {
                     <div className="mr-1">
                       <label className="flex items-center">
                         <input type="checkbox" className="form-checkbox" />
-                        <span className="text-sm ml-2">
+                        <span className="text-sm text-slate-100 ml-2">
                           Email me about product news.
                         </span>
                       </label>
                     </div>
                     <button
                       type="submit"
-                      className="btn bg-indigo-500 p-3 rounded-xl  hover:bg-indigo-600 text-white ml-3 whitespace-nowrap"
+                      className="btn bg-indigo-600 p-3 rounded-xl  hover:bg-indigo-700 text-white ml-3 whitespace-nowrap"
                     >
                       Sign Up
                     </button>
@@ -246,10 +253,10 @@ export default function SignUp() {
               )}
               {/* Footer */}
               <div className="pt-5 mt-6 border-t border-slate-200 dark:border-slate-700">
-                <div className="text-sm">
+                <div className="text-sm text-slate-100">
                   Have an account?{' '}
                   <Link
-                    className="font-medium text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400"
+                    className="font-medium text-indigo-700 hover:text-indigo-800 dark:hover:text-indigo-400"
                     href="/signin"
                   >
                     Sign In

@@ -51,30 +51,39 @@ export default function SignIn() {
     }
   };
   return (
-    <main className="bg-white dark:bg-slate-900">
+    <main style={{
+      backgroundImage: `url("${'/bg2.svg'}")`,
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'cover'
+    }}  className="bg-white dark:bg-slate-900">
 
       <div className="relative md:flex items-center justify-center">
 
         {/* Content */}
         <div className="md:w-1/2">
-          <div className="min-h-[100dvh] h-full flex flex-col after:flex-1">
+          <div className="min-h-[100dvh] h-full  flex  flex-col after:flex-1">
 
             {/* <AuthHeader /> */}
 
-            <div className="max-w-sm mx-auto w-full px-4 py-8">
-              <h1 className="text-3xl text-slate-800 dark:text-slate-100 font-bold mb-6">Welcome back! ✨</h1>
+            <div 
+              style={{
+                background: 'linear-gradient(180deg, rgb(253, 70, 119) 0%, rgb(137, 82, 222) 100%)'
+              }}
+              className="max-w-sm rounded-2xl h-full  mt-28 mx-auto w-full px-4 py-8"
+            > 
+              <h1 className="text-3xl text-slate-100 font-bold mb-6">LOGIN</h1>
               {/* Form */}
               <form onSubmit={handleSubmit}>
-                <div className="space-y-4">
+                <div  className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1" htmlFor="email">Email Address</label>
-                    <input  required id="company-email" value={email}  onChange={(e) => setEmail(e.target.value)} className={`form-input w-full `} type="email" placeholder=' Email Address' />
+                    <label className="block text-slate-100 text-sm font-medium mb-1" htmlFor="email">Email Address</label>
+                    <input  required id="company-email" value={email}  onChange={(e) => setEmail(e.target.value)} className={`form-input rounded-xl py-2 pl-2 w-full `} type="email" placeholder=' Email Address' />
                   </div>
                   <div>
                   <div>
-                    <label className="block text-sm font-medium mb-1" htmlFor="password">Password</label>
+                    <label className="block text-slate-100 text-sm font-medium mb-1" htmlFor="password">Password</label>
                     <div className="relative">
-                    <input id="password" value={password} onChange={(e)=>setPassword(e.target.value)} className="form-input w-full"  type={showPassword ? "text" : "password"} placeholder='password' autoComplete="on" />
+                    <input id="password" value={password} onChange={(e)=>setPassword(e.target.value)} className="form-input rounded-xl py-2 pl-2 w-full"  type={showPassword ? "text" : "password"} placeholder='password' autoComplete="on" />
                     <button  type="button"  className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5" onClick={() => setShowPassword(!showPassword)}
                      >
                      {showPassword ? 'Hide' : 'Show'}
@@ -85,11 +94,11 @@ export default function SignIn() {
                 </div>
                 <div className="flex items-center justify-between mt-6">
                   <div className="mr-1">
-                    <Link className="text-sm underline hover:no-underline" href="/reset-password">Forgot Password?</Link>
+                    <Link className="text-sm text-slate-100 underline hover:no-underline" href="/reset-password">Forgot Password?</Link>
                   </div>
                   <button
                       type="submit"
-                      className="btn bg-indigo-500 px-3 py-2 rounded-xl  hover:bg-indigo-600 text-white ml-3 whitespace-nowrap"
+                      className="btn bg-indigo-600 px-3 py-2 rounded-xl  hover:bg-indigo-700 text-white ml-3 whitespace-nowrap"
                     >
                       Sign In
                     </button>
@@ -100,8 +109,8 @@ export default function SignIn() {
               </form>
               {/* Footer */}
               <div className="pt-5 mt-6 border-t border-slate-200 dark:border-slate-700">
-                <div className="text-sm">
-                  Don&apos;t you have an account? <Link className="font-medium text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400" href="/signup">Sign Up</Link>
+                <div className="text-sm text-slate-100">
+                  Don&apos;t you have an account? <Link className="font-medium text-indigo-700 hover:text-indigo-800 dark:hover:text-indigo-400" href="/signup">Sign Up</Link>
                 </div>
                 
               </div>
