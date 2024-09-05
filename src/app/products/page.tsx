@@ -60,9 +60,9 @@ const ProductsPage = async ({
 
   return (
     <MaxWidthWrapper>
-       <div className="flex w-full flex-col gap-5 md:flex-row">
+       <div className="flex w-full mt-2 flex-col gap-5 md:flex-row">
           <Search />
-          <div className="mt-5">
+          <div className="mt-2">
           <CategoryFilter />
           </div>
         </div>
