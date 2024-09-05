@@ -53,7 +53,14 @@ export async function GET(req:Request){
   const page = parseInt(searchParams.get('page') || '1', 10);
   const category = searchParams.get('category') || '';
 
-  const conditions: any = {};
+  // const conditions: any = {};
+
+  const titleCondition = query ? { title: { $regex: query, $options: 'i' } } : {}
+  // const categoryCondition = category ? await getCategoryByName(category) : null
+
+    const conditions = {
+      $and: [titleCondition],
+    }
 
   const postQuery = Product.find(conditions)
   .sort({createdAt:'desc'})

@@ -1,18 +1,42 @@
 "use client"
-// import { useRouter } from 'next/navigation';
-import { FormEvent, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation';
+import { FormEvent, useState, useEffect } from 'react';
+import { formUrlQuery, removeKeysFromQuery } from '@/lib/utils';
 
 
 const Searchbar = () => {
-  const [searchPrompt, setSearchPrompt] = useState('');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get('query') || '';
+  const [searchPrompt, setSearchPrompt] = useState(initialQuery);
   const [isLoading, setIsLoading] = useState(false);
-  //const router = useRouter();
 
+ useEffect(() => {
+    setSearchPrompt(initialQuery);
+  }, [initialQuery]);
 
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault();
+    if (!searchPrompt) return;
+
+    setIsLoading(true);
+
+    // Redirect to the products page with the search query as a parameter
+    const newUrl = formUrlQuery({
+      params: searchParams.toString(),
+      key: 'query',
+      value: searchPrompt,
+    });
+
+    router.push(`/products${newUrl}`, { scroll: false });
+    setIsLoading(false);
+  };
+
+   
   return (
     <form 
       className="flex px-4 flex-wrap gap-4 mt-12" 
-    
+      onSubmit={handleSearch}
     >
       <input 
         type="text"
@@ -21,6 +45,7 @@ const Searchbar = () => {
         placeholder="Search Products"
         className="flex-1 min-w-[200px] w-full p-3 pl-5 border border-gray-800 rounded-3xl shadow-xs text-slate-300 bg-neutral-900 focus:outline-none"
       />
+      
 
       <button 
         type="submit" 

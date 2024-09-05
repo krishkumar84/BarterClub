@@ -2,6 +2,8 @@ import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import ProductReel from '@/components/ProductReel'
 import { PRODUCT_CATEGORIES } from '@/config'
 import { config } from '@/constants/index'
+import Search from '@/components/Search';
+import { SearchParamProps } from '@/types';
 
 const apiUrl = config.apiUrl;
 
@@ -26,10 +28,14 @@ const ProductsPage = async ({
   const label = PRODUCT_CATEGORIES.find(
     ({ value }) => value === category
   )?.label
-  const queryParam = parse(searchParams.query) || ''
+  const queryParam = (searchParams?.query as string) || ''
   const limitParam = parse(searchParams.limit) || '10'
   const pageParam = parse(searchParams.page) || '1'
   const categoryParam = parse(searchParams.category) || ''
+
+  // const page = Number(searchParams?.page) || 1;
+  // const searchText = (searchParams?.query as string) || '';
+  // const category = (searchParams?.category as string) || '';
 
   // Server-side fetch
   // console.log('Fetching posts...')
@@ -61,6 +67,10 @@ const ProductsPage = async ({
 
   return (
     <MaxWidthWrapper>
+       <div className="flex w-full flex-col gap-5 md:flex-row">
+          <Search />
+          {/* <CategoryFilter /> */}
+        </div>
       <ProductReel
         data={posts}
         emptyTitle="No Events Found"
