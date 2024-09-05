@@ -34,8 +34,8 @@ const pricingData = [
   {
     mainTitle: "For startups",
     secondTitle: "Pro",
-    monthlyPrice: 5,
-    yerlyPrice: 50,
+    monthlyPrice: 500,
+    yerlyPrice: 5000,
     infoNote: "Ideal for individuals who need quick access to basic features.",
     isSelected: true,
     logo: "/pricing3.png",
@@ -63,8 +63,8 @@ const pricingData = [
     secondTitle: "Enterprise",
     infoNote: "Ideal for individuals who need quick access to basic features.",
     isSelected: false,
-    monthlyPrice: 10,
-    yerlyPrice: 100,
+    monthlyPrice: 1000,
+    yerlyPrice: 10000,
     color : "bg-[#FD4677]",
     logo: "/pricing2.png",
     getIn: [
@@ -168,7 +168,7 @@ const Pricing = () => {
               <div className="flex items-center gap-3 my-4">
                 <span className={`text-6xl font-semibold`}
                  style={{ color: data?.color ? '#FD4677' : 'inherit' }}>
-                  ${monthPrice ? data?.monthlyPrice : data?.yerlyPrice}
+                  ₹{monthPrice ? data?.monthlyPrice : data?.yerlyPrice}
                 </span>
                 <span className="font-light">
                   /&nbsp;&nbsp;{monthPrice ? "Monthly" : "Anually"}

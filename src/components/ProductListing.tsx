@@ -51,9 +51,12 @@ const ProductListing = ({
         <p className='mt-1 text-sm text-gray-500'>
         {product.category.name}
         </p>
+        <div className="flex space-x-2">
+          <Image src="/logo.png" alt="Barter Point" width={20} height={20} />    
         <p className='mt-1 font-medium text-sm text-gray-900'>
-        ₹{product.price}
+        {product.price}
         </p>
+        </div>
     </Link>
         {isPostCreater && (
         <div className=" flex flex- gap-4 rounded-xl bg-white py-3 shadow-sm transition-all">

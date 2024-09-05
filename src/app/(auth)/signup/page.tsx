@@ -168,6 +168,19 @@ export default function SignUp() {
                     <div>
                       <label
                         className="block text-slate-100 text-sm font-medium mb-1"
+                        htmlFor="Plan"
+                      >
+                        Plan <span className="text-rose-500">*</span>
+                      </label>
+                      <select name="Plans" className="form-input rounded-xl py-2 pl-2 w-full" id="">
+                        <option value="Free">Free</option>
+                        <option value="Basic">Basic</option>
+                        <option value="Premium">Premium</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label
+                        className="block text-slate-100 text-sm font-medium mb-1"
                         htmlFor="Address"
                       >
                         Address <span className="text-rose-500">*</span>

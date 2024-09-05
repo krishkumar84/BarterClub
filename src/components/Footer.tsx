@@ -10,38 +10,18 @@ export function Footer() {
             </div>
              <nav className="flex flex-wrap justify-center -mx-5 -my-2">
                   <div className="px-5 py-2">
-                <a href="#" className="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    Home
+                <a href="privacy-policy" className="text-base leading-6 text-gray-500 hover:text-gray-900">
+                    Privacy Policy
                 </a>
             </div>
             <div className="px-5 py-2">
-                <a href="#" className="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    About
+                <a href="refund-policy" className="text-base leading-6 text-gray-500 hover:text-gray-900">
+                    Refund Policy
                 </a>
             </div>
             <div className="px-5 py-2">
-                <a href="#" className="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    Feature
-                </a>
-            </div>
-            <div className="px-5 py-2">
-                <a href="#" className="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    Marketplace
-                </a>
-            </div>
-            <div className="px-5 py-2">
-                <a href="#" className="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    Pricing
-                </a>
-            </div>
-            <div className="px-5 py-2">
-                <a href="#" className="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    service
-                </a>
-            </div>
-            <div className="px-5 py-2">
-                <a href="#" className="text-base leading-6 text-gray-500 hover:text-gray-900">
-                    Blog
+                <a href="terms-and-condition" className="text-base leading-6 text-gray-500 hover:text-gray-900">
+                    Terms and conditions
                 </a>
             </div>
         </nav>
