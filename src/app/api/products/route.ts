@@ -8,9 +8,12 @@ import Category from '@/lib/models/category.model';
 
 connect();
 
+const getCategoryByName = async (name: string) => {
+  return Category.findOne({ name: { $regex: name, $options: 'i' } })
+}
 
 export async function POST(req: NextRequest, res: NextResponse) {
-  console.log("hitted");
+  // console.log("hitted");
   // console.log(req.json());
   const {clerkId,userId,imageUrl,owner,body} = await req.json();
   console.log(clerkId,userId,imageUrl,body);
@@ -53,13 +56,11 @@ export async function GET(req:Request){
   const page = parseInt(searchParams.get('page') || '1', 10);
   const category = searchParams.get('category') || '';
 
-  // const conditions: any = {};
-
   const titleCondition = query ? { title: { $regex: query, $options: 'i' } } : {}
-  // const categoryCondition = category ? await getCategoryByName(category) : null
+  const categoryCondition = category ? await getCategoryByName(category) : null
 
     const conditions = {
-      $and: [titleCondition],
+      $and: [titleCondition, categoryCondition ? { category: categoryCondition._id } : {}],
     }
 
   const postQuery = Product.find(conditions)

@@ -4,6 +4,7 @@ import { PRODUCT_CATEGORIES } from '@/config'
 import { config } from '@/constants/index'
 import Search from '@/components/Search';
 import { SearchParamProps } from '@/types';
+import CategoryFilter from '@/components/CategoryFilter';
 
 const apiUrl = config.apiUrl;
 
@@ -33,14 +34,6 @@ const ProductsPage = async ({
   const pageParam = parse(searchParams.page) || '1'
   const categoryParam = parse(searchParams.category) || ''
 
-  // const page = Number(searchParams?.page) || 1;
-  // const searchText = (searchParams?.query as string) || '';
-  // const category = (searchParams?.category as string) || '';
-
-  // Server-side fetch
-  // console.log('Fetching posts...')
-  // console.log(apiUrl)
-
   const response = await fetch(`${apiUrl}/api/products?` + new URLSearchParams({
     query: queryParam,
     limit: limitParam,
@@ -69,7 +62,9 @@ const ProductsPage = async ({
     <MaxWidthWrapper>
        <div className="flex w-full flex-col gap-5 md:flex-row">
           <Search />
-          {/* <CategoryFilter /> */}
+          <div className="mt-5">
+          <CategoryFilter />
+          </div>
         </div>
       <ProductReel
         data={posts}
