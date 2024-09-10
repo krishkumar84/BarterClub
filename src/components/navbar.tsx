@@ -28,10 +28,6 @@ const menuItems = [
     name: 'Services',
     href: '#',
   },
-  {
-    name: 'Blog',
-    href: '#',
-  },
 ]
 import logo from '/public/logo.png'
 import {

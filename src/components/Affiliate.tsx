@@ -5,7 +5,7 @@ export function Affiliate() {
         <div className="px-12 pt-12 lg:flex lg:flex-row lg:items-center">
           <div className="w-full flex items-center justify-center lg:w-1/2">
             <img
-              src="/affiliate.png"
+              src="/affiliate.jpg"
               alt="about us image"
               className="h-auto w-[80%] rounded-md object-cover"
             />
@@ -13,20 +13,18 @@ export function Affiliate() {
           <div className="w-full lg:w-1/2">
             <div className="my-10 lg:my-0 lg:px-10">
               <h2 className="text-3xl font-bold  text-slate-300 sm:text-4xl lg:text-5xl">
-                Join Our Affiliate Program
+              Join Barterclub's Affiliate Program!
               </h2>
               <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-400">
-                Sed vulputate risus efficitur metus placerat ultricies. Mauris
-                ultrices ultricies nisl sit amet luctus. Maecenas id dictum
-                nulla. Nullam condimentum purus id tincidunt dapibus. Vestibulum
-                dolor ex, pulvinar ac est sit amet, ultricies pellentesque
-                velit. Nunc in urna mi. Aenean a sollicitudin sem, quis egestas
-                lectus. Donec ultricies justo laoreet mattis vehicula.
+              Looking to earn while sharing the benefits of barter with others? Join Barterclub’s Affiliate 
+              Program today! As a partner, you'll earn commissions for every new member you refer. It’s 
+              easy—simply share your unique link, help others discover a smarter way to trade, and watch 
+              your earnings grow. Sign up now and start spreading the word!
+              
               </p>
               <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-400">
-                Suspendisse commodo a erat ut aliquet. Phasellus nec nisl sit
-                amet eros pretium venenatis nec non massa. Ut sed ligula purus.
-                Praesent posuere orci vel ultrices efficitur. 
+              It’s a win-win: help others discover the power of barter, while you earn. Join today and start 
+              earning with Barterclub! 
               </p>
 
               <form action="#" method="POST" className="mt-8 max-w-xl">
@@ -39,7 +37,7 @@ export function Affiliate() {
                     }}
                     className="rounded-3xl  px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
                   >
-                    Read More
+                    Learn More
                   </button>
                 </div>
               </form>

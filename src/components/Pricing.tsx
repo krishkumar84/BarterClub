@@ -34,8 +34,8 @@ const pricingData = [
   {
     mainTitle: "For startups",
     secondTitle: "Pro",
-    monthlyPrice: 500,
-    yerlyPrice: 5000,
+    monthlyPrice: 499,
+    yerlyPrice: 4999,
     infoNote: "Ideal for individuals who need quick access to basic features.",
     isSelected: true,
     logo: "/pricing3.png",
@@ -63,8 +63,8 @@ const pricingData = [
     secondTitle: "Enterprise",
     infoNote: "Ideal for individuals who need quick access to basic features.",
     isSelected: false,
-    monthlyPrice: 1000,
-    yerlyPrice: 10000,
+    monthlyPrice: 999,
+    yerlyPrice: 9999,
     color : "bg-[#FD4677]",
     logo: "/pricing2.png",
     getIn: [
