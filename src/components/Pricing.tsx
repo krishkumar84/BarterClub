@@ -1,7 +1,10 @@
 "use client"
+import axios from "axios";
 import { color } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
+import { useAuth } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
 const pricingData = [
   {
     mainTitle: "For Individuals",
@@ -15,25 +18,37 @@ const pricingData = [
     getIn: [
       {
         rightIcon: true,
-        description: "20,000+ of PNG & SVG graphics",
+        description: "Only for individuals",
       },
       {
         rightIcon: true,
-        description: "Access to 100 million stock images",
+        description: "0 credit",
       },
       {
         rightIcon: false,
-        description: "Instant Access to our design system",
+        description: "5 free barter Points(monthly)",
       },
       {
         rightIcon: false,
-        description: "Create teams to collaborate on designs",
+        description: "No free listing on our social platform",
+      },
+      {
+        rightIcon: false,
+        description: "No directory listing",
+      },
+      {
+        rightIcon: false,
+        description: "Access to facebook community",
+      },
+      {
+        rightIcon: false,
+        description: "No trade shows",
       },
     ],
   },
   {
     mainTitle: "For startups",
-    secondTitle: "Pro",
+    secondTitle: "Basic",
     monthlyPrice: 499,
     yerlyPrice: 4999,
     infoNote: "Ideal for individuals who need quick access to basic features.",
@@ -42,25 +57,41 @@ const pricingData = [
     getIn: [
       {
         rightIcon: true,
-        description: "20,000+ of PNG & SVG graphics",
+        description: "Free Directory Listing",
       },
       {
         rightIcon: true,
-        description: "Access to 100 million stock images",
+        description: "Customer service Support",
       },
       {
         rightIcon: false,
-        description: "Instant Access to our design system",
+        description: "25000 line of credit",
       },
       {
         rightIcon: false,
-        description: "Create teams to collaborate on designs",
+        description: "10 free barter Points (monthly)",
+      },
+      {
+        rightIcon: false,
+        description: "No free listing on our social platform",
+      },
+      {
+        rightIcon: false,
+        description: "Normal directory listing",
+      },
+      {
+        rightIcon: false,
+        description: "Access to facebook community",
+      },
+      {
+        rightIcon: false,
+        description: "No trade shows",
       },
     ],
   },
   {
     mainTitle: "For big companies",
-    secondTitle: "Enterprise",
+    secondTitle: "Premium",
     infoNote: "Ideal for individuals who need quick access to basic features.",
     isSelected: false,
     monthlyPrice: 999,
@@ -70,19 +101,35 @@ const pricingData = [
     getIn: [
       {
         rightIcon: true,
-        description: "20,000+ of PNG & SVG graphics",
+        description: "Free Directory Listing",
       },
       {
         rightIcon: true,
-        description: "Access to 100 million stock images",
+        description: "Customer service Support",
       },
       {
         rightIcon: false,
-        description: "Instant Access to our design system",
+        description: "50,000 line of credit",
       },
       {
         rightIcon: false,
-        description: "Create teams to collaborate on designs",
+        description: "100 free barter Points (Monthly)",
+      },
+      {
+        rightIcon: false,
+        description: "Free listing on youtube channel",
+      },
+      {
+        rightIcon: false,
+        description: "Bold directory listing",
+      },
+      {
+        rightIcon: false,
+        description: "Access to facebook community",
+      },
+      {
+        rightIcon: false,
+        description: "Trade shows",
       },
     ],
   },
@@ -90,14 +137,52 @@ const pricingData = [
 
 const Pricing = () => {
   const [monthPrice, setMonthPrice] = useState(true);
-  const [isChecked, setIsChecked] = useState(false)
+  const [isChecked, setIsChecked] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { isSignedIn } = useAuth();
+  const router = useRouter();
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked)
     setMonthPrice(!monthPrice)
   }
+  
+  const createSubscription = () => {
+    if (!isSignedIn) {
+      router.push('/signin');
+    }
+    setLoading(true)
+   axios.post('/api/create-subscription', {})
+   .then((res) => {
+      console.log(res.data)
+      OnPayment(res.data.id)
+    },(error)=>{
+      setLoading(false);
+    })
+  }
+
+  const OnPayment = (subId:string) => {
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, 
+      subscription_id: subId,
+      currency: "INR",
+      name: "Barter Club",
+      description: "monthly subscription",
+      image: "/logo.png",
+      handler: async(response:any) => {
+        console.log(response);
+        setLoading(false);
+      }, 
+  }
+// @ts-ignore
+  const rzp =new window.Razorpay(options);
+  rzp.open();
+}
+
+
   return (
     <section className="flex flex-col justify-center items-center py-3 min-h-screen">
+      <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
       {/* heading section  */}
       <div className="flex flex-col w-auto px-6 text-center text-2xl sm:text-3xl md:text-4xl">
         <span className="font-bold text-slate-300 text-xl">Pricing</span>
@@ -188,13 +273,17 @@ const Pricing = () => {
                 ))}
               </div>
               <button
+              disabled={loading}
+               onClick={()=>(createSubscription())}
                 className={`w-full border-[1px] flex items-center justify-center gap-2 mt-5 mb-4 rounded-3xl py-2.5 ${
                   data?.isSelected
                     ? "bg-transparent"
                     : "bg-gradient-to-b from-pink-500 to-indigo-500  border-none"
                 }`}
               >
-                Get Started 
+                <span className="text-base font-medium">
+                  {loading ? 'Loading...' : 'Get Started'}
+                </span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
               </button>
             </div>
