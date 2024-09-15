@@ -2,9 +2,11 @@
 import axios from "axios";
 import { color } from "framer-motion";
 import Image from "next/image";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useAuth } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
+// import Razorpay from "razorpay";
 const pricingData = [
   {
     mainTitle: "For Individuals",
@@ -48,7 +50,7 @@ const pricingData = [
   },
   {
     mainTitle: "For startups",
-    secondTitle: "Basic",
+    secondTitle: "Standard",
     monthlyPrice: 499,
     yerlyPrice: 4999,
     infoNote: "Ideal for individuals who need quick access to basic features.",
@@ -139,45 +141,115 @@ const Pricing = () => {
   const [monthPrice, setMonthPrice] = useState(true);
   const [isChecked, setIsChecked] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { isSignedIn } = useAuth();
+  const { isSignedIn} = useAuth();
   const router = useRouter();
+  const { user, isLoaded } = useUser(); 
+  const [currentUser, setCurrentUser] = useState<any>(null); 
+
+  console.log("🚀 ~ Pricing ~ currentUser:", currentUser)
+
+  useEffect(() => {
+    if (isLoaded) {
+      setCurrentUser(user || null); 
+      console.log('UserContext: ', user);
+    }
+  }, [isLoaded, user]);
+  
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked)
     setMonthPrice(!monthPrice)
   }
   
-  const createSubscription = () => {
+  const createSubscription = async(planType: string, duration: string) => {
     if (!isSignedIn) {
       router.push('/signin');
+      return;
     }
     setLoading(true)
-   axios.post('/api/create-subscription', {})
-   .then((res) => {
-      console.log(res.data)
-      OnPayment(res.data.id)
-    },(error)=>{
+    if(!currentUser?.publicMetadata.userId){
+      alert('User not found');
       setLoading(false);
-    })
+      return;
+    }
+    try {
+      const response = await axios.post('/api/create-subscription', {
+        userId: currentUser?.publicMetadata.userId, // Ensure user ID is correctly fetched
+        planType,
+        duration,
+      });
+
+      const { razorpaySubscriptionId, planName, message } = response.data;
+
+      if (message === 'Subscribed to Free Plan') {
+        alert('Successfully subscribed to Free Plan');
+        setLoading(false);
+        return;
+      }
+
+      // Initialize Razorpay Checkout
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Public key
+        subscription_id: razorpaySubscriptionId,
+        name: "Barter Club",
+        currency: "INR",
+        description: `${planName} Plan Subscription`,
+        image: "/logo.png",
+        handler: async (response: any) => {
+          // After payment, Razorpay will handle via webhook
+          // Optionally, you can show a success message
+          alert('Payment successful! Your subscription is active.');
+          setLoading(false);
+        },
+        prefill: {
+          name: currentUser?.fullName,
+          email: currentUser?.primaryEmailAddress.emailAddress ,
+        },
+        theme: {
+          color: "#FD4677",
+        },
+      };
+      // @ts-ignore
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', (response: any) => {
+        alert('Payment failed! Please try again.');
+        setLoading(false);
+      });
+      rzp.open();
+    } catch (error: any) {
+      console.error('Error creating subscription:', error);
+      alert(error.response?.data?.message || 'An error occurred');
+      setLoading(false);
+    }
+
+
+
+  //  axios.post('/api/create-subscription', {})
+  //  .then((res) => {
+  //     console.log(res.data)
+  //     OnPayment(res.data.id)
+  //   },(error)=>{
+  //     setLoading(false);
+  //   })
   }
 
-  const OnPayment = (subId:string) => {
-    const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, 
-      subscription_id: subId,
-      currency: "INR",
-      name: "Barter Club",
-      description: "monthly subscription",
-      image: "/logo.png",
-      handler: async(response:any) => {
-        console.log(response);
-        setLoading(false);
-      }, 
-  }
-// @ts-ignore
-  const rzp =new window.Razorpay(options);
-  rzp.open();
-}
+//   const OnPayment = (subId:string) => {
+//     const options = {
+//       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, 
+//       subscription_id: subId,
+//       currency: "INR",
+//       name: "Barter Club",
+//       description: "monthly subscription",
+//       image: "/logo.png",
+//       handler: async(response:any) => {
+//         console.log(response);
+//         setLoading(false);
+//       }, 
+//   }
+// // @ts-ignore
+//   const rzp =new window.Razorpay(options);
+//   rzp.open();
+// }
 
 
   return (
@@ -274,7 +346,7 @@ const Pricing = () => {
               </div>
               <button
               disabled={loading}
-               onClick={()=>(createSubscription())}
+              onClick={() => createSubscription(data?.secondTitle, monthPrice ? 'Monthly' : 'Yearly')}
                 className={`w-full border-[1px] flex items-center justify-center gap-2 mt-5 mb-4 rounded-3xl py-2.5 ${
                   data?.isSelected
                     ? "bg-transparent"

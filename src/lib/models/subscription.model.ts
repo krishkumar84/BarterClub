@@ -5,7 +5,7 @@ const SubscriptionSchema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },  // Relation to user
   planType: { 
     type: String, 
-    enum: ['Free', 'Startup', 'Organization'], 
+    enum: ['Basic', 'Standard', 'Premium'], 
     required: true 
   },
   duration: { 
@@ -17,6 +17,7 @@ const SubscriptionSchema = new Schema({
   startDate: { type: Date, default: Date.now },
   endDate: { type: Date, required: true },  // Subscription expiry
   paymentStatus: { type: String, enum: ['Paid', 'Pending', 'Failed'], default: 'Pending' },
+  razorpaySubscriptionId: { type: String, required: true, unique: true },
 }, { timestamps: true });
 
 // Check if model already exists

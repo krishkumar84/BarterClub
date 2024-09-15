@@ -33,8 +33,26 @@ const UserSchema = new Schema({
     Address:{
         type: String,
         required: true,
+    },balance: {
+       type: Number,
+        default: 0 
+      },
+    purchasedPoints: {
+       type: Number,
+        default: 0 
+      },
+    discountPoints: {
+       type: Number,
+        default: 0 
+      },
+    subscription: {
+      plan: { type: String, enum: ['Free', 'Startup', 'Organization'], default: 'Free' },
+      isActive: { type: Boolean, default: false },
+      startDate: { type: Date },
+      endDate: { type: Date },
     },
-},{ timestamps: true });
+    transactionHistory: [{ type: Schema.Types.ObjectId, ref: 'Transaction' }],
+  },{ timestamps: true });
 
 const User = models?.User || model("User", UserSchema);
 
