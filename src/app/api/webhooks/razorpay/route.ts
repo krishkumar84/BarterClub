@@ -28,15 +28,15 @@ export async function POST(req: NextRequest) {
         const subscriptionId = payment.subscription_id ;
         console.log('Payment payload:', body.payload);
         console.log('Payment Captured Event:', payment);
-        console.log('Subscription ID:', subscriptionId);
+        // console.log('Subscription ID:', subscriptionId);
         const orderId = payment.order_id;
         const invoiceId = payment.invoice_id;
         const description = payment.description;
 
-        if (!payment.subscription_id) {
-          console.log('No subscription ID associated with this payment');
-          return NextResponse.json({ message: 'No subscription ID' }, { status: 400 });
-        }
+        // if (!payment.subscription_id) {
+        //   console.log('No subscription ID associated with this payment');
+        //   return NextResponse.json({ message: 'No subscription ID' }, { status: 400 });
+        // }
 
         // Find the subscription in your database
         const subscription = await Subscription.findOne({ razorpaySubscriptionId: subscriptionId });
@@ -56,12 +56,14 @@ export async function POST(req: NextRequest) {
         if (user) {
           user.balance += subscription.barterPoints;
           user.purchasedPoints += subscription.barterPoints;
-          user.subscription = {
-            plan: subscription.planType,
-            isActive: true,
-            startDate: subscription.startDate,
-            endDate: subscription.endDate,
-          };
+          user.subscription.isActive = true;
+          user.subscription.plan = subscription.planType;
+          // user.subscription = {
+          //   plan: subscription.planType,
+          //   isActive: true,
+          //   startDate: subscription.startDate,
+          //   endDate: subscription.endDate,
+          // };
 
           // Create a transaction record
           const transaction = new Transaction({
