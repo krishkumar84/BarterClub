@@ -25,10 +25,18 @@ export async function POST(req: NextRequest) {
     switch (event) {
       case 'payment.captured': {
         const payment = body.payload.payment.entity;
-        const subscriptionId = payment.subscription_id;
-
+        const subscriptionId = payment.subscription_id ;
+        console.log('Payment payload:', body.payload);
         console.log('Payment Captured Event:', payment);
         console.log('Subscription ID:', subscriptionId);
+        const orderId = payment.order_id;
+        const invoiceId = payment.invoice_id;
+        const description = payment.description;
+
+        if (!payment.subscription_id) {
+          console.log('No subscription ID associated with this payment');
+          return NextResponse.json({ message: 'No subscription ID' }, { status: 400 });
+        }
 
         // Find the subscription in your database
         const subscription = await Subscription.findOne({ razorpaySubscriptionId: subscriptionId });
@@ -36,6 +44,8 @@ export async function POST(req: NextRequest) {
           console.error('Subscription not found for payment.captured');
           return NextResponse.json({ message: 'Subscription not found' }, { status: 404 });
         }
+
+        console.log('Subscription:', subscription);
 
         // Update subscription status
         subscription.paymentStatus = 'Paid';
@@ -60,6 +70,9 @@ export async function POST(req: NextRequest) {
             transactionType: 'Purchase',
             points: subscription.barterPoints,
             razorpayPaymentId: payment.id,
+            orderId,
+            invoiceId,
+            description,
           });
           await transaction.save();
           user.transactionHistory.push(transaction._id);

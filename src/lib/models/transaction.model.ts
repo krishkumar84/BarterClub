@@ -11,7 +11,10 @@ const TransactionSchema = new Schema({
   },
   points: { type: Number, required: true },  // Barter points credited
   date: { type: Date, default: Date.now },
-  razorpayPaymentId: { type: String, required: true },  // Razorpay payment ID for security purposes
+  razorpayPaymentId: { type: String, required: true },  // Razorpay payment ID for security purposes\
+  orderId: { type: String },  // Optional: Razorpay order ID
+  invoiceId: { type: String },  // Optional: Razorpay signature
+  description: { type: String },  // Optional: Description of the transaction
 }, { timestamps: true });
 
 // Check if model already exists
