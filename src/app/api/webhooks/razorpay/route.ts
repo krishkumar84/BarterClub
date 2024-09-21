@@ -27,6 +27,9 @@ export async function POST(req: NextRequest) {
         const payment = body.payload.payment.entity;
         const subscriptionId = payment.subscription_id;
 
+        console.log('Payment Captured Event:', payment);
+        console.log('Subscription ID:', subscriptionId);
+
         // Find the subscription in your database
         const subscription = await Subscription.findOne({ razorpaySubscriptionId: subscriptionId });
         if (!subscription) {
