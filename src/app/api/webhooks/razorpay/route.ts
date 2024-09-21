@@ -65,6 +65,11 @@ export async function POST(req: NextRequest) {
         break;
       }
 
+      case 'payment.failed': {
+        console.error('Payment failed');
+        return NextResponse.json({ message: 'Payment failed' }, { status: 400 });
+      }
+
       case 'subscription.activated': {
         const subscriptionData = body.payload.subscription.entity;
         const subscription = await Subscription.findOne({ razorpaySubscriptionId: subscriptionData.id });
@@ -114,14 +119,22 @@ export async function POST(req: NextRequest) {
         break;
       }
 
-      case 'subscription.cancelled':
-      case 'subscription.payment_failed': {
+      case 'subscription.cancelled': {
         const subscriptionData = body.payload.subscription.entity;
         const subscription = await Subscription.findOne({ razorpaySubscriptionId: subscriptionData.id });
         if (subscription) {
-          subscription.paymentStatus = 'Failed';
+          subscription.paymentStatus = 'Cancelled';
           await subscription.save();
-          return NextResponse.json({ message: 'Subscription cancelled/payment failed' });
+        }
+        break;
+      }
+
+      case 'subscription.updated': {
+        const subscriptionData = body.payload.subscription.entity;
+        const subscription = await Subscription.findOne({ razorpaySubscriptionId: subscriptionData.id });
+        if (subscription) {
+          subscription.planType = subscriptionData.plan_id;
+          await subscription.save();
         }
         break;
       }
