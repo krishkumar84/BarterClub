@@ -10,6 +10,8 @@ import Link from 'next/link'
 import React from 'react'
 import axios from 'axios';
 import { config } from '@/constants/index'
+import UserBalance from '@/components/UserBalance';
+import TransactionHistory from '@/components/TransactionHistory';
 
 
 const apiUrl = config.apiUrl;
@@ -27,8 +29,8 @@ const ProfilePage = async ({ searchParams }: SearchParamProps) => {
 
 //   const orderedEvents = orders?.data.map((order: IOrder) => order.event) || [];
 //   const organizedEvents = await getEventsByUser({ userId, page: eventsPage })
-console.log(userId);
-console.log(`${apiUrl}/api/getRelatedPostByUser?userId=${userId}`);
+// console.log(userId);
+// console.log(`${apiUrl}/api/getRelatedPostByUser?userId=${userId}`);
 const getRelatedPostByUser = await axios.get(`${apiUrl}/api/getRelatedPostByUser?userId=${userId}`);
 const data = getRelatedPostByUser.data;
 console.log(data);
@@ -74,7 +76,8 @@ const BREADCRUMBS = [
           </Button>
         </div>
       </section>
-
+       <UserBalance />
+       <TransactionHistory/>
       {/* <section className="wrapper my-8">
          <MaxWidthWrapper>
            <ProductReel

@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
           const posts = await populateProduct(postQuery)
           const postsCount = await Product.countDocuments(conditions)
 
-          console.log(posts);
+          // console.log(posts);
     
     return NextResponse.json({
       data: JSON.parse(JSON.stringify(posts)), 

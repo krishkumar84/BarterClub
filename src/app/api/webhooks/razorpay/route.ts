@@ -32,6 +32,9 @@ export async function POST(req: NextRequest) {
         const orderId = payment.order_id;
         const invoiceId = payment.invoice_id;
         const description = payment.description;
+        console.log('Order ID:', orderId);
+        console.log('Invoice ID:', invoiceId);
+        console.log('Description:', description);
 
         // if (!payment.subscription_id) {
         //   console.log('No subscription ID associated with this payment');
@@ -40,12 +43,12 @@ export async function POST(req: NextRequest) {
 
         // Find the subscription in your database
         const subscription = await Subscription.findOne({ razorpaySubscriptionId: subscriptionId });
-        if (!subscription) {
-          console.error('Subscription not found for payment.captured');
-          return NextResponse.json({ message: 'Subscription not found' }, { status: 404 });
-        }
+        // if (!subscription) {
+        //   console.error('Subscription not found for payment.captured');
+        //   return NextResponse.json({ message: 'Subscription not found' }, { status: 404 });
+        // }
 
-        console.log('Subscription:', subscription);
+        // console.log('Subscription:', subscription);
 
         // Update subscription status
         subscription.paymentStatus = 'Paid';
