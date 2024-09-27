@@ -25,20 +25,24 @@ const UserBalance = () => {
 
   if (!isSignedIn) {
     return (
+      <div className="flex items-center justify-center">
       <div className="p-6 bg-white rounded-lg shadow-lg max-w-sm">
         <p className="text-center text-gray-800 font-semibold">
           Please sign in to view your balance.
         </p>
+    </div>
     </div>
     )
   }
 
   if (loading) {
     return (
+      <div className="flex items-center justify-center">
       <div className="p-6 bg-white rounded-lg shadow-lg max-w-sm">
         <p className="text-center text-gray-500 font-semibold">
           Loading balance...
         </p>
+      </div>
       </div>
     );
   }

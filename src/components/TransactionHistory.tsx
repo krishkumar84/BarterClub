@@ -52,6 +52,7 @@ const TransactionHistory = () => {
                 <th className="py-2 px-4 text-left">Type</th>
                 <th className="py-2 px-4 text-left">Amount (₹)</th>
                 <th className="py-2 px-4 text-left">Date</th>
+                <th className="py-2 px-4 text-left">Time</th>
                 <th className="py-2 px-4 text-left">Points</th>
               </tr>
             </thead>
@@ -64,6 +65,9 @@ const TransactionHistory = () => {
                   <td className="py-2 px-4 text-black">₹{tx.amount}</td>
                   <td className="py-2 px-4 text-gray-600">
                     {new Date(tx.date).toLocaleDateString()}
+                  </td>
+                  <td className="py-2 px-4 text-gray-600">
+                    {new Date(tx.date).toLocaleTimeString()}
                   </td>
                   <td className={`py-2 px-4 font-bold ${
                     tx.points > 0 ? 'text-green-500' : 'text-black'

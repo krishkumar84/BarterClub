@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@clerk/nextjs';
+// import { useAuth } from '@clerk/nextjs';
 // import { useCart } from '@/hooks/use-cart'
 // import { Product } from '@/payload-types'
 
@@ -16,7 +16,7 @@ const AddToCartButton = ({
 //   const { addItem } = useCart()
 const { isSignedIn } = useUser(); 
   const router = useRouter()
-  const { userId } = useAuth();
+  // const { userId } = useAuth();
   const [isSuccess, setIsSuccess] = useState<boolean>(false)
 
   useEffect(() => {
@@ -39,13 +39,17 @@ const { isSignedIn } = useUser();
     const res = await fetch('/api/createOrder', {
       method: 'POST',
       body: JSON.stringify({
-        // buyerId: user.id,
-        productId: product.id
+        //  buyerId: product.userId,
+        productId: product._id
       }),
       headers: {
         'Content-Type': 'application/json'
       }
     })
+    console.log(res);
+    console.log("product",product);
+    console.log(product._id);
+    console.log(product.userId);
 
     if (res.ok) {
       setIsSuccess(true)

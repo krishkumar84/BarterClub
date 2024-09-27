@@ -7,25 +7,37 @@ import Order from '@/lib/models/order.model';
 
 connect();
 export async function POST(req:Request){
+  const { sessionClaims} = auth();
+    const userId = (sessionClaims?.userId as any)?.userId;
+    console.log("userid hello",userId);
     const body = await req.json();
-    const { buyerId, productId } = body;
+    const {productId } = body;
+    console.log("productid",productId);
+    console.log("userid", userId);
     try {
         // Find buyer and seller by their IDs
-        const buyer = await User.findById(buyerId);
+        const buyer = await User.findById(userId);
         const product = await Product.findById(productId);
         const sellerId = product?.owner;
         const seller = await User.findById(sellerId);
-        const points = product?.points;
+        const points = product?.price;
     
         if (!buyer || !seller || !product) {
           throw new Error("Invalid buyer, seller, or product");
         }
+        console.log("buyer",buyer);
+        console.log("point",points);
+        console.log("product",buyer.balance);
     
         // Check if the buyer has enough points
         if (buyer.balance < points) {
+          return NextResponse.json({ message: "Insufficient points for the transaction" }, { status: 400 });
           throw new Error("Insufficient points for the transaction");
         }
-    
+        console.log("buyer",buyer);
+        console.log("product",product);
+        console.log("seller",seller);
+        console.log("points",points);
         // Create the order
         const order = new Order({
           product: product._id,
@@ -33,7 +45,7 @@ export async function POST(req:Request){
           seller: seller._id,
           pointsExchanged: points
         });
-    
+       console.log("order",order);
         // Update points between buyer and seller
         buyer.balance -= points;
         seller.balance += points;
@@ -44,9 +56,9 @@ export async function POST(req:Request){
         await seller.save();
     
         console.log("Order created successfully:", order);
-        NextResponse.json({ order }, { status: 201 });
+       return NextResponse.json({ order }, { status: 201 });
       } catch (error:any) {
         console.error("Error creating order:", error.message);
-        NextResponse.json({ message: error.message }, { status: 500 });
+       return  NextResponse.json({ message: error.message }, { status: 500 });
       }
 }
