@@ -4,6 +4,7 @@ import User from '@/lib/models/user.model'
 import { NextResponse } from 'next/server';
 import Product from '@/lib/models/product.model';
 import Order from '@/lib/models/order.model';
+import Transaction from '@/lib/models/transaction.model';
 
 connect();
 export async function POST(req:Request){
@@ -49,6 +50,43 @@ export async function POST(req:Request){
         // Update points between buyer and seller
         buyer.balance -= points;
         seller.balance += points;
+
+
+        console.log("buyer",buyer);
+        console.log("hitting trancaction");
+        // Create a transaction record for the buyer
+    const buyerTransaction = new Transaction({
+      userId: buyer._id,
+      amount: 'Purchase',  // Amount spent by the buyer (negative for spending)
+      transactionType: "Buy",
+      points: -points, // Barter points spent
+      razorpayPaymentId: "buying product", // Set this if you have a payment ID
+      description: `Purchased ${product.title} for ${points} points.`, // Add a meaningful description
+      orderId: order._id // Link the order ID
+    });
+
+    console.log("buyertransaction",buyerTransaction);
+
+    console.log("hitting transaction");
+    // Create a transaction record for the seller
+    const sellerTransaction = new Transaction({
+      userId: seller._id,
+      amount: 'Sell product' ,  // Amount received by the seller (positive for earnings)
+      transactionType: 'Sell',
+      points: points,
+      razorpayPaymentId: "selling product", // Set this if you have a payment ID
+      description: `Sold ${product.title} and earned ${points} points.`, // Add a meaningful description
+      orderId: order._id // Link the order ID
+    });
+   console.log("sellertransaction",sellerTransaction);
+
+    // Save the transactions
+    await buyerTransaction.save();
+    await sellerTransaction.save();
+
+    // Update transaction history for both users
+    buyer.transactionHistory.push(buyerTransaction._id);
+    seller.transactionHistory.push(sellerTransaction._id);
     
         // Save the order and the updated users
         await order.save();

@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
           const transaction = new Transaction({
             userId: user._id,
             amount: payment.amount / 100, // Convert paise to INR
-            transactionType: 'Purchase',
+            transactionType: 'Bonus',
             points: subscription.barterPoints,
             razorpayPaymentId: payment.id,
             orderId,

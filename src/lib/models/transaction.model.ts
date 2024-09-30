@@ -3,10 +3,10 @@ import { Schema, model, models } from "mongoose";
 // Define the transaction schema
 const TransactionSchema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  amount: { type: Number, required: true },  // Amount in INR or barter points
+  amount: { type: String, required: true },  // Amount in INR or barter points
   transactionType: { 
     type: String, 
-    enum: ['Purchase', 'Bonus'],  // Bonus = barter points credited as discount or free
+    enum: ['Purchase', 'Bonus','Sell','Buy'],  // Bonus = barter points credited as discount or free
     required: true 
   },
   points: { type: Number, required: true },  // Barter points credited

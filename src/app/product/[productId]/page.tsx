@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { config } from '@/constants/index'
 import axios from 'axios'
 import Image from 'next/image'
+import {auth } from '@clerk/nextjs/server';
 
 
 const apiUrl = config.apiUrl;
@@ -22,8 +23,9 @@ const BREADCRUMBS = [
   { id: 1, name: 'Home', href: '/' },
   { id: 2, name: 'Products', href: '/products' },
 ]
-
 const Page = async ({ params }: PageProps) => {
+  const { userId} : { userId: string | null } = auth();
+  console.log(userId);
   const { productId } = params
   // console.log(params);
   // console.log(productId);
@@ -35,6 +37,9 @@ const Page = async ({ params }: PageProps) => {
 
   const getRelatedPost = await axios.get(`${apiUrl}/api/getRelatedPosts?categoryId=${productDetails.category._id}&postId=${productId}`);
   const data = getRelatedPost.data.data;
+
+  
+  const isPostCreater = userId === productDetails?.clerkId;
 
   // console.log(data);
 
@@ -149,9 +154,11 @@ const Page = async ({ params }: PageProps) => {
             {/* add to cart part */}
             <div className="mt-6 lg:col-start-1 lg:row-start-2 lg:max-w-lg lg:self-start">
               <div>
+                {!isPostCreater && (
                 <div className="mt-10">
                   <AddToCartButton product={productDetails} />
                 </div>
+                )}
                 <div className="mt-6 text-center">
                   <div className="group inline-flex text-sm text-medium">
                     <Shield
