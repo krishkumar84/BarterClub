@@ -11,11 +11,10 @@ const GetApp = () => {
       <div className="flex flex-col-reverse sm:flex-row justify-center items-center flex-wrap px-6 w-full">
         <div className="z-20 flex w-full flex-1 flex-col items-start justify-center gap-4">
         <h2 className="text-3xl font-bold  text-white sm:text-4xl lg:text-5xl">
-        Quisque tristique tellus in tellus eleifend 
+        Exchange what you want with what you have.
               </h2>
               <p className="max-w-xl text-base leading-relaxed text-white">
-                Sed vulputate risus efficitur metus placerat ultricies. Mauris
-                ultrices ultricies nisl sit amet luctus.
+              swap items or services without spending money. It’s a simple way to get what you want by exchanging things you already own.
               </p>
               <button
                     type="button"

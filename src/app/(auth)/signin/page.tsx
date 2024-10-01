@@ -33,7 +33,7 @@ export default function SignIn() {
 
       if (signInAttempt.status === 'complete') {
         await setActive({ session: signInAttempt.createdSessionId });
-        router.push('/');
+        router.push('/profile');
       } else {
         setErrorMessage('Invalid email or password');
       setToastOpen(true);

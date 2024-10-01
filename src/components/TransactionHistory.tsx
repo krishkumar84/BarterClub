@@ -50,7 +50,7 @@ const TransactionHistory = () => {
             <thead>
               <tr className="bg-black text-white">
                 <th className="py-2 px-4 text-left">Type</th>
-                <th className="py-2 px-4 text-left">Amount (₹)</th>
+                <th className="py-2 px-4 text-left">Amount</th>
                 <th className="py-2 px-4 text-left">Date</th>
                 <th className="py-2 px-4 text-left">Time</th>
                 <th className="py-2 px-4 text-left">Points</th>
@@ -62,7 +62,7 @@ const TransactionHistory = () => {
                   <td className="py-2 px-4 text-black font-semibold">
                     {tx.transactionType}
                   </td>
-                  <td className="py-2 px-4 text-black">₹{tx.amount}</td>
+                  <td className="py-2 px-4 text-black">{tx.amount}</td>
                   <td className="py-2 px-4 text-gray-600">
                     {new Date(tx.date).toLocaleDateString()}
                   </td>
