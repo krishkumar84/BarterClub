@@ -71,11 +71,11 @@ export async function POST(req: NextRequest) {
           // Create a transaction record
           const transaction = new Transaction({
             userId: user._id,
-            amount: payment.amount / 100, // Convert paise to INR
-            transactionType: 'Bonus',
+            amount: "Bonus", // Convert paise to INR
+            transactionType: 'Subscription',
             points: subscription.barterPoints,
-            razorpayPaymentId: payment.id,
-            orderId,
+            razorpayPaymentId:"Buy Subscription",
+            orderId: payment.id,
             invoiceId,
             description,
           });
