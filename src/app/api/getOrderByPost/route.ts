@@ -15,9 +15,10 @@ export async function GET(req: Request) {
     console.log(postId);
     const { sessionClaims} = auth();
     const sellerId = (sessionClaims?.userId as any)?.userId;
-    if (!sellerId) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    console.log(sellerId);
+    // if (!sellerId) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 
-try{
+  try{
     const orders = await Order.aggregate([
         {
             $lookup: {
@@ -72,5 +73,5 @@ try{
         } catch (error) {
             console.error(error)
             return NextResponse.json({ error: (error as Error).message });
-        }
+   }
 }

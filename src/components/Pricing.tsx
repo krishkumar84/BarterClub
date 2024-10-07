@@ -1,6 +1,6 @@
 "use client"
 import axios from "axios";
-import { color } from "framer-motion";
+// import { color } from "framer-motion";
 import Image from "next/image";
 import { useState,useEffect } from "react";
 import { useAuth } from '@clerk/nextjs';

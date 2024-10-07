@@ -119,14 +119,25 @@ export async function POST(req: NextRequest) {
             if (user) {
               user.balance += subscription.barterPoints;
               user.purchasedPoints += subscription.barterPoints;
+              const orderId = payment.order_id;
+             const invoiceId = payment.invoice_id;
+             const description = payment.description;
 
               // Create a transaction record
               const transaction = new Transaction({
+                // userId: user._id,
+                // amount: payment.amount / 100, // Convert paise to INR
+                // transactionType: 'Purchase',
+                // points: subscription.barterPoints,
+                // razorpayPaymentId: payment.id,
                 userId: user._id,
-                amount: payment.amount / 100, // Convert paise to INR
-                transactionType: 'Purchase',
+                amount: "Bonus", // Convert paise to INR
+                transactionType: 'Subscription',
                 points: subscription.barterPoints,
-                razorpayPaymentId: payment.id,
+                razorpayPaymentId:"Buy Subscription",
+                orderId: payment.id,
+                invoiceId,
+                description,
               });
               await transaction.save();
               user.transactionHistory.push(transaction._id);

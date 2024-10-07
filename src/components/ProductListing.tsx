@@ -65,6 +65,12 @@ const ProductListing = ({
            </Link>
 
           <DeleteConfirmation clerkId={ActiveUserId} postId={product._id as string} />
+
+          <Link href={`/orders?postId=${product._id }`}>
+          <p className='mt-1 right-0 text-sm text-blue-600'>
+        Orders
+        </p>
+           </Link>
         </div>
         )}
       </div>
