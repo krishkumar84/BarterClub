@@ -12,6 +12,7 @@ import axios from 'axios';
 import { config } from '@/constants/index'
 import UserBalance from '@/components/UserBalance';
 import TransactionHistory from '@/components/TransactionHistory';
+import MyOrders from '@/components/myOrder';
 
 
 const apiUrl = config.apiUrl;
@@ -78,6 +79,7 @@ const BREADCRUMBS = [
       </section>
        <UserBalance />
        <TransactionHistory/>
+       <MyOrders userId={userId}/>
       {/* <section className="wrapper my-8">
          <MaxWidthWrapper>
            <ProductReel
