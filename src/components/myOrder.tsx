@@ -78,18 +78,18 @@ export default function MyOrders(userId: any) {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-16 py-8">
       <h1 className="text-3xl font-bold mb-6">My Orders</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {orders.map((order) => (
           <Card key={order._id} className="overflow-hidden flex flex-col">
             <CardHeader className="p-0">
-              <div className="relative h-56 w-full">
+              <div className="relative h-60 w-full">
                 <Image
                   src={order.product.images[0]}
                   alt={order.product.title}
                   layout="fill"
-                  objectFit="cover"
+                  objectFit="contain"
                 />
               </div>
             </CardHeader>

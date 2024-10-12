@@ -14,7 +14,7 @@ interface ProductReelProps {
   page: number | string,
   totalPages?: number,
   urlParamName?: string,
-  collectionType?: 'My_Post' | 'All_Posts' |'Related_Posts'
+  collectionType?: 'My Products' | 'All_Posts' |'Related_Posts'
   hide?: boolean
 }
 const FALLBACK_LIMIT = 4
