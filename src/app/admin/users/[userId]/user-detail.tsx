@@ -13,6 +13,8 @@ import { Badge } from "@/components/ui/badge"
 import { ArrowUpRight, CheckCircle2, XCircle } from "lucide-react"
 
 interface User {
+  _id: string;
+  clerkId: string;
   Name: string;
   email: string;
   phone: string;
@@ -63,8 +65,22 @@ export default function UserDetails({ user }: { user: User }) {
   const [points, setPoints] = useState("")
   const router = useRouter()
 
+  console.log(user)
+
   const handleIncreasePoints = async () => {
     // Implement API call to increase points
+    const clerkId = user.clerkId;
+    const userId = user._id;
+
+    const res = await fetch("/api/adminAddPoint", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ userId, points,clerkId })
+    })
+    const data = await res.json()
+    console.log(data)
     console.log("Increasing points:", points)
     // After successful API call, refresh the page or update the user state
   }
