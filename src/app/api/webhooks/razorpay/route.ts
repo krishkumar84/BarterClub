@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
         if (subscription) {
           subscription.paymentStatus = 'Paid';
           subscription.startDate = new Date(subscriptionData.start_at * 1000);
-          subscription.endDate = new Date(subscriptionData.end_at * 1000);
+          // subscription.endDate = new Date(subscriptionData.end_at * 1000);
           await subscription.save();
         }
         break;
@@ -111,11 +111,11 @@ export async function POST(req: NextRequest) {
         if (subscription) {
           if (payment.status === 'captured') {
             subscription.paymentStatus = 'Paid';
-            if (subscription.planType === 'Monthly') {
-              subscription.endDate = new Date(subscription.endDate.setMonth(subscription.endDate.getMonth() + 1));
-            } else if (subscription.planType === 'Yearly') {
-              subscription.endDate = new Date(subscription.endDate.setFullYear(subscription.endDate.getFullYear() + 1));
-            }
+            // if (subscription.planType === 'Monthly') {
+            //   subscription.endDate = new Date(subscription.endDate.setMonth(subscription.endDate.getMonth() + 1));
+            // } else if (subscription.planType === 'Yearly') {
+            //   subscription.endDate = new Date(subscription.endDate.setFullYear(subscription.endDate.getFullYear() + 1));
+            // }
             await subscription.save();
 
             // Update user barter points
