@@ -4,7 +4,9 @@ import { config } from '@/constants/index'
 const apiUrl = config.apiUrl;
 
 async function getUserDetails(userId: string) {
-  const res = await fetch(`${apiUrl}/api/getUserDetails/${userId}`)
+  const res = await fetch(`${apiUrl}/api/getUserDetails/${userId}`,
+    {cache: "no-store",}
+  )
   const data = await res.json()
   return data.data
 }

@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { ArrowUpRight, CheckCircle2, XCircle } from "lucide-react"
+import { set } from "mongoose"
 
 interface User {
   _id: string;
@@ -65,7 +66,7 @@ export default function UserDetails({ user }: { user: User }) {
   const [points, setPoints] = useState("")
   const router = useRouter()
   console.log("now")
-  console.log(user)
+  console.log(user.subscription)
 
   const handleIncreasePoints = async () => {
     // Implement API call to increase points
@@ -79,6 +80,10 @@ export default function UserDetails({ user }: { user: User }) {
       },
       body: JSON.stringify({ userId, points,clerkId })
     })
+    if (res.ok) {
+      router.refresh();
+      setPoints("")
+    }
     const data = await res.json()
     console.log(data)
     console.log("Increasing points:", points)
@@ -219,7 +224,7 @@ export default function UserDetails({ user }: { user: User }) {
                     <TableHead>Duration</TableHead>
                     <TableHead>Start Date</TableHead>
                     <TableHead>End Date</TableHead>
-                    {/* <TableHead>Status</TableHead> */}
+                    <TableHead>Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -229,13 +234,13 @@ export default function UserDetails({ user }: { user: User }) {
                       <TableCell>{subscription.duration}</TableCell>
                       <TableCell>{new Date(subscription.startDate).toLocaleDateString()}</TableCell>
                       <TableCell>{new Date(subscription.endDate).toLocaleDateString()}</TableCell>
-                      {/* <TableCell>
+                      <TableCell>
                         {subscription.paymentStatus === "Paid" ? (
                           <CheckCircle2 className="text-green-500" />
                         ) : (
                           <XCircle className="text-red-500" />
                         )}
-                      </TableCell> */}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

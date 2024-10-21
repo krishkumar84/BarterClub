@@ -111,7 +111,11 @@ export async function POST(req: NextRequest) {
         if (subscription) {
           if (payment.status === 'captured') {
             subscription.paymentStatus = 'Paid';
-            subscription.endDate = new Date(subscriptionData.end_at * 1000);
+            if (subscription.planType === 'Monthly') {
+              subscription.endDate = new Date(subscription.endDate.setMonth(subscription.endDate.getMonth() + 1));
+            } else if (subscription.planType === 'Yearly') {
+              subscription.endDate = new Date(subscription.endDate.setFullYear(subscription.endDate.getFullYear() + 1));
+            }
             await subscription.save();
 
             // Update user barter points
