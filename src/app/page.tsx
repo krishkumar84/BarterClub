@@ -14,6 +14,7 @@ import Header from "@/components/navbar";
 // import HeroCarousel from "./components/HeroCarousel";
 
 const  Home = async () => {
+
   return (
    <>
    <section  style={{

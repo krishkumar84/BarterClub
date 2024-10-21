@@ -235,7 +235,7 @@ export default function UserDetails({ user }: { user: User }) {
                       <TableCell>{new Date(subscription.startDate).toLocaleDateString()}</TableCell>
                       <TableCell>{new Date(subscription.endDate).toLocaleDateString()}</TableCell>
                       <TableCell>
-                        {subscription.paymentStatus === "Paid" ? (
+                      {subscription.paymentStatus === "Paid" && new Date(subscription.endDate) > new Date() ? (
                           <CheckCircle2 className="text-green-500" />
                         ) : (
                           <XCircle className="text-red-500" />

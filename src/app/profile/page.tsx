@@ -36,6 +36,11 @@ const getRelatedPostByUser = await axios.get(`${apiUrl}/api/getRelatedPostByUser
 const data = getRelatedPostByUser.data;
 console.log(data);
 
+const chkstatus = await axios.get(`${apiUrl}/api/checkSubscriptionStatus?userId=${userId}`);
+console.log("hello krish")
+console.log(chkstatus.data);
+console.log(chkstatus.data.message);
+
 const BREADCRUMBS = [
   { id: 1, name: 'Home', href: '/' },
   { id: 2, name: 'Products', href: '/products' },
