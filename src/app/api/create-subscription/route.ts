@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import Razorpay from 'razorpay';
-// import { v4 as uuidv4 } from 'uuid';
-import { connect } from '@/lib/db'; // Ensure you have a dbConnect utility
+import { connect } from '@/lib/db';
 import User from '@/lib/models/user.model';
 import Subscription from '@/lib/models/subscription.model';
 import { NextResponse } from 'next/server';
@@ -78,13 +77,23 @@ export async function POST(req:NextRequest, res:NextApiResponse) {
         razorpaySubscriptionId: subscription.id,
       });
 
+      user.subscription = {
+        plan: planType,
+        isActive: true,
+        startDate: new Date(),
+        endDate,
+      };
+
+      console.log('Saving subscription and user');
+      await user.save();
+
       await newSubscription.save();
       return NextResponse.json({
         razorpaySubscriptionId: subscription.id,
         planName: planType,
       },
       {
-        status: 200, // You can change this to any status code you need
+        status: 200,
       }
     );
     }else{
@@ -92,7 +101,7 @@ export async function POST(req:NextRequest, res:NextApiResponse) {
             plan: 'Free',
             isActive: true,
             startDate: new Date(),
-            endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // 1 year validity
+            endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
           };
           await user.save();
     
@@ -109,17 +118,4 @@ export async function POST(req:NextRequest, res:NextApiResponse) {
         status: 500,
        });
       }
-
-    // const instance = new Razorpay({
-    //     key_id: process.env.RAZORPAY_KEY_ID || "",
-    //     key_secret: process.env.RAZORPAY_KEY_SECRET,
-    // });
-
-    // const result = await instance.subscriptions.create({
-    //     plan_id: process.env.STARTUP_MONTHLY_SUBSCRIPTION_PLAN_ID || " ",
-    //     total_count: 1,
-    //     customer_notify: 1,
-    //     addons: [],
-    // });
-    // return NextResponse.json(result);
 }

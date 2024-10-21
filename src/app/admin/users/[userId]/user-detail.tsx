@@ -64,7 +64,7 @@ const formatDate = (dateString: string) => {
 export default function UserDetails({ user }: { user: User }) {
   const [points, setPoints] = useState("")
   const router = useRouter()
-
+  console.log("now")
   console.log(user)
 
   const handleIncreasePoints = async () => {
@@ -91,7 +91,7 @@ export default function UserDetails({ user }: { user: User }) {
         <CardHeader>
           <div className="flex items-center space-x-4">
             <Avatar className="h-20 w-20">
-              <AvatarImage src="/placeholder-user.jpg" alt={user.Name} />
+              <AvatarImage src="/placeholder-user.jpg" alt={"user img"} />
               <AvatarFallback>{user.Name.charAt(0)}</AvatarFallback>
             </Avatar>
             <div>
@@ -219,7 +219,7 @@ export default function UserDetails({ user }: { user: User }) {
                     <TableHead>Duration</TableHead>
                     <TableHead>Start Date</TableHead>
                     <TableHead>End Date</TableHead>
-                    <TableHead>Status</TableHead>
+                    {/* <TableHead>Status</TableHead> */}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -229,13 +229,13 @@ export default function UserDetails({ user }: { user: User }) {
                       <TableCell>{subscription.duration}</TableCell>
                       <TableCell>{new Date(subscription.startDate).toLocaleDateString()}</TableCell>
                       <TableCell>{new Date(subscription.endDate).toLocaleDateString()}</TableCell>
-                      <TableCell>
+                      {/* <TableCell>
                         {subscription.paymentStatus === "Paid" ? (
                           <CheckCircle2 className="text-green-500" />
                         ) : (
                           <XCircle className="text-red-500" />
                         )}
-                      </TableCell>
+                      </TableCell> */}
                     </TableRow>
                   ))}
                 </TableBody>
