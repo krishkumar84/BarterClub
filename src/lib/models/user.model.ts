@@ -46,7 +46,7 @@ const UserSchema = new Schema({
         default: 0 
       },
     subscription: {
-      plan: { type: String, enum: ['Basic', 'Standard', 'Premium'], default: 'Free' },
+      plan: { type: String, enum: ['Free','Basic', 'Standard', 'Premium'], default: 'Free' },
       isActive: { type: Boolean, default: false },
       startDate: { type: Date },
       endDate: { type: Date },
