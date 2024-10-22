@@ -1,9 +1,5 @@
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import ProductReel from '@/components/ProductReel'
-import { Button } from '@/components/ui/button'
-// import { getEventsByUser } from '@/lib/actions/event.actions'
-// import { getOrdersByUser } from '@/lib/actions/order.actions'
-// import { IOrder } from '@/lib/database/models/order.model'
 import { SearchParamProps } from '@/types'
 import { auth } from "@clerk/nextjs/server";
 import Link from 'next/link'
@@ -13,6 +9,36 @@ import { config } from '@/constants/index'
 import UserBalance from '@/components/UserBalance';
 import TransactionHistory from '@/components/TransactionHistory';
 import MyOrders from '@/components/myOrder';
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Label } from "@/components/ui/label"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+
+interface User {
+  _id: string;
+  clerkId: string;
+  Name: string;
+  email: string;
+  phone: string;
+  Gst: string;
+  Address: string;
+  subscription: {
+    isActive: boolean;
+    plan: string;
+  };
+  balance: number;
+  discountPoints: number;
+  purchasedPoints: number;
+  transactionHistory: {
+    _id: string;
+    date: string;
+    amount: number;
+    transactionType: string;
+    points: number;
+    description?: string;
+  }[];
+}
 
 
 const apiUrl = config.apiUrl;
@@ -23,23 +49,15 @@ const ProfilePage = async ({ searchParams }: SearchParamProps) => {
   const { userId:clerkId } : { userId: string | null } = auth();
 
   if (!clerkId) return null;
-//   const ordersPage = Number(searchParams?.ordersPage) || 1;
-//   const eventsPage = Number(searchParams?.eventsPage) || 1;
-
-//   const orders = await getOrdersByUser({ userId, page: ordersPage})
-
-//   const orderedEvents = orders?.data.map((order: IOrder) => order.event) || [];
-//   const organizedEvents = await getEventsByUser({ userId, page: eventsPage })
-// console.log(userId);
-// console.log(`${apiUrl}/api/getRelatedPostByUser?userId=${userId}`);
 const getRelatedPostByUser = await axios.get(`${apiUrl}/api/getRelatedPostByUser?userId=${userId}`);
 const data = getRelatedPostByUser.data;
 console.log(data);
 
 const chkstatus = await axios.get(`${apiUrl}/api/checkSubscriptionStatus?userId=${userId}`);
-console.log("hello krish")
 console.log(chkstatus.data);
-console.log(chkstatus.data.message);
+
+const res = await axios.get(`${apiUrl}/api/getclientuserdetail/${userId}`);
+const user: User = res.data.data;
 
 const BREADCRUMBS = [
   { id: 1, name: 'Home', href: '/' },
@@ -82,34 +100,46 @@ const BREADCRUMBS = [
           </Button>
         </div>
       </section>
+      <Card className="mb-6">
+        <CardHeader>
+          <div className="flex items-center space-x-4">
+            <Avatar className="h-20 w-20">
+              <AvatarImage src="/placeholder-user.jpg" alt={"user img"} />
+              <AvatarFallback>{user.Name.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div>
+              <CardTitle className="text-2xl">{user.Name}</CardTitle>
+              <CardDescription>{user.email}</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label>Phone</Label>
+              <p>{user.phone}</p>
+            </div>
+            <div>
+              <Label>GST</Label>
+              <p>{user.Gst}</p>
+            </div>
+            <div>
+              <Label>Address</Label>
+              <p>{user.Address}</p>
+            </div>
+            <div>
+              <Label>Subscription Status</Label>
+              <Badge variant={user.subscription.isActive ? "success" : "destructive"}>
+                {user.subscription.isActive ? "Active" : "Inactive"}
+              </Badge>
+              <p className="text-sm text-muted-foreground">{user.subscription.plan} Plan</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
        <UserBalance />
        <TransactionHistory/>
        <MyOrders userId={userId}/>
-      {/* <section className="wrapper my-8">
-         <MaxWidthWrapper>
-           <ProductReel
-          data={orderedEvents}
-          emptyTitle="No event tickets purchased yet"
-          emptyStateSubtext="No worries - plenty of exciting events to explore!"
-          collectionType="My_Tickets"
-          limit={3}
-          page={ordersPage}
-          urlParamName="ordersPage"
-          totalPages={orders?.totalPages}
-        />
-    </MaxWidthWrapper>
-      </section> */}
-
-      {/* Events Organized */}
-      {/* <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-10">
-        <div className="wrapper flex items-center justify-center sm:justify-between">
-          <Button asChild size="lg" className="button hidden sm:flex">
-            <Link href="/addProduct">
-              Create New Post
-            </Link>
-          </Button>
-        </div>
-      </section> */}
 
       <section className="wrapper my-8">
       <MaxWidthWrapper>
