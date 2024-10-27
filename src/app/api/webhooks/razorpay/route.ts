@@ -24,17 +24,45 @@ export async function POST(req: NextRequest) {
 
     switch (event) {
       case 'payment.captured': {
+
+        try {
         const payment = body.payload.payment.entity;
-        const subscriptionId = payment.subscription_id ;
-        console.log('Payment payload:', body.payload);
-        console.log('Payment Captured Event:', payment);
+        console.log(payment,"payment new")
+        const amountInINR = payment.amount / 100;
+        const userId = payment.notes?.userId;
+        console.log(userId,"userid")
+
+        const user = await User.findById(userId);
+
+        console.log(user,"user")
+        console.log("here aagya")
+        if (user) {
+          user.balance += amountInINR;
+          user.purchasedPoints += amountInINR;
+
+          // Save transaction details
+          const transaction = new Transaction({
+            userId: user._id,
+            amount: amountInINR,
+            transactionType: 'Points Purchase',
+            points: amountInINR,
+            razorpayPaymentId: payment.id,
+          });
+
+          await transaction.save();
+          user.transactionHistory.push(transaction._id);
+          await user.save();
+        }
+      } catch (error) {
+        console.error('Error handling Razorpay webhook:', error);
+      }
         // console.log('Subscription ID:', subscriptionId);
-        const orderId = payment.order_id;
-        const invoiceId = payment.invoice_id;
-        const description = payment.description;
-        console.log('Order ID:', orderId);
-        console.log('Invoice ID:', invoiceId);
-        console.log('Description:', description);
+        // const orderId = payment.order_id;
+        // const invoiceId = payment.invoice_id;
+        // const description = payment.description;
+        // console.log('Order ID:', orderId);
+        // console.log('Invoice ID:', invoiceId);
+        // console.log('Description:', description);
 
         // if (!payment.subscription_id) {
         //   console.log('No subscription ID associated with this payment');
@@ -42,7 +70,7 @@ export async function POST(req: NextRequest) {
         // }
 
         // Find the subscription in your database
-        const subscription = await Subscription.findOne({ razorpaySubscriptionId: subscriptionId });
+        // const subscription = await Subscription.findOne({ razorpaySubscriptionId: subscriptionId });
         // if (!subscription) {
         //   console.error('Subscription not found for payment.captured');
         //   return NextResponse.json({ message: 'Subscription not found' }, { status: 404 });
@@ -51,16 +79,16 @@ export async function POST(req: NextRequest) {
         // console.log('Subscription:', subscription);
 
         // Update subscription status
-        subscription.paymentStatus = 'Paid';
-        await subscription.save();
+        // subscription.paymentStatus = 'Paid';
+        // await subscription.save();
 
         // Update user barter points
-        const user = await User.findById(subscription.userId);
-        if (user) {
-          user.balance += subscription.barterPoints;
-          user.purchasedPoints += subscription.barterPoints;
-          user.subscription.isActive = true;
-          user.subscription.plan = subscription.planType;
+        // const user = await User.findById(subscription.userId);
+        // if (user) {
+        //   user.balance += subscription.barterPoints;
+        //   user.purchasedPoints += subscription.barterPoints;
+        //   user.subscription.isActive = true;
+        //   user.subscription.plan = subscription.planType;
           // user.subscription = {
           //   plan: subscription.planType,
           //   isActive: true,
@@ -69,21 +97,21 @@ export async function POST(req: NextRequest) {
           // };
 
           // Create a transaction record
-          const transaction = new Transaction({
-            userId: user._id,
-            amount: "Bonus", // Convert paise to INR
-            transactionType: 'Subscription',
-            points: subscription.barterPoints,
-            razorpayPaymentId:"Buy Subscription",
-            orderId: payment.id,
-            invoiceId,
-            description,
-          });
-          await transaction.save();
-          user.transactionHistory.push(transaction._id);
-          await user.save();
-        }
-        break;
+        //   const transaction = new Transaction({
+        //     userId: user._id,
+        //     amount: "Bonus", // Convert paise to INR
+        //     transactionType: 'Subscription',
+        //     points: subscription.barterPoints,
+        //     razorpayPaymentId:"Buy Subscription",
+        //     orderId: payment.id,
+        //     invoiceId,
+        //     description,
+        //   });
+        //   await transaction.save();
+        //   user.transactionHistory.push(transaction._id);
+        //   await user.save();
+        // }
+        // break;
       }
 
       case 'payment.failed': {

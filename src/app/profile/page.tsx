@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import BuyPoints from '@/components/buy-points';
 
 interface User {
   _id: string;
@@ -139,8 +140,8 @@ const BREADCRUMBS = [
       </Card>
        <UserBalance />
        <TransactionHistory/>
+       <BuyPoints/>
        <MyOrders userId={userId}/>
-
       <section className="wrapper my-8">
       <MaxWidthWrapper>
       <ProductReel
