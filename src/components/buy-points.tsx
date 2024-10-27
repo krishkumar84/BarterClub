@@ -43,6 +43,7 @@ export default function BuyPoints() {
         userId: currentUser?.publicMetadata.userId,
         amountInINR,
       });
+      console.log(response.data);
 
       const { orderId, keyId } = response.data;
 
@@ -53,6 +54,9 @@ export default function BuyPoints() {
         name: "Barter Club",
         description: "Buy Barter Points",
         order_id: orderId, // Order ID created by the server
+        notes: {
+            userId: currentUser?.publicMetadata.userId, // Ensure you set the userId here
+          },
         handler: async (response: any) => {
           // Payment is handled by the server via webhook
           alert('Payment successful! Points will be added shortly.');
@@ -92,6 +96,7 @@ export default function BuyPoints() {
 
   return (
     <Card className="w-full max-w-md mx-auto">
+        <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
       <CardHeader>
         <CardTitle>Buy Barter Points</CardTitle>
         <CardDescription>Enter the amount of points you want to buy</CardDescription>

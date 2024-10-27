@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
           const transaction = new Transaction({
             userId: user._id,
             amount: amountInINR,
-            transactionType: 'Points Purchase',
+            transactionType: 'Purchase',
             points: amountInINR,
             razorpayPaymentId: payment.id,
           });

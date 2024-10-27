@@ -16,7 +16,8 @@ export async function POST(req:NextRequest, res:NextApiResponse) {
     // const body = req.body; 
     const { amountInINR } = await req.json();
     const { sessionClaims} = auth();
-    const userId: string = sessionClaims?.userId as string;
+    const userId: string = (sessionClaims?.userId as any)?.userId;
+    console.log("userid hello",userId);
     if(!userId){
       return NextResponse.json({ message: 'User not found' });
     }
