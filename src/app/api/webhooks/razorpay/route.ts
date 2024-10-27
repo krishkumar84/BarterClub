@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
         if (user) {
           user.balance += amountInINR;
           user.purchasedPoints += amountInINR;
+          const description = payment.description;
 
           // Save transaction details
           const transaction = new Transaction({
@@ -47,6 +48,7 @@ export async function POST(req: NextRequest) {
             transactionType: 'Purchase',
             points: amountInINR,
             razorpayPaymentId: payment.id,
+            description,
           });
 
           await transaction.save();
