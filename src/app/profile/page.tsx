@@ -15,6 +15,12 @@ import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import BuyPoints from '@/components/buy-points';
+import {
+  SignedIn,
+  SignedOut,
+  SignOutButton,
+  UserButton,
+} from "@clerk/nextjs";
 
 interface User {
   _id: string;
@@ -68,28 +74,46 @@ const BREADCRUMBS = [
   return (
     <>
       <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-10">
-          <ol className='flex items-center ml-12 mt-8 space-x-2'>
-              {BREADCRUMBS.map((breadcrumb, i) => (
-                <li key={breadcrumb.href}>
-                  <div className='flex items-center text-sm'>
-                    <Link
-                      href={breadcrumb.href}
-                      className='font-medium text-sm text-muted-foreground hover:text-gray-900'>
-                      {breadcrumb.name}
-                    </Link>
-                    {i !== BREADCRUMBS.length - 1 ? (
-                      <svg
-                        viewBox='0 0 20 20'
-                        fill='currentColor'
-                        aria-hidden='true'
-                        className='ml-2 h-5 w-5 flex-shrink-0 text-gray-300'>
-                        <path d='M5.555 17.776l8-16 .894.448-8 16-.894-.448z' />
-                      </svg>
-                    ) : null}
-                  </div>
-                </li>
-              ))}
-            </ol>
+      <div className="flex items-center justify-between mx-12 mt-8">
+        {/* Left - Breadcrumbs */}
+        <ol className="flex items-center space-x-2">
+          {BREADCRUMBS.map((breadcrumb, i) => (
+            <li key={breadcrumb.href}>
+              <div className="flex items-center text-sm">
+                <Link href={breadcrumb.href} className="font-medium text-sm text-muted-foreground hover:text-gray-900">
+                  {breadcrumb.name}
+                </Link>
+                {i !== BREADCRUMBS.length - 1 ? (
+                  <svg
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    className="ml-2 h-5 w-5 flex-shrink-0 text-gray-300">
+                    <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+                  </svg>
+                ) : null}
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        {/* Right - Buttons */}
+        <div className="flex items-center space-x-4">
+          <SignedIn>
+            <SignOutButton>
+              <Link href="/">
+                <button
+                  type="button"
+                  className="rounded-3xl px-6 py-3 text-sm font-semibold text-[#FD4677] shadow-sm hover:bg-slate-300 hover:text-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">
+                  Logout
+                </button>
+              </Link>
+            </SignOutButton>
+            <UserButton />
+          </SignedIn>
+        </div>
+      </div>
+
         <div className="wrapper p-6 pl-20 flex items-center justify-center sm:justify-between">
         <h1 className='text-2xl font-bold text-gray-900 sm:text-3xl'>
         My Orders

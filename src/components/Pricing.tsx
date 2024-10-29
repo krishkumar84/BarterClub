@@ -1,12 +1,11 @@
 "use client"
 import axios from "axios";
-// import { color } from "framer-motion";
 import Image from "next/image";
 import { useState,useEffect } from "react";
 import { useAuth } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
-// import Razorpay from "razorpay";
+import { toast } from "sonner";
 const pricingData = [
   {
     mainTitle: "For Individuals",
@@ -172,84 +171,67 @@ const Pricing = () => {
       setLoading(false);
       return;
     }
-    try {
-      const response = await axios.post('/api/create-subscription', {
-        userId: currentUser?.publicMetadata.userId, // Ensure user ID is correctly fetched
-        planType,
-        duration,
-      });
 
-      const { razorpaySubscriptionId, planName, message } = response.data;
+    const { data } = await axios.get(`/api/checkSubscriptionStatus?userId=${currentUser?.publicMetadata.userId}`);
 
-      if (message === 'Subscribed to Free Plan') {
-        alert('Successfully subscribed to Free Plan');
-        setLoading(false);
-        return;
-      }
-
-      // Initialize Razorpay Checkout
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Public key
-        subscription_id: razorpaySubscriptionId,
-        name: "Barter Club",
-        currency: "INR",
-        description: `${planName} Plan Subscription`,
-        image: "/logo.png",
-        handler: async (response: any) => {
-          // After payment, Razorpay will handle via webhook
-          // Optionally, you can show a success message
-          alert('Payment successful! Your subscription is active.');
+    if (data.message === 'Subscription expired, plan reverted to Free') {
+      // Proceed with creating Razorpay account as the subscription is expired
+      try {
+        const response = await axios.post('/api/create-subscription', {
+          userId: currentUser?.publicMetadata.userId, // Ensure user ID is correctly fetched
+          planType,
+          duration,
+        });
+  
+        const { razorpaySubscriptionId, planName, message } = response.data;
+  
+        if (message === 'Subscribed to Free Plan') {
+          alert('Successfully subscribed to Free Plan');
           setLoading(false);
-        },
-        prefill: {
-          name: currentUser?.fullName,
-          email: currentUser?.primaryEmailAddress.emailAddress ,
-        },
-        theme: {
-          color: "#FD4677",
-        },
-      };
-      // @ts-ignore
-      const rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', (response: any) => {
-        alert('Payment failed! Please try again.');
+          return;
+        }
+  
+        // Initialize Razorpay Checkout
+        const options = {
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Public key
+          subscription_id: razorpaySubscriptionId,
+          name: "Barter Club",
+          currency: "INR",
+          description: `${planName} Plan Subscription`,
+          image: "/logo.png",
+          handler: async (response: any) => {
+            // After payment, Razorpay will handle via webhook
+            // Optionally, you can show a success message
+            toast.success('Payment successful! Your subscription is active.');
+            setLoading(false);
+          },
+          prefill: {
+            name: currentUser?.fullName,
+            email: currentUser?.primaryEmailAddress.emailAddress ,
+          },
+          theme: {
+            color: "#FD4677",
+          },
+        };
+        // @ts-ignore
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', (response: any) => {
+          alert('Payment failed! Please try again.');
+          setLoading(false);
+        });
+        rzp.open();
+      } catch (error: any) {
+        console.error('Error creating subscription:', error);
+        alert(error.response?.data?.message || 'An error occurred');
         setLoading(false);
-      });
-      rzp.open();
-    } catch (error: any) {
-      console.error('Error creating subscription:', error);
-      alert(error.response?.data?.message || 'An error occurred');
-      setLoading(false);
+      }
+    } else if (data.message === 'Subscription is still active') {
+      // Show a toast message indicating the subscription is still active
+     toast.success('Subscription is still active');
+     setLoading(false);
     }
-
-
-
-  //  axios.post('/api/create-subscription', {})
-  //  .then((res) => {
-  //     console.log(res.data)
-  //     OnPayment(res.data.id)
-  //   },(error)=>{
-  //     setLoading(false);
-  //   })
   }
 
-//   const OnPayment = (subId:string) => {
-//     const options = {
-//       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, 
-//       subscription_id: subId,
-//       currency: "INR",
-//       name: "Barter Club",
-//       description: "monthly subscription",
-//       image: "/logo.png",
-//       handler: async(response:any) => {
-//         console.log(response);
-//         setLoading(false);
-//       }, 
-//   }
-// // @ts-ignore
-//   const rzp =new window.Razorpay(options);
-//   rzp.open();
-// }
 
 
   return (

@@ -1,145 +1,193 @@
 "use client"
+
 import Link from 'next/link'
-import React, { useState } from 'react';
-import { useAuth, useSignIn } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
+import React, { useState } from 'react'
+import { useAuth, useSignIn } from '@clerk/nextjs'
+import { useRouter } from 'next/navigation'
+import { Eye, EyeOff, Loader2 } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { toast } from "sonner"
 
 export default function ResetPassword() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [code, setCode] = useState('');
-  const [successfulCreation, setSuccessfulCreation] = useState(false);
-  const [secondFactor, setSecondFactor] = useState(false);
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [code, setCode] = useState('')
+  const [successfulCreation, setSuccessfulCreation] = useState(false)
+  const [secondFactor, setSecondFactor] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
-  const router = useRouter();
-  const { isSignedIn } = useAuth();
-  const { isLoaded, signIn, setActive } = useSignIn();
+  const router = useRouter()
+  const { isSignedIn } = useAuth()
+  const { isLoaded, signIn, setActive } = useSignIn()
 
   if (!isLoaded) {
-    return null;
+    return null
   }
 
-  // If the user is already signed in,
-  // redirect them to the home page
   if (isSignedIn) {
-    router.push('/');
+    router.push('/')
+    return null
   }
-
 
   async function create(e: React.FormEvent) {
-    e.preventDefault();
-    await signIn
-      ?.create({
+    e.preventDefault()
+    setIsLoading(true)
+    try {
+      await signIn?.create({
         strategy: 'reset_password_email_code',
         identifier: email,
       })
-      .then(_ => {
-        setSuccessfulCreation(true);
-        setError('');
-      })
-      .catch(err => {
-        console.error('error', err.errors[0].longMessage);
-        setError(err.errors[0].longMessage);
-      });
+      setSuccessfulCreation(true)
+      toast.success("Reset code sent to your email.")
+    } catch (err: any) {
+      console.error('error', err.errors[0].longMessage)
+      toast.error(err.errors[0].longMessage)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-
-
   async function reset(e: React.FormEvent) {
-    e.preventDefault();
-    await signIn
-      ?.attemptFirstFactor({
+    e.preventDefault()
+    setIsLoading(true)
+    try {
+      const result = await signIn?.attemptFirstFactor({
         strategy: 'reset_password_email_code',
         code,
         password,
       })
-      .then(result => {
-        // Check if 2FA is required
-        if (result.status === 'needs_second_factor') {
-          setSecondFactor(true);
-          setError('');
-        } else if (result.status === 'complete') {
-          // Set the active session to 
-          // the newly created session (user is now signed in)
-          setActive({ session: result.createdSessionId });
-          setError('');
-        } else {
-          console.log(result);
-        }
-      })
-      .catch(err => {
-        console.error('error', err.errors[0].longMessage)
-        setError(err.errors[0].longMessage);
-      });
+      if (result?.status === 'needs_second_factor') {
+        setSecondFactor(true)
+        toast.info("2FA is required. Please check your authenticator app.")
+      } else if (result?.status === 'complete') {
+        setActive && setActive({ session: result.createdSessionId })
+        toast.success("Password reset successfully.")
+        router.push('/')
+      } else {
+        console.log(result)
+      }
+    } catch (err: any) {
+      console.error('error', err.errors[0].longMessage)
+      toast.error(err.errors[0].longMessage)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
-    <main className="bg-white dark:bg-slate-900">
+    <main className="min-h-screen bg-white dark:bg-slate-900 bg-[url('/bg2.svg')] bg-no-repeat bg-cover">
       <div className="relative md:flex items-center justify-center">
-        {/* Content */}
         <div className="md:w-1/2">
           <div className="min-h-[100dvh] h-full flex flex-col after:flex-1">
-            {/* <AuthHeader /> */}
-
-            <div className="max-w-sm mx-auto w-full px-4 py-8">
-              <h1 className="text-3xl text-slate-800 dark:text-slate-100 font-bold mb-6">
-                Reset your Password ✨
-              </h1>
-              {/* Form */}
-              <form onSubmit={!successfulCreation ? create : reset}>
-                {!successfulCreation && (
-                  <>
-                  <div>
-                    <label className="block text-sm font-medium mb-1" htmlFor="email">Email Address <span className="text-rose-500">*</span></label>
-                    <input value={email}
-                      onChange={(e) => setEmail(e.target.value)} id="email" className="form-input w-full" type="email" />
-                  </div>
-
-                    <div className="flex justify-end mt-6">
-                      <button className="btn bg-indigo-500 px-3 py-2 rounded-xl  hover:bg-indigo-600 text-white ml-3 whitespace-nowrap">
-                        Send Reset Link
-                      </button>
-                    </div>
-                    {error && <p>{error}</p>}
-                  </>
-                )}
-
-                {successfulCreation && (
-                  <div className="space-y-4">
-                    <label className="block text-sm font-medium mb-1" htmlFor="password">Enter your new password</label>
-                    <input
-                      type="password"
-                      value={password}
-                      className="form-input w-full"
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-
-                    <label className="block text-sm font-medium mb-1" htmlFor="password">
-                      Enter the password reset code that was sent to your email
-                    </label>
-                    <input
-                      type="text"
-                      value={code}
-                      className="form-input w-full"
-                      onChange={(e) => setCode(e.target.value)}
-                    />
-
-                    <button className="btn bg-indigo-500 px-3 py-2 rounded-xl  hover:bg-indigo-600 text-white ml-3 whitespace-nowrap">Reset</button>
-                    {error && <p>{error}</p>}
-                  </div>
-                )}
-
+            <Card className="max-w-sm mx-auto w-full mt-28 bg-gradient-to-b from-[#FD4677] to-[#8952DE] text-white">
+              <CardHeader>
+                <CardTitle className="text-3xl font-bold">
+                  Reset your Password
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={!successfulCreation ? create : reset} className="space-y-4">
+                  {!successfulCreation ? (
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email Address</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                          className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                        />
+                      </div>
+                      <Button 
+                        type="submit" 
+                        className="w-full bg-white text-[#FD4677] hover:bg-white/90"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          'Send Reset Link'
+                        )}
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="password">New Password</Label>
+                        <div className="relative">
+                          <Input
+                            id="password"
+                            type={showPassword ? "text" : "password"}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute inset-y-0 right-0 pr-3 hover:bg-[#FD4677] text-white/50 hover:text-white"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            <span className="sr-only">Toggle password visibility</span>
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="code">Reset Code</Label>
+                        <Input
+                          id="code"
+                          type="text"
+                          value={code}
+                          onChange={(e) => setCode(e.target.value)}
+                          required
+                          className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                        />
+                      </div>
+                      <Button 
+                        type="submit" 
+                        className="w-full bg-white text-[#FD4677] hover:bg-white/90"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Resetting...
+                          </>
+                        ) : (
+                          'Reset Password'
+                        )}
+                      </Button>
+                    </>
+                  )}
+                </form>
                 {secondFactor && (
-                  <p>2FA is required, but this UI does not handle that</p>
+                  <p className="mt-4 text-center">2FA is required. Please check your authenticator app.</p>
                 )}
-              </form>
-            </div>
+              </CardContent>
+              <CardFooter className="flex flex-col items-start border-t border-white/20 space-y-2">
+                <div className="text-sm">
+                  Remember your password?{' '}
+                  <Link className="font-medium text-indigo-200 hover:text-indigo-100" href="/signin">
+                    Sign In
+                  </Link>
+                </div>
+              </CardFooter>
+            </Card>
           </div>
         </div>
-
-        {/* <AuthImage /> */}
       </div>
     </main>
-  );
+  )
 }

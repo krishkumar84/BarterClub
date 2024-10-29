@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-
 const inter = Inter({ subsets: ["latin"] });
+import { Toaster } from 'sonner';
+import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 
 
 export const metadata: Metadata = {
@@ -17,6 +18,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  const customToastOptions = {
+    style: {
+      background: '#FD4677',
+      color: '#fff',
+    },
+    success: {
+      icon: <FaCheckCircle color="#4CAF50" />, // Green color for success
+    },
+    error: {
+      icon: <FaTimesCircle color="#F44336" />, // Red color for error
+    },
+  };
   return (
     <ClerkProvider>
     <html lang="en">
@@ -24,6 +38,7 @@ export default function RootLayout({
       <Providers>
         {/* <Header/> */}
         {children}
+        <Toaster position="top-center" theme="light" toastOptions={customToastOptions}/>
     </Providers>
         </body>
     </html>

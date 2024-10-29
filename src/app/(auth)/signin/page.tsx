@@ -1,128 +1,142 @@
-'use client';
-import { useState } from 'react';
-import * as React from 'react';
-import { useSignIn } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
+'use client'
+
+import { useState } from 'react'
+import * as React from 'react'
+import { useSignIn } from '@clerk/nextjs'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-// import AuthHeader from '../auth-header'
-// import AuthImage from '../auth-image'
-// import Toast02 from '../../../components/toast-02';
+import { Eye, EyeOff, Loader2 } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { toast } from "sonner";
 
 export default function SignIn() {
-  const { isLoaded, signIn, setActive } = useSignIn();
-  const [password, setPassword] = React.useState('');
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [toastOpen, setToastOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const router = useRouter();
-  const [email, setEmail] = useState('');
-
+  const { isLoaded, signIn, setActive } = useSignIn()
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [email, setEmail] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    if (!isLoaded) {
-      return;
+    if (!isLoaded || isLoading) {
+      return
     }
+
+    setIsLoading(true)
 
     try {
       const signInAttempt = await signIn.create({
         identifier: email,
         password,
-      });
+      })
 
       if (signInAttempt.status === 'complete') {
-        await setActive({ session: signInAttempt.createdSessionId });
-        router.push('/profile');
+        await setActive({ session: signInAttempt.createdSessionId })
+        router.push('/profile')
       } else {
-        setErrorMessage('Invalid email or password');
-      setToastOpen(true);
-        console.error(JSON.stringify(signInAttempt, null, 2));
+        toast.error("An error occurred during sign in.")
+        console.error(JSON.stringify(signInAttempt, null, 2))
       }
     } catch (err: any) {
-      let errorMsg = 'Invalid email or password'; 
-      if (err && err.errors && Array.isArray(err.errors) && err.errors.length > 0) {
-        errorMsg = err.errors[0].message || errorMsg;
+      if (err.errors && Array.isArray(err.errors)) {
+        err.errors.forEach((error: any) => {
+          toast.error(error.message)
+        })
+      } else {
+        toast.error("An error occurred during sign in.")
       }
-
-      setErrorMessage(errorMsg)
-      setToastOpen(true);
-      console.error(JSON.stringify(err, null, 2));
+      console.error(JSON.stringify(err, null, 2))
+    } finally {
+      setIsLoading(false)
     }
-  };
+  }
+
   return (
-    <main style={{
-      backgroundImage: `url("${'/bg2.svg'}")`,
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: 'cover'
-    }}  className="bg-white dark:bg-slate-900">
-
-      <div className="relative md:flex items-center justify-center">
-
-        {/* Content */}
-        <div className="md:w-1/2">
-          <div className="min-h-[100dvh] h-full  flex  flex-col after:flex-1">
-
-            {/* <AuthHeader /> */}
-
-            <div 
-              style={{
-                background: 'linear-gradient(180deg, rgb(253, 70, 119) 0%, rgb(137, 82, 222) 100%)'
-              }}
-              className="max-w-sm rounded-2xl h-full  mt-28 mx-auto w-full px-4 py-8"
-            > 
-              <h1 className="text-3xl text-slate-100 font-bold mb-6">LOGIN</h1>
-              {/* Form */}
-              <form onSubmit={handleSubmit}>
-                <div  className="space-y-4">
-                  <div>
-                    <label className="block text-slate-100 text-sm font-medium mb-1" htmlFor="email">Email Address</label>
-                    <input  required id="company-email" value={email}  onChange={(e) => setEmail(e.target.value)} className={`form-input rounded-xl py-2 pl-2 w-full `} type="email" placeholder=' Email Address' />
+      <main className="min-h-screen bg-white dark:bg-slate-900 bg-[url('/bg2.svg')] bg-no-repeat bg-cover">
+        <div className="relative md:flex items-center justify-center">
+          <div className="md:w-1/2">
+            <div className="min-h-[100dvh] h-full flex flex-col after:flex-1">
+              <Card className="max-w-sm mx-auto w-full mt-28 bg-gradient-to-b from-[#FD4677] to-[#8952DE] text-white">
+                <CardHeader>
+                  <CardTitle className="text-3xl font-bold">LOGIN</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      
+                      <Label htmlFor="email">Email Address</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="Email Address"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Password</Label>
+                      <div className="relative">
+                        <Input
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
+                          className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="absolute inset-y-0 right-0 pr-3 hover:bg-[#FD4677] text-white/50 hover:text-white"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          <span className="sr-only">Toggle password visibility</span>
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Link className="text-sm underline hover:no-underline" href="/reset-password">
+                        Forgot Password?
+                      </Link>
+                      <Button 
+                        type="submit" 
+                        className="bg-white text-[#FD4677] hover:bg-white/90"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Signing In...
+                          </>
+                        ) : (
+                          'Sign In'
+                        )}
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+                <CardFooter className="flex flex-col items-start border-t border-white/20 space-y-2">
+                  <div className="text-sm">
+                    Don't have an account?{' '}
+                    <Link className="font-medium text-indigo-200 hover:text-indigo-100" href="/signup">
+                      Sign Up
+                    </Link>
                   </div>
-                  <div>
-                  <div>
-                    <label className="block text-slate-100 text-sm font-medium mb-1" htmlFor="password">Password</label>
-                    <div className="relative">
-                    <input id="password" value={password} onChange={(e)=>setPassword(e.target.value)} className="form-input rounded-xl py-2 pl-2 w-full"  type={showPassword ? "text" : "password"} placeholder='password' autoComplete="on" />
-                    <button  type="button"  className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5" onClick={() => setShowPassword(!showPassword)}
-                     >
-                     {showPassword ? 'Hide' : 'Show'}
-                    </button>
-                  </div>
-                  </div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between mt-6">
-                  <div className="mr-1">
-                    <Link className="text-sm text-slate-100 underline hover:no-underline" href="/reset-password">Forgot Password?</Link>
-                  </div>
-                  <button
-                      type="submit"
-                      className="btn bg-indigo-600 px-3 py-2 rounded-xl  hover:bg-indigo-700 text-white ml-3 whitespace-nowrap"
-                    >
-                      Sign In
-                    </button>
-                </div>
-                <div className="pt-2">
-              {/* <Toast02 type="error" open={toastOpen} setOpen={setToastOpen}> {errorMessage} </Toast02> */}
-              </div>
-              </form>
-              {/* Footer */}
-              <div className="pt-5 mt-6 border-t border-slate-200 dark:border-slate-700">
-                <div className="text-sm text-slate-100">
-                  Don&apos;t you have an account? <Link className="font-medium text-indigo-700 hover:text-indigo-800 dark:hover:text-indigo-400" href="/signup">Sign Up</Link>
-                </div>
-                
-              </div>
+                </CardFooter>
+              </Card>
             </div>
-
           </div>
         </div>
-
-        {/* <AuthImage /> */}
-
-      </div>
-
-    </main>
+      </main>
   )
 }

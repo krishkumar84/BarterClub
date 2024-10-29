@@ -1,73 +1,87 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Button } from './ui/button'
-import { useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs"
 import { useRouter } from 'next/navigation'
-// import { useAuth } from '@clerk/nextjs';
-// import { useCart } from '@/hooks/use-cart'
-// import { Product } from '@/payload-types'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog"
+import { toast } from "sonner"
 
-const AddToCartButton = ({
-  product,
-}: {
-  product: any
-}) => {
-//   const { addItem } = useCart()
-const { isSignedIn } = useUser(); 
+interface Product {
+  _id: string
+  title: string
+  price: number
+  // Add other product properties as needed
+}
+
+const AddToCartButton = ({ product }: { product: Product }) => {
+  const { isSignedIn } = useUser()
   const router = useRouter()
-  // const { userId } = useAuth();
-  const [isSuccess, setIsSuccess] = useState<boolean>(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setIsSuccess(false)
-    }, 2000)
-
-    return () => clearTimeout(timeout)
-  }, [isSuccess])
-
-  const handleclick = () => {
-    if(!isSignedIn){
+  const handleClick = () => {
+    if (!isSignedIn) {
       router.push('/signin')
-    }else{
-      setIsSuccess(true)
+    } else {
+      setIsModalOpen(true)
     }
   }
 
-  const handleBuy = async() => {
-    const res = await fetch('/api/createOrder', {
-      method: 'POST',
-      body: JSON.stringify({
-        //  buyerId: product.userId,
-        productId: product._id
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    console.log(res);
-    console.log("product",product);
-    console.log(product._id);
-    console.log(product.userId);
+  const handleBuy = async () => {
+    setIsLoading(true)
+    try {
+      const res = await fetch('/api/createOrder', {
+        method: 'POST',
+        body: JSON.stringify({
+          productId: product._id
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
 
-    if (res.ok) {
-      setIsSuccess(true)
+      if (res.status === 201) {
+        toast.success("Order placed successfully!")
+        setIsModalOpen(false)
+      } else {
+        throw new Error("Failed to place order")
+      }
+    } catch (error) {
+      console.error(error)
+      toast.error("Failed to place order. Please try again.")
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
-    <Button
-      onClick={() => {
-        handleclick();
-        handleBuy();
-        // addItem(product)
-        // setIsSuccess(true)
-      }}
-      size='lg'
-      className='w-full'>
-      {isSuccess ? 'Buying!' : 'Buy Product'}
-    </Button>
+    <>
+      <Button
+        onClick={handleClick}
+        size='lg'
+        className='w-full'
+      >
+        Buy Product
+      </Button>
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Purchase</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to buy {product.title} for {product.price} Barter Points?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end space-x-2 mt-4">
+            <Button variant="outline" onClick={() => setIsModalOpen(false)}>Cancel</Button>
+            <Button onClick={handleBuy} disabled={isLoading}>
+              {isLoading ? 'Processing...' : 'Confirm Purchase'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 

@@ -1,32 +1,41 @@
 'use client'
-import Link from 'next/link';
-import { useState } from 'react';
-// import AuthHeader from '../auth-header';
-// import AuthImage from '../auth-image';
-import { useSignUp } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
+
+import { useState } from 'react'
+import * as React from 'react'
+import { useSignUp } from '@clerk/nextjs'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { Eye, EyeOff, Loader2 } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { toast } from "sonner"
 
 export default function SignUp() {
-  const { isLoaded, signUp, setActive } = useSignUp();
-  const [fullName, setFullName] = useState('');
-  const [password, setPassword] = useState('');
-  const [pendingVerification, setPendingVerification] = useState(false);
-  const [code, setCode] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [gst, setGst] = useState('');
-  const [address, setAddress] = useState('');
+  const { isLoaded, signUp, setActive } = useSignUp()
+  const [fullName, setFullName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [phone, setPhone] = useState('')
+  const [gst, setGst] = useState('')
+  const [plan, setPlan] = useState('Free')
+  const [address, setAddress] = useState('')
+  const [pendingVerification, setPendingVerification] = useState(false)
+  const [code, setCode] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault()
 
-  const handleSignUp = async (e: any) => {
-    e.preventDefault();
-
-    if (!isLoaded) {
-      return;
+    if (!isLoaded || isLoading) {
+      return
     }
+
+    setIsLoading(true)
 
     try {
       await signUp.create({
@@ -38,250 +47,206 @@ export default function SignUp() {
         unsafeMetadata: {
           gst: gst,
           address: address,
+          plan: plan,
         },
-        
-        
-      });
+      })
 
-      // send the email.
-      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
-
-      // change the UI to our pending section.
-      setPendingVerification(true);
-    } catch (err) {
-      console.error(err);
+      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
+      setPendingVerification(true)
+      toast.success("Verification email sent. Please check your inbox.")
+    } catch (err: any) {
+      console.error(JSON.stringify(err, null, 2))
+      toast.error(err.errors?.[0]?.message || "An error occurred during sign up.")
+    } finally {
+      setIsLoading(false)
     }
-  };
+  }
 
-  const handleVerification = async (e: any) => {
-    e.preventDefault();
-    if (!isLoaded) {
-      return;
+  const handleVerification = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!isLoaded || isLoading) {
+      return
     }
+
+    setIsLoading(true)
 
     try {
       const completeSignUp = await signUp.attemptEmailAddressVerification({
         code,
-      });
-      if (completeSignUp.status !== 'complete') {
-        console.log(JSON.stringify(completeSignUp, null, 2));
-      }
+      })
       if (completeSignUp.status === 'complete') {
-        await setActive({ session: completeSignUp.createdSessionId });
-        router.push('/');
+        await setActive({ session: completeSignUp.createdSessionId })
+        toast.success("Account created successfully!")
+        router.push('/')
+      } else {
+        toast.error("Verification failed. Please try again.")
       }
-    } catch (err) {
-      console.error(JSON.stringify(err, null, 2));
+    } catch (err: any) {
+      console.error(JSON.stringify(err, null, 2))
+      toast.error(err.errors?.[0]?.message || "Verification failed. Please try again.")
+    } finally {
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
-    <main style={{
-      backgroundImage: `url("${'/bg2.svg'}")`,
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: 'cover'
-    }} className="bg-white pt-12 dark:bg-slate-900">
+    <main className="min-h-screen bg-white dark:bg-slate-900 bg-[url('/bg2.svg')] bg-no-repeat bg-cover">
       <div className="relative md:flex items-center justify-center">
-        {/* Content */}
-        <div className="w-full">
+        <div className="md:w-1/2">
           <div className="min-h-[100dvh] h-full flex flex-col after:flex-1">
-            {/* <AuthHeader /> */}
-
-            <div 
-              style={{
-                background: 'linear-gradient(180deg, rgb(253, 70, 119) 0%, rgb(137, 82, 222) 100%)'
-              }} className="max-w-sm rounded-2xl h-full mx-auto w-full px-4 py-4">
-              <h1 className="text-3xl text-slate-100  font-bold mb-6">
-                Create your Account
-              </h1>
-              {/* Form */}
-              {!pendingVerification ? (
-                <form onSubmit={handleSignUp}>
-                  <div className="space-y-4">
-                  <div>
-                      <label
-                        className="block text-slate-100 text-sm font-medium mb-1"
-                        htmlFor="fullName"
-                      >
-                        Full Name <span className="text-rose-500">*</span>
-                      </label>
-                      <input
+            <Card className="max-w-sm mx-auto w-full mt-28 bg-gradient-to-b from-[#FD4677] to-[#8952DE] text-white">
+              <CardHeader>
+                <CardTitle className="text-3xl font-bold">
+                  {pendingVerification ? "Verify Email" : "Create Account"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {!pendingVerification ? (
+                  <form onSubmit={handleSignUp} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="fullName">Full Name</Label>
+                      <Input
                         id="fullName"
-                        className="form-input rounded-xl py-2 pl-2 w-full"
-                        type="text"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
-                        placeholder="Full Name"
                         required
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                       />
                     </div>
-                    <div>
-                      <label
-                        className="block text-slate-100 text-sm font-medium mb-1"
-                        htmlFor="email"
-                      >
-                        Email Address <span className="text-rose-500">*</span>
-                      </label>
-                      <input
-                       required
-                       id="email"
-                       value={email}
-                       onChange={(e) => setEmail(e.target.value)}
-                       className={`form-input rounded-xl py-2 pl-2 w-full`}
-                       type="email"
-                       placeholder='Company Email Address'
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email Address</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                       />
                     </div>
-                    <div>
-                      <label
-                        className="block text-slate-100 text-sm font-medium mb-1"
-                        htmlFor="Phone no"
-                      >
-                        Phone no <span className="text-rose-500">*</span>
-                      </label>
-                      <input
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Phone Number</Label>
+                      <Input
                         id="phone"
-                        className="form-input rounded-xl py-2 pl-2 w-full"
-                        type="text"
+                        type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        placeholder="phone no"
                         required
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                       />
                     </div>
-                    <div>
-                      <label
-                        className="block text-slate-100 text-sm font-medium mb-1"
-                        htmlFor="GST"
-                      >
-                        Gst no
-                      </label>
-                      <input
+                    <div className="space-y-2">
+                      <Label htmlFor="gst">GST Number</Label>
+                      <Input
                         id="gst"
-                        className="form-input  rounded-xl py-2 pl-2 w-full"
-                        type="number"
                         value={gst}
                         onChange={(e) => setGst(e.target.value)}
-                        placeholder="Gst no"
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                       />
                     </div>
-                    <div>
-                      <label
-                        className="block text-slate-100 text-sm font-medium mb-1"
-                        htmlFor="Plan"
-                      >
-                        Plan <span className="text-rose-500">*</span>
-                      </label>
-                      <select name="Plans" className="form-input rounded-xl py-2 pl-2 w-full" id="">
-                        <option value="Free">Free</option>
-                        <option value="Basic">Basic</option>
-                        <option value="Premium">Premium</option>
-                      </select>
+                    <div className="space-y-2">
+                      <Label htmlFor="plan">Plan</Label>
+                      <Select onValueChange={setPlan} defaultValue={plan}>
+                        <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                          <SelectValue placeholder="Select a plan" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Free">Free</SelectItem>
+                          <SelectItem value="Basic">Basic</SelectItem>
+                          <SelectItem value="Premium">Premium</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-                    <div>
-                      <label
-                        className="block text-slate-100 text-sm font-medium mb-1"
-                        htmlFor="Address"
-                      >
-                        Address <span className="text-rose-500">*</span>
-                      </label>
-                      <input
+                    <div className="space-y-2">
+                      <Label htmlFor="address">Address</Label>
+                      <Input
                         id="address"
-                        className="form-input rounded-xl py-2 pl-2 w-full"
-                        type="text"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
-                        placeholder="Address"
                         required
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                       />
                     </div>
-                    <div>
-                    <label className="block text-slate-100 text-sm font-medium mb-1" htmlFor="password">Password</label>
-                    <div className="relative">
-                    <input id="password" placeholder='password' value={password} onChange={(e)=>setPassword(e.target.value)} className="form-input rounded-xl py-2 pl-2 w-full"  type={showPassword ? "text" : "password"} autoComplete="on" />
-                    <button  type="button"  className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5" onClick={() => setShowPassword(!showPassword)}
-                     >
-                     {showPassword ? 'Hide' : 'Show'}
-                    </button>
-                  </div>
-                  </div>
-                  </div>
-                  {errorMessage && (
-                    <div className="mt-4 text-red-600">
-                      {errorMessage}
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Password</Label>
+                      <div className="relative">
+                        <Input
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
+                          className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="absolute inset-y-0 right-0 pr-3 hover:bg-[#FD4677] text-white/50 hover:text-white"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          <span className="sr-only">Toggle password visibility</span>
+                        </Button>
+                      </div>
                     </div>
-                  )}
-                  <div className="flex items-center justify-between mt-6">
-                    <div className="mr-1">
-                      <label className="flex items-center">
-                        <input type="checkbox" className="form-checkbox" />
-                        <span className="text-sm text-slate-100 ml-2">
-                          Email me about product news.
-                        </span>
-                      </label>
-                    </div>
-                    <button
-                      type="submit"
-                      className="btn bg-indigo-600 p-3 rounded-xl  hover:bg-indigo-700 text-white ml-3 whitespace-nowrap"
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-white text-[#FD4677] hover:bg-white/90"
+                      disabled={isLoading}
                     >
-                      Sign Up
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                <form onSubmit={handleVerification}>
-                  <div className="space-y-4">
-                    <div>
-                      <label
-                        className="block text-sm font-medium mb-1"
-                        htmlFor="otp"
-                      >
-                        Enter OTP <span className="text-rose-500">*</span>
-                      </label>
-                      <input
-                        id="otp"
-                        className="form-input w-full"
-                        type="text"
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Signing Up...
+                        </>
+                      ) : (
+                        'Sign Up'
+                      )}
+                    </Button>
+                  </form>
+                ) : (
+                  <form onSubmit={handleVerification} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="code">Verification Code</Label>
+                      <Input
+                        id="code"
                         value={code}
                         onChange={(e) => setCode(e.target.value)}
-                        placeholder="OTP"
                         required
+                        className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                       />
                     </div>
-                  </div>
-                  {errorMessage && (
-                    <div className="mt-4 text-red-600">
-                      {errorMessage}
-                    </div>
-                  )}
-                  <div className="flex items-center justify-between mt-6">
-                    <button
-                      type="submit"
-                      className="btn bg-indigo-500 p-3 rounded-xl  hover:bg-indigo-600 text-white ml-3 whitespace-nowrap"
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-white text-[#FD4677] hover:bg-white/90"
+                      disabled={isLoading}
                     >
-                      Verify OTP
-                    </button>
-                  </div>
-                </form>
-              )}
-              {/* Footer */}
-              <div className="pt-5 mt-6 border-t border-slate-200 dark:border-slate-700">
-                <div className="text-sm text-slate-100">
-                  Have an account?{' '}
-                  <Link
-                    className="font-medium text-indigo-700 hover:text-indigo-800 dark:hover:text-indigo-400"
-                    href="/signin"
-                  >
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Verifying...
+                        </>
+                      ) : (
+                        'Verify Email'
+                      )}
+                    </Button>
+                  </form>
+                )}
+              </CardContent>
+              <CardFooter className="flex flex-col items-start border-t border-white/20 space-y-2">
+                <div className="text-sm">
+                  Already have an account?{' '}
+                  <Link className="font-medium text-indigo-200 hover:text-indigo-100" href="/signin">
                     Sign In
                   </Link>
                 </div>
-              </div>
-            </div>
+              </CardFooter>
+            </Card>
           </div>
         </div>
-
-        {/* <AuthImage /> */}
       </div>
     </main>
-  );
+  )
 }
