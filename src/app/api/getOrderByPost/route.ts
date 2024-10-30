@@ -64,6 +64,9 @@ export async function GET(req: Request) {
               ],
             },
           },
+          {
+            $sort: { createdAt: -1 },
+          },
       ])
         // console.log(orders);
         //   const ordersCount = await Order.distinct('event._id').countDocuments(conditions)

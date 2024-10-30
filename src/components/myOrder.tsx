@@ -40,6 +40,18 @@ type OrdersResponse = {
   totalItems: number
 }
 
+const getBadgeVariant = (status: string) => {
+  switch (status) {
+    case 'approved':
+      return 'success'
+    case 'rejected':
+      return 'destructive'
+    case 'pending':
+    default:
+      return 'secondary'
+  }
+}
+
 export default function MyOrders(userId: any) {
     console.log(userId)
   const [orders, setOrders] = useState<Order[]>([])
@@ -101,7 +113,7 @@ export default function MyOrders(userId: any) {
               <p className="font-semibold mb-2">
                 Points Exchanged: {order.pointsExchanged}
               </p>
-              <Badge variant={order.status === 'pending' ? 'secondary' : 'success'}>
+              <Badge variant={getBadgeVariant(order.status)}>
                 {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
               </Badge>
             </CardContent>
@@ -207,7 +219,7 @@ function OrderDetails({ order }: { order: Order }) {
         </div>
         <div className="mb-4">
           <p className="font-semibold">Order Status:</p>
-          <Badge variant={order.status === 'pending' ? 'secondary' : 'success'}>
+          <Badge variant={getBadgeVariant(order.status)}>
             {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
           </Badge>
         </div>

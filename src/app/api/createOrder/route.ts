@@ -5,16 +5,17 @@ import { NextResponse } from 'next/server';
 import Product from '@/lib/models/product.model';
 import Order from '@/lib/models/order.model';
 import Transaction from '@/lib/models/transaction.model';
+import { sendOrderNotificationEmail } from '@/lib/email';
 
 connect();
 export async function POST(req:Request){
   const { sessionClaims} = auth();
     const userId = (sessionClaims?.userId as any)?.userId;
-    console.log("userid hello",userId);
+    // console.log("userid hello",userId);
     const body = await req.json();
     const {productId } = body;
-    console.log("productid",productId);
-    console.log("userid", userId);
+    // console.log("productid",productId);
+    // console.log("userid", userId);
     try {
         // Find buyer and seller by their IDs
         const buyer = await User.findById(userId);
@@ -33,7 +34,6 @@ export async function POST(req:Request){
         // Check if the buyer has enough points
         if (buyer.balance < points) {
           return NextResponse.json({ message: "Insufficient points for the transaction" }, { status: 400 });
-          throw new Error("Insufficient points for the transaction");
         }
         console.log("buyer",buyer);
         console.log("product",product);
@@ -92,6 +92,53 @@ export async function POST(req:Request){
         await order.save();
         await buyer.save();
         await seller.save();
+
+   const sellerEmailContent = `
+      <h1>New Order Alert From BarterClub</h1>
+      <p>Hello ${seller.Name},</p>
+      <p>You have a new order for your product <strong>${product.title}</strong> in Exchange of ${points} Barter points.</p>
+      <p><strong>Buyer Details:</strong></p>
+      <ul>
+        <li>Name: ${buyer.Name}</li>
+        <li>Email: ${buyer.email}</li>
+        <li>Phone: ${buyer.phone}</li>
+        <li>Address: ${buyer.Address}</li>
+      </ul>
+      <p><strong>Product Details:</strong></p>
+      <ul>
+        <li>Title: ${product.title}</li>
+        <li>Price: ${product.price}</li>
+        <li>Delivery: ${product.delivery}</li>
+        <li><a href="https://barterclub.in/product/${product._id}"><img src="${product.images[0]}" alt="Product Image of ${product.title}" width="300" height="300" style="display: block; margin: auto;"></a></li>
+      </ul>
+       <p>Please confirm the order in your<a href="https://barterclub.in/orders?postId=${product._id}"> dashboard</a>.</p>
+    `;
+
+    // Email content for the buyer
+    const buyerEmailContent = `
+      <h1>Order Created</h1>
+      <p>Hello ${buyer.Name},</p>
+      <p>Your order for <a href="https://barterclub.in/product/${product._id}"><strong>${product.title}</strong></a> has been created successfully.</p>
+      <p>You will receive a confirmation once the seller accepts the order.</p>
+    `;
+
+    console.log("sending mail")
+
+    // Send emails to both buyer and seller
+    await sendOrderNotificationEmail({
+      recipientEmail: seller.email,
+      subject: `New Order for Your Product "${product.title}"`,
+      htmlContent: sellerEmailContent,
+    });
+   console.log("sending second")
+   console.log(buyer.email)
+   console.log(`Order Created for "${product.title}"`)
+    console.log(buyerEmailContent)
+    await sendOrderNotificationEmail({
+      recipientEmail: buyer.email,
+      subject: `Order Created for "${product.title}"`,
+      htmlContent: buyerEmailContent,
+    });
     
         console.log("Order created successfully:", order);
        return NextResponse.json({ order }, { status: 201 });

@@ -4,6 +4,7 @@ import { SearchParamProps } from '@/types'
 import axios from 'axios'
 import { config } from '@/constants/index'
 import { Badge } from "@/components/ui/badge"
+import OrderActions from './OrderActions'
 
 const apiUrl = config.apiUrl;
 
@@ -30,12 +31,13 @@ export default async function Orders({ searchParams }: SearchParamProps) {
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Buyer Address</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Points</th>
+              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {orders.data && orders.data.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-4 py-4 text-center text-gray-500">
+                <td colSpan={6} className="px-4 py-4 text-center text-gray-500">
                   No orders found.
                 </td>
               </tr>
@@ -63,6 +65,9 @@ export default async function Orders({ searchParams }: SearchParamProps) {
                     <Badge variant="secondary" className="font-semibold">
                       {row.pointsExchanged} pts
                     </Badge>
+                  </td>
+                  <td className="px-4 py-4 text-center">
+                    <OrderActions orderId={row._id} initialStatus={row.status} />
                   </td>
                 </tr>
               ))
