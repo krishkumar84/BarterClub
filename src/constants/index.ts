@@ -54,7 +54,8 @@ export const config = {
   apiUrl: dev 
     // ? 'https://potential-space-succotash-5j7wgv6jpp6f7575-3000.app.github.dev'
     ? 'http://localhost:3000'
-    : 'https://barter-club.vercel.app',
+    : 'https://barterclub.in',
+    // : 'https://barter-club.vercel.app',
 };
 
   
