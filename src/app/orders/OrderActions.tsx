@@ -24,7 +24,7 @@ export default function OrderActions({ orderId, initialStatus }: OrderActionsPro
     console.log(orderId, newStatus)
     setIsLoading(true)
     try {
-      await axios.post(`${apiUrl}/api/updateOrderStatus`, { orderId, status: newStatus })
+      await axios.post('/api/updateOrderStatus', { orderId, status: newStatus })
       setStatus(newStatus)
       toast.success(`Order ${newStatus} successfully`)
     } catch (error) {
