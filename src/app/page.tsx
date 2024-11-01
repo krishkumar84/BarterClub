@@ -11,6 +11,7 @@ import { Contact } from "@/components/Contactus";
 import { Footer } from "@/components/Footer";
 import Pricing from "@/components/Pricing";
 import Header from "@/components/navbar";
+import TextTransition from "@/components/TextTransition";
 // import HeroCarousel from "./components/HeroCarousel";
 
 const  Home = async () => {
@@ -29,10 +30,13 @@ const  Home = async () => {
               Unleash the 
               <span className="text-primary text-slate-100"> BarterClub</span>
             </h1>
+            <div className="mt-6 h-12 px-4">
+          <TextTransition />
+        </div>
 
-            <p className="mt-6 text-gray-300 px-4">
+            {/* <p className="mt-6 text-gray-300 px-4">
               Powerful, self-serve product and growth analytics to help you convert, engage, and retain more.
-            </p>
+            </p> */}
 
             <Searchbar />
           </div>
