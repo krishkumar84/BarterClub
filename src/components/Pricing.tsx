@@ -174,7 +174,7 @@ const Pricing = () => {
 
     const { data } = await axios.get(`/api/checkSubscriptionStatus?userId=${currentUser?.publicMetadata.userId}`);
 
-    if (data.message === 'Subscription expired, plan reverted to Free') {
+    if (data.message === 'Subscription expired, plan reverted to Free' || 'No active subscription found, default plan is Free') {
       // Proceed with creating Razorpay account as the subscription is expired
       try {
         const response = await axios.post('/api/create-subscription', {
