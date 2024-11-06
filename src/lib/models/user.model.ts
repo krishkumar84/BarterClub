@@ -28,7 +28,6 @@ const UserSchema = new Schema({
   },
   Gst:{
     type: Number,
-    unique: true,
   },
     Address:{
         type: String,
