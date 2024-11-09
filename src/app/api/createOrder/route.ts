@@ -6,6 +6,7 @@ import Product from '@/lib/models/product.model';
 import Order from '@/lib/models/order.model';
 import Transaction from '@/lib/models/transaction.model';
 import { sendOrderNotificationEmail } from '@/lib/email';
+import EscrowTransaction from '@/lib/models/esCrow.model';
 
 connect();
 export async function POST(req:Request){
@@ -47,9 +48,22 @@ export async function POST(req:Request){
           pointsExchanged: points
         });
        console.log("order",order);
+
+       await order.save();
         // Update points between buyer and seller
         buyer.balance -= points;
-        seller.balance += points;
+        // seller.balance += points;
+
+        const escrowTransaction = new EscrowTransaction({
+          order: order._id,
+          buyer: buyer._id,
+          product: product._id,
+          seller: seller._id,
+          amountHeld: points,
+          status: "pending_payment"
+        });
+    
+        await escrowTransaction.save();
 
 
         console.log("buyer",buyer);
@@ -57,7 +71,7 @@ export async function POST(req:Request){
         // Create a transaction record for the buyer
     const buyerTransaction = new Transaction({
       userId: buyer._id,
-      amount: 'Purchase',  // Amount spent by the buyer (negative for spending)
+      amount: 'Purchase', 
       transactionType: "Buy",
       points: -points, // Barter points spent
       razorpayPaymentId: "buying product", // Set this if you have a payment ID
@@ -69,27 +83,26 @@ export async function POST(req:Request){
 
     console.log("hitting transaction");
     // Create a transaction record for the seller
-    const sellerTransaction = new Transaction({
-      userId: seller._id,
-      amount: 'Sell product' ,  // Amount received by the seller (positive for earnings)
-      transactionType: 'Sell',
-      points: points,
-      razorpayPaymentId: "selling product", // Set this if you have a payment ID
-      description: `Sold ${product.title} and earned ${points} points.`, // Add a meaningful description
-      orderId: order._id // Link the order ID
-    });
-   console.log("sellertransaction",sellerTransaction);
+  //   const sellerTransaction = new Transaction({
+  //     userId: seller._id,
+  //     amount: 'Sell product' ,  // Amount received by the seller (positive for earnings)
+  //     transactionType: 'Sell',
+  //     points: points,
+  //     razorpayPaymentId: "selling product", // Set this if you have a payment ID
+  //     description: `Sold ${product.title} and earned ${points} points.`, // Add a meaningful description
+  //     orderId: order._id // Link the order ID
+  //   });
+  //  console.log("sellertransaction",sellerTransaction);
 
     // Save the transactions
     await buyerTransaction.save();
-    await sellerTransaction.save();
+    // await sellerTransaction.save();
 
     // Update transaction history for both users
     buyer.transactionHistory.push(buyerTransaction._id);
-    seller.transactionHistory.push(sellerTransaction._id);
+    // seller.transactionHistory.push(sellerTransaction._id);
     
         // Save the order and the updated users
-        await order.save();
         await buyer.save();
         await seller.save();
 

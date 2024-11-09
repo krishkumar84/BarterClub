@@ -9,6 +9,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import Link from 'next/link'
+import { toast } from "sonner";
 
 type Order = {
   _id: string
@@ -42,10 +43,12 @@ type OrdersResponse = {
 
 const getBadgeVariant = (status: string) => {
   switch (status) {
-    case 'approved':
+    case 'pending_delivery':
       return 'success'
     case 'rejected':
       return 'destructive'
+     case 'delivered':
+      return 'success' 
     case 'pending':
     default:
       return 'secondary'
@@ -165,6 +168,31 @@ export default function MyOrders(userId: any) {
 }
 
 function OrderDetails({ order }: { order: Order }) {
+  const [isConfirming, setIsConfirming] = useState(false)
+
+  const handleConfirmDelivery = async () => {
+    setIsConfirming(true)
+    try {
+      const response = await fetch('/api/approveDelivery', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ orderId: order._id }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to confirm delivery')
+      }
+
+      toast.success('Delivery confirmed successfully!')
+    } catch (error:any) {
+      console.error('Error confirming delivery:', error)
+      toast.error(error.message)
+    } finally {
+      setIsConfirming(false)
+    }
+  }
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
@@ -227,6 +255,15 @@ function OrderDetails({ order }: { order: Order }) {
           <p className="font-semibold">Points Exchanged:</p>
           <p>{order.pointsExchanged}</p>
         </div>
+        {order.status === 'pending_delivery' && (
+          <Button 
+            onClick={handleConfirmDelivery} 
+            disabled={isConfirming}
+            className='mt-4'
+          >
+            {isConfirming ? 'Confirming...' : 'Confirm Delivery'}
+          </Button>
+        )}
       </div>
     </div>
   )

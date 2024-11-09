@@ -19,7 +19,7 @@ export default function OrderActions({ orderId, initialStatus }: OrderActionsPro
   const [status, setStatus] = useState(initialStatus)
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleOrderStatus = async (newStatus: 'approved' | 'rejected') => {
+  const handleOrderStatus = async (newStatus: 'pending_delivery' | 'rejected') => {
     // console.log("herre")
     console.log(orderId, newStatus)
     setIsLoading(true)
@@ -42,7 +42,7 @@ export default function OrderActions({ orderId, initialStatus }: OrderActionsPro
           size="sm"
           variant="outline"
           className="bg-green-500 hover:bg-green-600 text-white"
-          onClick={() => handleOrderStatus('approved')}
+          onClick={() => handleOrderStatus('pending_delivery')}
           disabled={isLoading}
         >
           {isLoading ? (
@@ -71,7 +71,7 @@ export default function OrderActions({ orderId, initialStatus }: OrderActionsPro
   }
 
   return (
-    <Badge variant={status === 'approved' ? 'success' : 'destructive'}>
+    <Badge variant={status === 'delivered' ? 'success' : 'destructive'}>
       {status}
     </Badge>
   )
