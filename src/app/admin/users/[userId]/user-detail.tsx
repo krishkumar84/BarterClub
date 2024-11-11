@@ -1,6 +1,4 @@
 "use client"
-
-import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -11,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { ArrowUpRight, CheckCircle2, XCircle } from "lucide-react"
+import { useEffect,useState } from "react"
 import { set } from "mongoose"
 
 interface User {
@@ -24,6 +23,7 @@ interface User {
   subscription: {
     isActive: boolean;
     plan: string;
+    endDate: string;
   };
   balance: number;
   discountPoints: number;
@@ -64,6 +64,8 @@ const formatDate = (dateString: string) => {
 
 export default function UserDetails({ user }: { user: User }) {
   const [points, setPoints] = useState("")
+  const [getholdPayment, setgetholdPayment] = useState<{ data: string }>({ data: "" })
+
   const router = useRouter()
   console.log("now")
   console.log(user.subscription)
@@ -89,6 +91,14 @@ export default function UserDetails({ user }: { user: User }) {
     console.log("Increasing points:", points)
     // After successful API call, refresh the page or update the user state
   }
+
+  useEffect(() => {
+    fetch("/api/esCrowPaymentByUser?userId=" + user._id)
+      .then((res) => res.json())
+      .then((data) => {
+        setgetholdPayment({ data: data })
+      })
+  }, [])
 
   return (
     <div className="container mx-auto p-6">
@@ -125,7 +135,13 @@ export default function UserDetails({ user }: { user: User }) {
                 {user.subscription.isActive ? "Active" : "Inactive"}
               </Badge>
               <p className="text-sm text-muted-foreground">{user.subscription.plan} Plan</p>
+              <p className="text-sm text-muted-foreground">ends on:  {new Date(user.subscription.endDate).toLocaleDateString('en-GB')}</p>
             </div>
+            <div>
+              <Label>Points Hold in BarterClub</Label>
+              <p className="text-sm text-muted-foreground">points will be added after delivery of product and confirmation by buyer</p>
+              <p>{getholdPayment.data} Points</p>
+          </div>
           </div>
         </CardContent>
       </Card>

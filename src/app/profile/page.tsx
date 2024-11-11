@@ -33,6 +33,7 @@ interface User {
   subscription: {
     isActive: boolean;
     plan: string;
+    endDate: string;
   };
   balance: number;
   discountPoints: number;
@@ -62,6 +63,9 @@ console.log(data);
 
 const chkstatus = await axios.get(`${apiUrl}/api/checkSubscriptionStatus?userId=${userId}`);
 console.log(chkstatus.data);
+
+const getholdPayment = await axios.get(`${apiUrl}/api/esCrowPaymentByUser?userId=${userId}`);
+console.log(getholdPayment.data,"hell ya");
 
 const res = await axios.get(`${apiUrl}/api/getclientuserdetail/${userId}`);
 const user: User = res.data.data;
@@ -158,7 +162,13 @@ const BREADCRUMBS = [
                 {user.subscription.isActive ? "Active" : "Inactive"}
               </Badge>
               <p className="text-sm text-muted-foreground">{user.subscription.plan} Plan</p>
+              <p className="text-sm text-muted-foreground">ends on: {new Date(user.subscription.endDate).toLocaleDateString()}</p>
             </div>
+           <div>
+              <Label>Points Hold in BarterClub</Label>
+              <p className="text-sm text-muted-foreground">points will be added after delivery of product and confirmation by buyer</p>
+              <p>{getholdPayment.data} Points</p>
+          </div>
           </div>
         </CardContent>
       </Card>
