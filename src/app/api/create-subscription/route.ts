@@ -15,12 +15,19 @@ export async function POST(req:NextRequest, res:NextApiResponse) {
     const { userId, planType, duration } = await req.json();
 
     if (!userId || !planType || !duration) {
-        return NextResponse.json({ message: 'Missing required fields' });
+        throw new Error('Invalid request');
       }
 
       try {
         const user = await User.findById(userId);
-        if (!user) return NextResponse.json({ message: 'User not found' });
+        if (!user) return NextResponse.json({ message: 'User not found' },{status: 404});
+
+        if (user.subscription.isActive) {
+          return NextResponse.json(
+            { message: 'User already has an active subscription' },
+            { status: 400 }
+          );
+        }
 
         const razorpay = new Razorpay({
             key_id: process.env.RAZORPAY_KEY_ID || '',

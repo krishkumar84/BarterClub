@@ -140,6 +140,7 @@ const Pricing = () => {
   const [monthPrice, setMonthPrice] = useState(true);
   const [isChecked, setIsChecked] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingStates, setLoadingStates] = useState<{ [key: number]: boolean }>({});
   const { isSignedIn} = useAuth();
   const router = useRouter();
   const { user, isLoaded } = useUser(); 
@@ -160,15 +161,17 @@ const Pricing = () => {
     setMonthPrice(!monthPrice)
   }
   
-  const createSubscription = async(planType: string, duration: string) => {
+  const createSubscription = async(planType: string, duration: string, index: number) => {
     if (!isSignedIn) {
       router.push('/signin');
       return;
     }
-    setLoading(true)
+    // setLoading(true)
+    setLoadingStates((prevState) => ({ ...prevState, [index]: true }));
     if(!currentUser?.publicMetadata.userId){
-      alert('User not found');
-      setLoading(false);
+      toast.error('User ID not found');
+      // setLoading(false);
+      setLoadingStates((prevState) => ({ ...prevState, [index]: false }));
       return;
     }
 
@@ -182,11 +185,17 @@ const Pricing = () => {
           planType,
           duration,
         });
+
+        if (response.data.message === 'User already has an active subscription') {
+          toast.success('User already has an active subscription');
+          setLoading(false);
+          return;
+        }
   
         const { razorpaySubscriptionId, planName, message } = response.data;
   
         if (message === 'Subscribed to Free Plan') {
-          alert('Successfully subscribed to Free Plan');
+          toast.success('Subscribed to Free Plan');
           setLoading(false);
           return;
         }
@@ -203,7 +212,8 @@ const Pricing = () => {
             // After payment, Razorpay will handle via webhook
             // Optionally, you can show a success message
             toast.success('Payment successful! Your subscription is active.');
-            setLoading(false);
+            // setLoading(false);
+            setLoadingStates((prevState) => ({ ...prevState, [index]: false }));
           },
           prefill: {
             name: currentUser?.fullName,
@@ -216,19 +226,24 @@ const Pricing = () => {
         // @ts-ignore
         const rzp = new window.Razorpay(options);
         rzp.on('payment.failed', (response: any) => {
-          alert('Payment failed! Please try again.');
-          setLoading(false);
+          toast.error('Payment failed');
+          // setLoading(false);
+          setLoadingStates((prevState) => ({ ...prevState, [index]: false }));
         });
         rzp.open();
       } catch (error: any) {
         console.error('Error creating subscription:', error);
-        alert(error.response?.data?.message || 'An error occurred');
-        setLoading(false);
+        toast.error(error.response?.data?.message || 'An error occurred');
+        // setLoading(false);
+        setLoadingStates((prevState) => ({ ...prevState, [index]: false }));
+
       }
-    } else if (data.message === 'Subscription is still active') {
+    } else if (data.message == 'Subscription is still active') {
       // Show a toast message indicating the subscription is still active
      toast.success('Subscription is still active');
-     setLoading(false);
+    //  setLoading(false);
+    setLoadingStates((prevState) => ({ ...prevState, [index]: false }));
+
     }
   }
 
@@ -328,7 +343,7 @@ const Pricing = () => {
               </div>
               <button
               disabled={loading}
-              onClick={() => createSubscription(data?.secondTitle, monthPrice ? 'Monthly' : 'Yearly')}
+              onClick={() => createSubscription(data?.secondTitle, monthPrice ? 'Monthly' : 'Yearly', index)}
                 className={`w-full border-[1px] flex items-center justify-center gap-2 mt-5 mb-4 rounded-3xl py-2.5 ${
                   data?.isSelected
                     ? "bg-transparent"
@@ -336,7 +351,8 @@ const Pricing = () => {
                 }`}
               >
                 <span className="text-base font-medium">
-                  {loading ? 'Loading...' : 'Get Started'}
+                  {/* {loading ? 'Loading...' : 'Get Started'} */}
+                  {loadingStates[index] ? 'Loading...' : 'Get Started'}
                 </span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
               </button>
