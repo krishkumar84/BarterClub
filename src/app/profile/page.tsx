@@ -169,6 +169,13 @@ const BREADCRUMBS = [
               <p className="text-sm text-muted-foreground">points will be added after delivery of product and confirmation by buyer</p>
               <p>{getholdPayment.data} Points</p>
           </div>
+          {!user.subscription.isActive && (
+             <Link href="/#pricing">
+               <button className="btn px-2 py-2 rounded-md btn-primary mt-2 bg-black text-white">
+                 Upgrade Subscription
+               </button>
+             </Link>
+           )}
           </div>
         </CardContent>
       </Card>

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import axios from 'axios'
 import { useUser } from '@clerk/nextjs';
+import { toast } from "sonner"
 
 // Assuming these types are defined elsewhere in your project
 type User = {
@@ -59,7 +60,7 @@ export default function BuyPoints() {
           },
         handler: async (response: any) => {
           // Payment is handled by the server via webhook
-          alert('Payment successful! Points will be added shortly.');
+          toast.success('Payment successful! Points will be added shortly.');
         },
         prefill: {
           name: currentUser?.fullName,
@@ -73,12 +74,12 @@ export default function BuyPoints() {
       // @ts-ignore
       const rzp = new window.Razorpay(options);
       rzp.on('payment.failed', (response: any) => {
-        alert('Payment failed! Please try again.');
+        toast.error('Payment failed! Please try again.');
       });
       rzp.open();
     } catch (error: any) {
       console.error('Error buying points:', error);
-      alert('An error occurred while trying to buy points');
+      toast.error('An error occurred while trying to buy points');
     } finally {
       setIsLoading(false)
     }
@@ -88,7 +89,7 @@ export default function BuyPoints() {
     e.preventDefault()
     const amountInINR = parseFloat(amount)
     if (isNaN(amountInINR) || amountInINR <= 0) {
-      alert('Please enter a valid amount')
+      toast.error('Please enter a valid amount')
       return
     }
     handleBuyPoints(amountInINR)
@@ -99,7 +100,7 @@ export default function BuyPoints() {
         <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
       <CardHeader>
         <CardTitle>Buy Barter Points</CardTitle>
-        <CardDescription>Enter the amount of points you want to buy</CardDescription>
+        <CardDescription>Enter the amount of points you want to buy (1 Barter Point = 1 INR)</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">

@@ -45,11 +45,12 @@ const AddToCartButton = ({ product }: { product: Product }) => {
         toast.success("Order placed successfully!")
         setIsModalOpen(false)
       } else {
-        throw new Error("Failed to place order")
+        const data = await res.json()
+        toast.error(data.message)
       }
-    } catch (error) {
+    } catch (error:any) {
       console.error(error)
-      toast.error("Failed to place order. Please try again.")
+      toast.error(error.message)
     } finally {
       setIsLoading(false)
     }

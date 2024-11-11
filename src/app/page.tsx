@@ -43,9 +43,11 @@ const  Home = async () => {
           <HeroCarousel />
         </div>
        <div className="flex-col flex items-center justify-center gap-12 mb-24">
-       <Clients/>
+       {/* <Clients/> */}
        <AboutUs/>
-        <Pricing/>
+       <div id="pricing">
+            <Pricing />
+          </div>
        <Affiliate/>
         <Contact/>
        <GetApp/>
