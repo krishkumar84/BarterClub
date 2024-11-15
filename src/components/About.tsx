@@ -24,7 +24,6 @@ export function AboutUs() {
               offering a unique opportunity to advertise, market, and network
               with a wider audience while fostering a circular economy.
             </p>
-
             <form action="#" method="POST" className="mt-8 max-w-xl">
               <div className="flex flex-col sm:flex-row sm:items-center">
                   <button
