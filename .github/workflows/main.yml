@@ -23,33 +23,11 @@ jobs:
           
       - name: Create Pull Request
         id: create-pr
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: main  # Target the main branch
-          title: 'Auto PR: ${{ github.ref_name }} → main'
-          body: |
-            Automated PR created from branch ${{ github.ref_name }}
-            
-            Commit message: ${{ github.event.head_commit.message }}
-            Branch: ${{ github.ref_name }}
-            Pushed by: @${{ github.actor }}
-          commit-message: "Auto-merge from ${{ github.ref_name }}"
-          branch: ${{ github.ref_name }}
-          delete-branch: false  # Don't delete the branch yet, wait for merge
-
-      - name: Automerge PR
-        uses: pascalgn/automerge-action@v0.16.4
+        run: gh pr create -B base_branch -H branch_to_merge --title 'Merge branch_to_merge into base_branch' --body 'Created by Github action'
         env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          MERGE_LABELS: ""  # Allow merging without requiring labels
-          MERGE_METHOD: "merge"
-          MERGE_COMMIT_MESSAGE: "Auto-merged PR from krishkumar84"
-          MERGE_FILTER_AUTHOR: "krishkumar84"
-          MERGE_RETRIES: "6"
-          MERGE_RETRY_SLEEP: "10000"  
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Print PR URL
-        if: steps.create-pr.outputs.pull-request-url
+        if: success()
         run: |
           echo "Created PR: ${{ steps.create-pr.outputs.pull-request-url }}"
