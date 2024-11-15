@@ -6,5 +6,3 @@ const createError = (status: number, message: string) => {
   };
   
   export default createError;
-  
-  //daffhjashfdjashkdfjda

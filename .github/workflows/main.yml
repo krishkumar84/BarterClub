@@ -1,33 +1,37 @@
-name: Auto PR Creation and Merge
-
+name: Auto Merge krishkumar84's PRs
 on:
-  push:
-    branches-ignore:
-      - main   # Trigger on push to any branch except main
-
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - ready_for_review
+    branches:
+      - main  
 jobs:
-  create-and-merge-pr:
-    # Only run for pushes from krishkumar84
-    if: github.actor == 'krishkumar84'
+  automerge:
     runs-on: ubuntu-latest
+    # Only run for PRs from krishkumar84
+    if: github.event.pull_request.user.login == 'krishkumar84'
     
     permissions:
       contents: write
       pull-requests: write
     
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Needed for creating PR
-          
-      - name: Create Pull Request
-        id: create-pr
-        run: gh pr create -B base_branch -H branch_to_merge --title 'Merge branch_to_merge into base_branch' --body 'Created by Github action'
+      - name: Automerge PR
+        uses: pascalgn/automerge-action@v0.16.4
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Print PR URL
-        if: success()
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          MERGE_LABELS: ""  # Allow merging without requiring labels
+          MERGE_METHOD: "merge"
+          MERGE_COMMIT_MESSAGE: "Auto-merged PR from krishkumar84"
+          MERGE_FILTER_AUTHOR: "krishkumar84"
+          MERGE_RETRIES: "6"
+          MERGE_RETRY_SLEEP: "10000"
+          
+      - name: Debug Information
+        if: always()
         run: |
-          echo "Created PR: ${{ steps.create-pr.outputs.pull-request-url }}"
+          echo "PR Author: ${{ github.event.pull_request.user.login }}"
+          echo "Target Branch: ${{ github.event.pull_request.base.ref }}"
+          echo "Source Branch: ${{ github.event.pull_request.head.ref }}"
