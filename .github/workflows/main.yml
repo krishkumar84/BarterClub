@@ -1,0 +1,39 @@
+name: Auto Merge krishkumar84's PRs
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - ready_for_review
+    branches:
+      - main  
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+    # Only run for PRs from krishkumar84
+    if: github.event.pull_request.user.login == 'krishkumar84'
+    
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Automerge PR
+        uses: pascalgn/automerge-action@v0.16.4
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          MERGE_LABELS: ""  # Allow merging without requiring labels
+          MERGE_METHOD: "merge"
+          MERGE_COMMIT_MESSAGE: "Auto-merged PR from krishkumar84"
+          MERGE_FILTER_AUTHOR: "krishkumar84"
+          MERGE_RETRIES: "6"
+          MERGE_RETRY_SLEEP: "10000"
+          
+      - name: Debug Information
+        if: always()
+        run: |
+          echo "PR Author: ${{ github.event.pull_request.user.login }}"
+          echo "Target Branch: ${{ github.event.pull_request.base.ref }}"
+          echo "Source Branch: ${{ github.event.pull_request.head.ref }}"
