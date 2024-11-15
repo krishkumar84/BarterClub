@@ -1,25 +1,43 @@
-name: Auto Merge krishkumar84's PRs
+name: Auto PR Creation and Merge
 
 on:
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - ready_for_review
-    branches:
-      - main  
+  push:
+    branches-ignore:
+      - main   # Trigger on push to any branch except main
 
 jobs:
-  automerge:
+  create-and-merge-pr:
+    # Only run for pushes from krishkumar84
+    if: github.actor == 'krishkumar84'
     runs-on: ubuntu-latest
-    # Only run for PRs from krishkumar84
-    if: github.event.pull_request.user.login == 'krishkumar84'
     
     permissions:
       contents: write
       pull-requests: write
     
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Needed for creating PR
+          
+      - name: Create Pull Request
+        id: create-pr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main  # Target the main branch
+          title: 'Auto PR: ${{ github.ref_name }} → main'
+          body: |
+            Automated PR created from branch ${{ github.ref_name }}
+            
+            Commit message: ${{ github.event.head_commit.message }}
+            Branch: ${{ github.ref_name }}
+            Pushed by: @${{ github.actor }}
+          commit-message: "Auto-merge from ${{ github.ref_name }}"
+          branch: ${{ github.ref_name }}
+          delete-branch: false  # Don't delete the branch yet, wait for merge
+
       - name: Automerge PR
         uses: pascalgn/automerge-action@v0.16.4
         env:
@@ -29,11 +47,9 @@ jobs:
           MERGE_COMMIT_MESSAGE: "Auto-merged PR from krishkumar84"
           MERGE_FILTER_AUTHOR: "krishkumar84"
           MERGE_RETRIES: "6"
-          MERGE_RETRY_SLEEP: "10000"
-          
-      - name: Debug Information
-        if: always()
+          MERGE_RETRY_SLEEP: "10000"  
+
+      - name: Print PR URL
+        if: steps.create-pr.outputs.pull-request-url
         run: |
-          echo "PR Author: ${{ github.event.pull_request.user.login }}"
-          echo "Target Branch: ${{ github.event.pull_request.base.ref }}"
-          echo "Source Branch: ${{ github.event.pull_request.head.ref }}"
+          echo "Created PR: ${{ steps.create-pr.outputs.pull-request-url }}"
