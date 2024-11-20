@@ -12,6 +12,7 @@ import { Footer } from "@/components/Footer";
 import Pricing from "@/components/Pricing";
 import Header from "@/components/navbar";
 import TextTransition from "@/components/TextTransition";
+import AccordionExample from "@/components/Accordian";
 // import HeroCarousel from "./components/HeroCarousel";
 
 const  Home = async () => {
@@ -30,7 +31,7 @@ const  Home = async () => {
               Unleash the 
               <span className="text-primary text-slate-100"> BarterClub</span>
             </h1>
-            <div className="mt-6 h-12 px-4">
+            <div className="mt-6 scale-110 h-12 px-5">
           <TextTransition />
         </div>
 
@@ -51,6 +52,7 @@ const  Home = async () => {
        <Affiliate/>
         <Contact/>
        <GetApp/>
+        <AccordionExample/>
         </div>
        <Footer/>
       </section>
