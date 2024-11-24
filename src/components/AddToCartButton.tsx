@@ -47,6 +47,9 @@ const AddToCartButton = ({ product }: { product: Product }) => {
       } else {
         const data = await res.json()
         toast.error(data.message)
+        if(data.message === 'Insufficient points for the transaction') {
+          router.push('/profile#buy-points')
+        }
       }
     } catch (error:any) {
       console.error(error)

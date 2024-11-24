@@ -104,11 +104,19 @@ const BREADCRUMBS = [
         {/* Right - Buttons */}
         <div className="flex items-center space-x-4">
           <SignedIn>
+          <Link href="/addProduct">
+          <button
+           type="button"
+           className="rounded-3xl mr-6 px-6 py-3 text-sm font-semibold text-[#FD4677] shadow-sm hover:bg-gray-100 hover:text-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+            >
+                Add Post
+              </button>
+          </Link>
             <SignOutButton>
               <Link href="/">
                 <button
                   type="button"
-                  className="rounded-3xl px-6 py-3 text-sm font-semibold text-[#FD4677] shadow-sm hover:bg-slate-300 hover:text-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">
+                  className="rounded-3xl px-6 py-3 text-sm font-semibold text-[#FD4677] shadow-sm hover:bg-gray-100 hover:text-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black">
                   Logout
                 </button>
               </Link>
@@ -181,7 +189,9 @@ const BREADCRUMBS = [
       </Card>
        <UserBalance />
        <TransactionHistory/>
+       <div id='buy-points'>
        <BuyPoints/>
+       </div>
        <MyOrders userId={userId}/>
       <section className="wrapper my-8">
       <MaxWidthWrapper>

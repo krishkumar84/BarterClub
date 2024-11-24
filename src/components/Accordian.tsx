@@ -55,11 +55,11 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
       animate={isExpanded ? 'expanded' : 'collapsed'}
       onClick={onToggle}
       style={{
-        background: 'linear-gradient(100deg, rgb(253, 70, 109) 20%, rgb(137.24, 82.95, 222.57) 100%)'
+        background: 'linear-gradient(100deg, rgb(253, 70, 109,0.8) 20%, rgb(137.24, 82.95, 222.57,0.8) 100%)'
       }} 
     >
       <div className="flex items-center justify-between p-4">
-        <h2 className="m-0 text-md font-semibold text-white">{title}</h2>
+        <h2 className="m-0 text-lg font-semibold text-gray-100">{title}</h2>
         <motion.div variants={chevronVariants}>
           <ChevronDown size={18} />
         </motion.div>
@@ -70,7 +70,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
         initial="collapsed"
         animate={isExpanded ? 'expanded' : 'collapsed'}
       >
-        <p className="m-0 text-sm text-gray-900 dark:text-gray-100">
+        <p className="m-0 text-sm text-gray-300">
           {content}
         </p>
       </motion.div>
