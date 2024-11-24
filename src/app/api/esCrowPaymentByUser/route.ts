@@ -19,7 +19,7 @@ export async function GET(req:Request){
         {
           $match: {
             seller: new ObjectId(userId),
-            status: 'payment_completed'
+            status: 'pending_payment'
           }
         },
         {
