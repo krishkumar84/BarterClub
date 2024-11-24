@@ -10,7 +10,6 @@ export async function POST(req:Request){
 
     const { orderId } = await req.json();
 
-    console.log(req.json());
     console.log("approveDelivery", orderId);
 
   try {
