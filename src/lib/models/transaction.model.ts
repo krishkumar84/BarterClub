@@ -6,7 +6,7 @@ const TransactionSchema = new Schema({
   amount: { type: String, required: true },  // Amount in INR or barter points
   transactionType: { 
     type: String, 
-    enum: ['Purchase','Subscription','Bonus','Sell','Buy'],  // Bonus = barter points credited as discount or free
+    enum: ['Purchase','Subscription','Bonus','Sell','Buy','Refund'],  // Bonus = barter points credited as discount or free
     required: true 
   },
   points: { type: Number, required: true },  // Barter points credited

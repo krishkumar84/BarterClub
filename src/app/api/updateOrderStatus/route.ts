@@ -5,6 +5,8 @@ import Order from '@/lib/models/order.model';
 import User from '@/lib/models/user.model';
 import Product from '@/lib/models/product.model';
 import { sendOrderNotificationEmail } from '@/lib/email';
+import EscrowTransaction from "@/lib/models/esCrow.model";
+import Transaction from "@/lib/models/transaction.model";
 
 connect();
 
@@ -44,6 +46,25 @@ export async function POST(req: Request) {
         return NextResponse.json({ message: 'Unauthorized product owner' }, { status: 401 });
     }
     const seller = await User.findById(sellerId);
+    if(status == 'rejected'){
+      const escrowTransaction = await EscrowTransaction.findOne({ order: orderId });
+    if (!escrowTransaction || escrowTransaction.status !== "pending_payment") {
+      return NextResponse.json({ message: "Escrow transaction not found or invalid" }, { status: 400 });
+    }
+    buyer.balance += escrowTransaction.amountHeld;
+    await buyer.save();
+    const buyerTransaction = new Transaction({
+      userId: buyer._id,
+      amount: 'Point Refund' ,  
+      transactionType: 'Refund',
+      points: escrowTransaction.amountHeld,
+      razorpayPaymentId: "amount refunded", 
+      description: `Amount refund of  ${product.title} of ${escrowTransaction.amountHeld} points.`, 
+      orderId: order._id 
+    });
+    await buyerTransaction.save();
+    buyer.transactionHistory.push(buyerTransaction._id);
+    }
 
     order.status = status;
     await order.save();
@@ -72,7 +93,7 @@ export async function POST(req: Request) {
   const buyerEmailContent = `
     <h1>Order Created</h1>
     <p>Hello ${buyer.Name},</p>
-    <p>Your order for <a href="https://barterclub.in/product/${product._id}"><strong>${product.title}</strong></a> has been ${status}</p>
+    <p>Your order for <a href="https://barterclub.in/product/${product._id}"><strong>${product.title}</strong></a> has been ${status} ${status=='rejected' ? 'and amount will be refunded' : '.'}</p>
     <p>You can contact seller now</p>
     <p><strong>Seller Details:</strong></p>
     <ul>
