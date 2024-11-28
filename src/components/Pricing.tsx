@@ -52,7 +52,7 @@ const pricingData = [
     secondTitle: "Standard",
     monthlyPrice: 499,
     yerlyPrice: 4999,
-    infoNote: "Ideal for individuals who need quick access to basic features.",
+    infoNote: "Ideal for small business owners, free lancers and service providers.",
     isSelected: true,
     logo: "/pricing3.png",
     getIn: [
@@ -93,7 +93,7 @@ const pricingData = [
   {
     mainTitle: "For big companies",
     secondTitle: "Premium",
-    infoNote: "Ideal for individuals who need quick access to basic features.",
+    infoNote: "Ideal for manufacturer, SMEs, and who want to grow fast.",
     isSelected: false,
     monthlyPrice: 999,
     yerlyPrice: 9999,

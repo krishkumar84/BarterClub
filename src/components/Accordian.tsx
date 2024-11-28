@@ -111,7 +111,7 @@ const accordionItems = [
     },
     {
         title: 'Is BarterClub free to use?',
-        content: 'Yes, BarterClub is completely free to use. There are no fees or charges for listing items or making trades. However, you will need to arrange to meet up with other users to complete trades, so you may incur costs for travel or shipping.'
+        content: 'Yes, BarterClub is completely free to use. There are no fees or charges for listing items or making trades. However, you will need to arrange to meet up with other users to complete trades, so you may incur costs for travel or shipping  we also have premium plans which has its own benefits. like listing your product in our social community, Free points every months, Invitation to community programs, product discounts etc.'
     },
     {
         title: 'Is BarterClub safe?',
