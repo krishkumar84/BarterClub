@@ -64,6 +64,8 @@ export async function POST(req: Request) {
     });
     await buyerTransaction.save();
     buyer.transactionHistory.push(buyerTransaction._id);
+    product.availableQty += 1;
+    await product.save();  
     }
 
     order.status = status;

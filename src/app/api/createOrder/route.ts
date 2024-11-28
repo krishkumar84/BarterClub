@@ -28,18 +28,22 @@ export async function POST(req:Request){
         if (!buyer || !seller || !product) {
           throw new Error("Invalid buyer, seller, or product");
         }
-        console.log("buyer",buyer);
-        console.log("point",points);
-        console.log("product",buyer.balance);
+        if(product.availableQty <= 0){
+          return NextResponse.json({ message: "Product is out of stock" }, { status: 400 });
+        }
+
+        // console.log("buyer",buyer);
+        // console.log("point",points);
+        // console.log("product",buyer.balance);
     
         // Check if the buyer has enough points
         if (buyer.balance < points) {
           return NextResponse.json({ message: "Insufficient points for the transaction" }, { status: 400 });
         }
-        console.log("buyer",buyer);
-        console.log("product",product);
-        console.log("seller",seller);
-        console.log("points",points);
+        // console.log("buyer",buyer);
+        // console.log("product",product);
+        // console.log("seller",seller);
+        // console.log("points",points);
         // Create the order
         const order = new Order({
           product: product._id,
@@ -52,7 +56,9 @@ export async function POST(req:Request){
        await order.save();
         // Update points between buyer and seller
         buyer.balance -= points;
-        // seller.balance += points;
+        product.availableQty -= 1;
+
+        await product.save();
 
         const escrowTransaction = new EscrowTransaction({
           order: order._id,
@@ -64,10 +70,10 @@ export async function POST(req:Request){
         });
     
         await escrowTransaction.save();
+      
 
-
-        console.log("buyer",buyer);
-        console.log("hitting trancaction");
+        // console.log("buyer",buyer);
+        // console.log("hitting trancaction");
         // Create a transaction record for the buyer
     const buyerTransaction = new Transaction({
       userId: buyer._id,
@@ -79,20 +85,9 @@ export async function POST(req:Request){
       orderId: order._id // Link the order ID
     });
 
-    console.log("buyertransaction",buyerTransaction);
+    // console.log("buyertransaction",buyerTransaction);
 
-    console.log("hitting transaction");
-    // Create a transaction record for the seller
-  //   const sellerTransaction = new Transaction({
-  //     userId: seller._id,
-  //     amount: 'Sell product' ,  // Amount received by the seller (positive for earnings)
-  //     transactionType: 'Sell',
-  //     points: points,
-  //     razorpayPaymentId: "selling product", // Set this if you have a payment ID
-  //     description: `Sold ${product.title} and earned ${points} points.`, // Add a meaningful description
-  //     orderId: order._id // Link the order ID
-  //   });
-  //  console.log("sellertransaction",sellerTransaction);
+    // console.log("hitting transaction");
 
     // Save the transactions
     await buyerTransaction.save();

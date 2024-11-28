@@ -153,9 +153,16 @@ const Page = async ({ params }: PageProps) => {
             <div className="mt-6 lg:col-start-1 lg:row-start-2 lg:max-w-lg lg:self-start">
               <div>
                 {!isPostCreater && (
-                <div className="mt-10">
-                  <AddToCartButton product={productDetails} />
-                </div>
+                  <div className="mt-10">
+                    {productDetails.availableQty <= 0 && (
+                      <div className="bg-red-100 border text-center border-red-400 text-red-700 px-4 py-3 rounded relative">
+                        <strong className="font-bold">Out of Stock!</strong>
+                      </div>
+                    )}
+                    {productDetails.availableQty > 0 && (
+                      <AddToCartButton product={productDetails} />
+                    )}
+                  </div>
                 )}
                 <div className="mt-6 text-center">
                   <div className="group inline-flex text-sm text-medium">
