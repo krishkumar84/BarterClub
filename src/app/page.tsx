@@ -31,7 +31,7 @@ const  Home = async () => {
               Unleash the 
               <span className="text-primary text-slate-100"> BarterClub</span>
             </h1>
-            <div className="mt-6 scale-110 h-12 px-5">
+            <div className="mt-6 scale-y-110 h-12 px-5">
           <TextTransition />
         </div>
 

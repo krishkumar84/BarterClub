@@ -55,8 +55,8 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
       animate={isExpanded ? 'expanded' : 'collapsed'}
       onClick={onToggle}
       style={{
-        background: 'linear-gradient(100deg, rgb(253, 70, 109,0.8) 20%, rgb(137.24, 82.95, 222.57,0.8) 100%)'
-      }} 
+        background: 'linear-gradient(100deg, rgba(253, 70, 109, 0.8) 20%, rgba(137, 82, 222, 0.8) 100%)'
+      }}
     >
       <div className="flex items-center justify-between p-4">
         <h2 className="m-0 text-lg font-semibold text-gray-100">{title}</h2>
@@ -65,12 +65,13 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
         </motion.div>
       </div>
       <motion.div
-        className="text-md w-[40rem] select-none px-4 py-4"
+        className="text-md w-full max-w-[40rem] select-none px-4 py-4 overflow-y-auto"
+        style={{ maxHeight: '20rem' }} // Set a maximum height for the content area
         variants={contentVariants}
         initial="collapsed"
         animate={isExpanded ? 'expanded' : 'collapsed'}
       >
-        <p className="m-0 text-sm text-gray-300">
+        <p className="m-0 text-sm flex flex-wrap text-gray-300">
           {content}
         </p>
       </motion.div>
@@ -86,7 +87,7 @@ const Accordion: React.FC<AccordionProps> = ({ items }) => {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-[22rem] sm:w-full">
       {items.map((item, index) => (
         <AccordionItem
           key={index}
@@ -126,7 +127,7 @@ const accordionItems = [
 const AccordionExample: React.FC = () => {
   return (
     <div>
-      <div className="p-8">
+      <div className="p-8 flex items-center justify-center w-full">
         <Accordion items={accordionItems} />
       </div>
     </div>
