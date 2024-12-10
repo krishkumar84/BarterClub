@@ -60,14 +60,16 @@ export async function POST(req: NextRequest) {
           await transaction.save();
           user.transactionHistory.push(transaction._id);
           await user.save();
+          console.log("transaction saved")
         }
       } catch (error) {
         console.error('Error handling Razorpay webhook:', error);
       }
+      break;
    }
 
-      
-      case 'subscription.activated': {
+   case 'subscription.activated': {
+        console.log("subscription.activated")
         const subscriptionData = body.payload.subscription.entity;
         const subscription = await Subscription.findOne({ razorpaySubscriptionId: subscriptionData.id });
         if (subscription) {
@@ -78,8 +80,8 @@ export async function POST(req: NextRequest) {
         }
         break;
       }
-      
       case 'subscription.charged': {
+        console.log("subscription.charged")
         const subscriptionData = body.payload.subscription.entity;
         const payment = body.payload.payment.entity;
         
@@ -120,8 +122,8 @@ export async function POST(req: NextRequest) {
             }
             break;
           }
-          
           case 'subscription.cancelled': {
+            console.log("subscription.cancelled")
             const subscriptionData = body.payload.subscription.entity;
             const subscription = await Subscription.findOne({ razorpaySubscriptionId: subscriptionData.id });
             if (subscription) {
@@ -131,10 +133,11 @@ export async function POST(req: NextRequest) {
             break;
           }
           case 'payment.failed': {
+            console.log("payment.failed")
             console.error('Payment failed');
             return NextResponse.json({ message: 'Payment failed' }, { status: 400 });
           }
-          
+          console.log("subscription.updated")
           case 'subscription.updated': {
             const subscriptionData = body.payload.subscription.entity;
             const subscription = await Subscription.findOne({ razorpaySubscriptionId: subscriptionData.id });
@@ -144,8 +147,8 @@ export async function POST(req: NextRequest) {
             }
             break;
           }
-          
           default:
+            console.log("default")
             console.log(`Unhandled event type ${event}`);
           }          
           return NextResponse.json({ message: 'Webhook processed' }, { status: 200 });
