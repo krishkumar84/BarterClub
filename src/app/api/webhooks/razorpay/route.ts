@@ -18,14 +18,19 @@ export async function POST(req: NextRequest) {
     if (digest !== razorpaySignature) {
       return NextResponse.json({ message: 'Invalid signature' }, { status: 400 });
     }
-
+    if (!body.payload || !body.payload.payment) {
+      console.error('Invalid payload structure for payment.captured', body);
+      return NextResponse.json({ 
+        message: 'Invalid payload structure', 
+        details: body 
+      }, { status: 400 });
+    }
     const event = body.event;
     console.log(event,"event")
     await connect();
 
     switch (event) {
       case 'payment.captured': {
-
         try {
         const payment = body.payload.payment.entity;
         console.log(payment,"payment new")
@@ -34,7 +39,7 @@ export async function POST(req: NextRequest) {
         console.log(userId,"userid")
 
         const user = await User.findById(userId);
-
+       
         console.log(user,"user")
         console.log("here aagya")
         if (user) {
@@ -59,63 +64,7 @@ export async function POST(req: NextRequest) {
       } catch (error) {
         console.error('Error handling Razorpay webhook:', error);
       }
-        // console.log('Subscription ID:', subscriptionId);
-        // const orderId = payment.order_id;
-        // const invoiceId = payment.invoice_id;
-        // const description = payment.description;
-        // console.log('Order ID:', orderId);
-        // console.log('Invoice ID:', invoiceId);
-        // console.log('Description:', description);
-
-        // if (!payment.subscription_id) {
-        //   console.log('No subscription ID associated with this payment');
-        //   return NextResponse.json({ message: 'No subscription ID' }, { status: 400 });
-        // }
-
-        // Find the subscription in your database
-        // const subscription = await Subscription.findOne({ razorpaySubscriptionId: subscriptionId });
-        // if (!subscription) {
-        //   console.error('Subscription not found for payment.captured');
-        //   return NextResponse.json({ message: 'Subscription not found' }, { status: 404 });
-        // }
-
-        // console.log('Subscription:', subscription);
-
-        // Update subscription status
-        // subscription.paymentStatus = 'Paid';
-        // await subscription.save();
-
-        // Update user barter points
-        // const user = await User.findById(subscription.userId);
-        // if (user) {
-        //   user.balance += subscription.barterPoints;
-        //   user.purchasedPoints += subscription.barterPoints;
-        //   user.subscription.isActive = true;
-        //   user.subscription.plan = subscription.planType;
-          // user.subscription = {
-          //   plan: subscription.planType,
-          //   isActive: true,
-          //   startDate: subscription.startDate,
-          //   endDate: subscription.endDate,
-          // };
-
-          // Create a transaction record
-        //   const transaction = new Transaction({
-        //     userId: user._id,
-        //     amount: "Bonus", // Convert paise to INR
-        //     transactionType: 'Subscription',
-        //     points: subscription.barterPoints,
-        //     razorpayPaymentId:"Buy Subscription",
-        //     orderId: payment.id,
-        //     invoiceId,
-        //     description,
-        //   });
-        //   await transaction.save();
-        //   user.transactionHistory.push(transaction._id);
-        //   await user.save();
-        // }
-        // break;
-      }
+   }
 
       
       case 'subscription.activated': {
@@ -138,11 +87,6 @@ export async function POST(req: NextRequest) {
         if (subscription) {
           if (payment.status === 'captured') {
             subscription.paymentStatus = 'Paid';
-            // if (subscription.planType === 'Monthly') {
-              //   subscription.endDate = new Date(subscription.endDate.setMonth(subscription.endDate.getMonth() + 1));
-              // } else if (subscription.planType === 'Yearly') {
-                //   subscription.endDate = new Date(subscription.endDate.setFullYear(subscription.endDate.getFullYear() + 1));
-                // }
                 await subscription.save();
                 
                 // Update user barter points
@@ -156,11 +100,6 @@ export async function POST(req: NextRequest) {
                   
                   // Create a transaction record
                   const transaction = new Transaction({
-                    // userId: user._id,
-                    // amount: payment.amount / 100, // Convert paise to INR
-                    // transactionType: 'Purchase',
-                    // points: subscription.barterPoints,
-                    // razorpayPaymentId: payment.id,
                     userId: user._id,
                     amount: "Bonus", // Convert paise to INR
                     transactionType: 'Subscription',
@@ -208,11 +147,14 @@ export async function POST(req: NextRequest) {
           
           default:
             console.log(`Unhandled event type ${event}`);
-          }
-          
+          }          
           return NextResponse.json({ message: 'Webhook processed' }, { status: 200 });
-        } catch (error) {
+        } catch (error:any) {
           console.error('Error processing webhook:', error);
-          return NextResponse.json({ message: 'Error processing webhook' }, { status: 500 });
+          return NextResponse.json({ 
+            message: 'Comprehensive webhook error', 
+            error: error.message,
+            stack: error.stack 
+          }, { status: 500 });
         }
 }
