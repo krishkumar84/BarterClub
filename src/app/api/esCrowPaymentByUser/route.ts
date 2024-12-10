@@ -1,11 +1,10 @@
 import { connect } from '@/lib/db';
-import { NextResponse } from 'next/server';
-import {auth} from '@clerk/nextjs/server';
+import { NextResponse,NextRequest } from 'next/server';
 import EscrowTransaction from '@/lib/models/esCrow.model';
 import { ObjectId } from 'mongodb';
 
 connect();
-export async function GET(req:Request){
+export async function GET(req:NextRequest){
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get('userId');
     // const { sessionClaims} = auth();

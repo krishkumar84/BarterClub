@@ -5,12 +5,17 @@ import User from '@/lib/models/user.model';
 import Subscription from '@/lib/models/subscription.model';
 import { NextResponse } from 'next/server';
 import { NextRequest} from "next/server";
+import { getAuth } from "@clerk/nextjs/server";
 
 connect();
 
 
 export async function POST(req:NextRequest, res:NextApiResponse) {
+  const { userId:clerk } = getAuth(req);
 
+  if (!clerk) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
     // const body = req.body; 
     const { userId, planType, duration } = await req.json();
 

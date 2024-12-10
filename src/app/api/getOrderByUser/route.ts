@@ -1,13 +1,18 @@
 import Product from '@/lib/models/product.model';
 import { connect } from '@/lib/db';
-import { auth } from '@clerk/nextjs/server';
+import { getAuth } from "@clerk/nextjs/server";
 import User from '@/lib/models/user.model'
 import Order from '@/lib/models/order.model';
-import { NextResponse } from 'next/server';
+import { NextResponse,NextRequest } from 'next/server';
 
 connect();
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
+    const { userId:clerk } = getAuth(req);
+
+    if (!clerk) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get('userId');
     const page = parseInt(searchParams.get('page') || '1', 10);

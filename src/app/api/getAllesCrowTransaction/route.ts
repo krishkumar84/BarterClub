@@ -1,14 +1,17 @@
 import { connect } from '@/lib/db';
-import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { NextResponse,NextRequest } from 'next/server';
 import EscrowTransaction from '@/lib/models/esCrow.model';
-import User from '@/lib/models/user.model';
-import Product from '@/lib/models/product.model';
+import { getAuth } from "@clerk/nextjs/server";
 
 connect();
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
+    const { userId:clerk } = getAuth(req);
+
+    if (!clerk) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
     const data = await EscrowTransaction.aggregate([
         // Lookup buyer details
         {

@@ -1,9 +1,14 @@
 import Transaction from '@/lib/models/transaction.model';
-import User from '@/lib/models/user.model';
-import { NextResponse } from 'next/server';
+import { NextResponse ,NextRequest} from 'next/server';
+import { getAuth } from "@clerk/nextjs/server";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const { userId:clerk } = getAuth(req);
+
+    if (!clerk) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
     const transactions = await Transaction.aggregate([
       {
         $lookup: {

@@ -1,12 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import Order from "@/lib/models/order.model";
 import EscrowTransaction from "@/lib/models/esCrow.model";
 import User from "@/lib/models/user.model";
 import { sendOrderNotificationEmail } from "@/lib/email";
 import Transaction from "@/lib/models/transaction.model";
 import Product from "@/lib/models/product.model";
+import { getAuth } from "@clerk/nextjs/server";
 
-export async function POST(req:Request){
+export async function POST(req: NextRequest){
+  const { userId } = getAuth(req);
+
+  if (!userId) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
 
     const { orderId } = await req.json();
 

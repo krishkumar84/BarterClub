@@ -7,6 +7,9 @@ connect();
 export async function GET(){
     const { sessionClaims} = auth();
     const userId = (sessionClaims?.userId as any)?.userId;
+    if(!userId){
+        return NextResponse.json({ message: 'User not found' });
+    }
     console.log("userid hello",userId);
     try {
         const user = await User.findById(userId);

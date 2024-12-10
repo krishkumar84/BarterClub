@@ -12,6 +12,9 @@ connect();
 export async function POST(req:Request){
   const { sessionClaims} = auth();
     const userId = (sessionClaims?.userId as any)?.userId;
+    if(!userId){
+        return NextResponse.json({ message: 'User not found' });
+    }
     // console.log("userid hello",userId);
     const body = await req.json();
     const {productId } = body;

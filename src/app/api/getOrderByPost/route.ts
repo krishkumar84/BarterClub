@@ -15,6 +15,9 @@ export async function GET(req: Request) {
     console.log(postId);
     const { sessionClaims} = auth();
     const sellerId = (sessionClaims?.userId as any)?.userId;
+    if(!sellerId){
+        return NextResponse.json({ message: 'User not found' });
+    }
     console.log(sellerId);
     // if (!sellerId) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 

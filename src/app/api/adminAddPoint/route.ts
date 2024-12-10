@@ -16,6 +16,10 @@ export async function POST(req: Request) {
     console.log(adminRole)
     console.log(adminId)
 
+    if(!sessionClaims){
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
     if (adminRole !== 'admin') {
       return NextResponse.json({ message: 'Unauthorized access' }, { status: 403 });
     }
