@@ -5,14 +5,22 @@ import { connect } from '@/lib/db';
 import {auth } from '@clerk/nextjs/server';
 import User from '@/lib/models/user.model'
 import Category from '@/lib/models/category.model';
+import { redis } from "@/lib/ratelimit";
+import { headers } from "next/headers";
+import { Ratelimit } from "@upstash/ratelimit";
 
 connect();
 
+const ratelimit = new Ratelimit({ 
+  redis: redis, 
+  limiter: Ratelimit.fixedWindow(15, '60s'), 
+});
 const getCategoryByName = async (name: string) => {
   return Category.findOne({ name: { $regex: name, $options: 'i' } })
 }
 
 export async function POST(req: NextRequest, res: NextResponse) {
+
   // console.log("hitted");
   // console.log(req.json());
   const {clerkId,userId,imageUrl,owner,body} = await req.json();
@@ -49,6 +57,14 @@ const populateProduct = (query: any) => {
 };
 
 export async function GET(req:Request){
+
+  const ip = headers().get('x-real-ip') || req.headers.get('x-forwarded-for');
+  const { success, pending, limit, reset, remaining } = await ratelimit.limit(ip!);
+  console.log(success, pending, limit, reset, remaining);
+  
+  if (!success) {
+    return NextResponse.json(createError(429, 'Too many requests'));
+  }
   try{
   const { searchParams } = new URL(req.url);
   const query = searchParams.get('query') || '';

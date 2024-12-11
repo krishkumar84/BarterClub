@@ -7,9 +7,28 @@ import Order from '@/lib/models/order.model';
 import Transaction from '@/lib/models/transaction.model';
 import { sendOrderNotificationEmail } from '@/lib/email';
 import EscrowTransaction from '@/lib/models/esCrow.model';
+import { redis } from "@/lib/ratelimit";
+import { headers } from "next/headers";
+import { Ratelimit } from "@upstash/ratelimit";
+import createError from '@/lib/createError';
+
+connect();
+
+const ratelimit = new Ratelimit({ 
+  redis: redis, 
+  limiter: Ratelimit.fixedWindow(5, '60s'), 
+});
+
 
 connect();
 export async function POST(req:Request){
+  const ip = headers().get('x-real-ip') || req.headers.get('x-forwarded-for');
+  const { success, pending, limit, reset, remaining } = await ratelimit.limit(ip!);
+  console.log(success, pending, limit, reset, remaining);
+  
+  if (!success) {
+    return NextResponse.json(createError(429, 'Too many requests'));
+  }
   const { sessionClaims} = auth();
     const userId = (sessionClaims?.userId as any)?.userId;
     if(!userId){

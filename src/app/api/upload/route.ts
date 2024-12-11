@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { randomBytes } from 'crypto';
 import { getAuth } from "@clerk/nextjs/server";
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { redis } from "@/lib/ratelimit";
+import { headers } from "next/headers";
+import { Ratelimit } from "@upstash/ratelimit";
+import createError from '@/lib/createError';
+
+const ratelimit = new Ratelimit({ 
+  redis: redis, 
+  limiter: Ratelimit.fixedWindow(10, '100s'), 
+});
 
 const r2 = new S3Client({
   region: "auto",
@@ -13,6 +22,13 @@ const r2 = new S3Client({
 });
 
 export async function POST(req:any) {
+  const ip = headers().get('x-real-ip') || req.headers.get('x-forwarded-for');
+  const { success, pending, limit, reset, remaining } = await ratelimit.limit(ip!);
+  console.log(success, pending, limit, reset, remaining);
+  
+  if (!success) {
+    return NextResponse.json(createError(429, 'Too many requests'));
+  }
   try {
     const { userId } = getAuth(req);
     console.log(userId);

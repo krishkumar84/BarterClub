@@ -6,11 +6,25 @@ import Subscription from '@/lib/models/subscription.model';
 import { NextResponse } from 'next/server';
 import { NextRequest} from "next/server";
 import { getAuth } from "@clerk/nextjs/server";
+import { redis } from "@/lib/ratelimit";
+import { headers } from "next/headers";
+import { Ratelimit } from "@upstash/ratelimit";
+import createError from '@/lib/createError';
 
 connect();
 
-
+const ratelimit = new Ratelimit({ 
+  redis: redis, 
+  limiter: Ratelimit.fixedWindow(5, '100s'), 
+});
 export async function POST(req:NextRequest, res:NextApiResponse) {
+  const ip = headers().get('x-real-ip') || req.headers.get('x-forwarded-for');
+  const { success, pending, limit, reset, remaining } = await ratelimit.limit(ip!);
+  console.log(success, pending, limit, reset, remaining);
+  
+  if (!success) {
+    return NextResponse.json(createError(429, 'Too many requests'));
+  }
   const { userId:clerk } = getAuth(req);
 
   if (!clerk) {
