@@ -53,6 +53,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'Unauthorized seller' }, { status: 401 });
     }
 
+    const escrowTransaction = await EscrowTransaction.findOne({ order: orderId });
+    if (!escrowTransaction || escrowTransaction.status !== "pending_payment") {
+      return NextResponse.json({ message: "Escrow transaction not found or invalid" }, { status: 400 });
+    }
+
     const buyer = await User.findById(order.buyer);
     const product = await Product.findById(order.product);
     const sellerId = product?.owner;
@@ -78,9 +83,11 @@ export async function POST(req: Request) {
       orderId: order._id 
     });
     await buyerTransaction.save();
+    escrowTransaction.status = "payment_refunded";
     buyer.transactionHistory.push(buyerTransaction._id);
     product.availableQty += 1;
     await product.save();  
+    await escrowTransaction.save();
     }
 
     order.status = status;

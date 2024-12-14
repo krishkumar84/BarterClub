@@ -27,7 +27,7 @@ const EscrowTransactionSchema = new Schema({
     },
     status: {
       type: String,
-      enum: ["pending_payment", "payment_completed"],
+      enum: ["pending_payment", "payment_completed","payment_refunded"],
       default: "pending_payment"
     },
     createdAt: {
