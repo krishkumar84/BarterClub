@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import User from '@/lib/models/user.model'; 
 import { auth } from '@clerk/nextjs/server';
+import { connect } from '@/lib/db';
+
+connect();
 
 export async function GET() {
   try {

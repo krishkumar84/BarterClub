@@ -1,6 +1,9 @@
 import Transaction from '@/lib/models/transaction.model';
 import { NextResponse ,NextRequest} from 'next/server';
 import { getAuth } from "@clerk/nextjs/server";
+import { connect } from '@/lib/db';
+
+connect();
 
 export async function GET(req: NextRequest) {
   try {
