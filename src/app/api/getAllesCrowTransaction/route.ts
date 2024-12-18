@@ -1,16 +1,23 @@
 import { connect } from '@/lib/db';
 import { NextResponse,NextRequest } from 'next/server';
 import EscrowTransaction from '@/lib/models/esCrow.model';
-import { getAuth } from "@clerk/nextjs/server";
+import { auth } from '@clerk/nextjs/server';
 
 connect();
 
 export async function GET(req: NextRequest) {
   try {
-    const { userId:clerk } = getAuth(req);
+    console.log('Authenticating user...');
+    const { sessionClaims } = auth();
+    if (!sessionClaims) {
+      console.log('Unauthorized: No session claims');
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
 
-    if (!clerk) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    const adminRole = (sessionClaims?.userId as { role: string }).role;
+    if (adminRole !== 'admin') {
+      console.log('Unauthorized access: Not an admin');
+      return NextResponse.json({ message: 'Unauthorized access' }, { status: 403 });
     }
     const data = await EscrowTransaction.aggregate([
         // Lookup buyer details
@@ -65,6 +72,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ success: true, data: data });
   } catch (error) {
     console.error('Error fetching transactions:', error);
-    return NextResponse.json({ success: false, message: 'Failed to fetch transactions' });
+    return NextResponse.json({ success: false, message: 'Failed to fetch transactions',error:error });
   }
 }
