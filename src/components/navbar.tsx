@@ -6,15 +6,15 @@ import { Menu, X } from 'lucide-react'
 const menuItems = [
   {
     name: 'Home',
-    href: '#',
+    href: '#home',
   },
   {
     name: 'About',
-    href: '#',
+    href: '#about',
   },
   {
     name: 'Features',
-    href: '#',
+    href: '#faq',
   },
   {
     name: 'Marketplace',
@@ -22,11 +22,11 @@ const menuItems = [
   },
   {
     name: 'Pricing',
-    href: '#',
+    href: '#pricing',
   },
   {
-    name: 'Services',
-    href: '#',
+    name: 'Contact',
+    href: '#contact',
   },
 ]
 import logo from '/public/logo.png'
@@ -37,12 +37,21 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import Link from "next/link";
+import { useUser } from "@clerk/nextjs";
+
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }
+
+  const user = useUser();
+  const isAdmin = user.isLoaded && user.isSignedIn && user.user?.publicMetadata?.role === 'admin';
+
+  console.log(isAdmin)
+
+
 
   return (
     <div className="relative w-full  ">
@@ -86,6 +95,14 @@ export default function Header() {
             </Link>
           </SignedOut>
           <SignedIn>
+          {isAdmin && <Link href="/admin">
+          <button
+           type="button"
+           className="rounded-3xl mr-3 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-300 hover:text-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+            >
+                Admin
+              </button>
+          </Link>}
           <Link href="/profile">
           <button
            type="button"
@@ -145,6 +162,7 @@ export default function Header() {
                         key={item.name}
                         href={item.href}
                         className="-m-3 flex items-center rounded-md p-3 text-sm font-semibold"
+                        onClick={toggleMenu}
                       >
                         <span className="ml-3 text-base font-medium text-slate-300">
                           {item.name}
@@ -154,12 +172,53 @@ export default function Header() {
                   </nav>
                 </div>
                 <div className="flex flex-row">
+        <div className="flex flex-col">
+          <SignedIn>
+          {isAdmin && <Link href="/admin">
+          <button
+           type="button"
+           className="rounded-3xl mt-2 pl-3 py-3 text-sm font-semibold text-slate-300 shadow-sm hover:text-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+            >
+                Admin
+              </button>
+          </Link>}
+          <Link href="/profile">
+          <button
+           type="button"
+           className="rounded-3xl pl-3 py-3 text-sm font-semibold text-slate-300 shadow-sm hover:text-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+            >
+                Dashboard
+              </button>
+          </Link>
+          <Link href="/addProduct">
+          <button
+           type="button"
+           className="rounded-3xl pl-3 py-3 text-sm font-semibold text-slate-300 shadow-sm hover:text-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+            >
+                Add Post
+              </button>
+          </Link>
+          </SignedIn>
+          <SignedIn>
+           <SignOutButton>
+           <button
+                type="button"
+                className="rounded-3xl  py-3 text-sm font-semibold text-slate-300 shadow-sm hover:text-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+              >
+                Logout
+              </button>
+         </SignOutButton>
+         <div className="mt-2 ml-4">
+         <UserButton />
+         </div>
+         </SignedIn>
+        </div>
           <SignedOut>
             <div className="flex flex-col gap-2 mt-2">
             <Link href="/signin">
               <button
                 type="button"
-                className="rounded-3xl  px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-300 hover:text-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                className="rounded-3xl  px-6 py-3 text-sm font-semibold text-slate-300 shadow-sm hover:text-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
                 onClick={toggleMenu}
               >
                 Login
@@ -168,7 +227,7 @@ export default function Header() {
             <Link href="/signup">
               <button
                 type="button"
-                className="rounded-3xl  px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-300 hover:text-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                className="rounded-3xl  px-6 py-3 text-sm font-semibold text-slate-300 shadow-sm hover:text-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
                 onClick={toggleMenu}
               >
                 Signup
@@ -177,18 +236,6 @@ export default function Header() {
             </div>
           </SignedOut>
           <SignedIn>
-           <SignOutButton>
-            <Link href="/">
-           <button
-                type="button"
-                className="rounded-3xl mr-6 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-300 hover:text-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-                onClick={toggleMenu}
-              >
-                Logout
-              </button>
-            </Link>
-         </SignOutButton>
-         <UserButton />
          </SignedIn>
         </div>
               </div>

@@ -332,7 +332,7 @@ const getStoredImageUrls = (): string[] => {
               <FormItem className="w-full">
                 <FormControl>
                 <div className="grid w-full max-w-sm items-center gap-1.5">
-                     <Label>Price(in Inr)</Label>
+                     <Label>Price(Barter Points)</Label>
                      <Input type="number" placeholder="Price" {...field} className="input-field" />
                    </div>
                 </FormControl>

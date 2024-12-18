@@ -1,5 +1,9 @@
 import React from 'react'
 import Image from 'next/image'
+import {
+  SignedOut,
+} from "@clerk/nextjs";
+import Link from "next/link";
 
 const GetApp = () => {
   return (
@@ -16,12 +20,16 @@ const GetApp = () => {
               <p className="max-w-xl text-base leading-relaxed text-white">
               swap items or services without spending money. It’s a simple way to get what you want by exchanging things you already own.
               </p>
-              <button
+              <SignedOut>
+              <Link href="/signup">
+                  <button
                     type="button"
                     className="rounded-3xl bg-white  px-6 py-3 text-sm font-semibold text-gray-800 shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
                   >
                     Join in
                   </button>
+                </Link>
+              </SignedOut>
         </div>
 
         <div className="flex flex-1 my-4 sm:mt-0 items-center justify-end">

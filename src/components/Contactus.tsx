@@ -3,7 +3,7 @@ import { UserRound,Mail,MessageCircleMore } from 'lucide-react'
 
 export function Contact() {
   return (
-    <section className='w-[85%]'>
+    <section className='max-w-5xl'>
       <div className="px-2 lg:flex justify-center lg:flex-row lg:items-center ">
         <div className="w-full bg-zinc-900 py-8 lg:w-1/2 rounded-tl-3xl rounded-tr-3xl lg:rounded-tr-none lg:rounded-bl-3xl">
           <div className="my-10 lg:my-0 px-6 md:px-10">

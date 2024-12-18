@@ -19,7 +19,9 @@ const  Home = async () => {
 
   return (
    <>
-   <section  style={{
+   <section  
+    id="home"
+    style={{
     backgroundImage: `url("${'/bg2.svg'}")`,
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover'
@@ -45,14 +47,20 @@ const  Home = async () => {
         </div>
        <div className="flex-col flex items-center justify-center gap-12 mb-24">
        {/* <Clients/> */}
-       <AboutUs/>
+       <div id="about">
+            <AboutUs />
+       </div>
        <div id="pricing">
             <Pricing />
           </div>
        <Affiliate/>
+        <div id="contact">
         <Contact/>
+        </div>
        <GetApp/>
+       <div id="faq">
         <AccordionExample/>
+        </div>
         </div>
        <Footer/>
       </section>
