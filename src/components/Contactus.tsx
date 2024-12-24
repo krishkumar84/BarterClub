@@ -1,7 +1,52 @@
+'use client'
 import React from 'react'
 import { UserRound,Mail,MessageCircleMore } from 'lucide-react'
+import { toast } from "sonner"
+import { useState } from 'react'
 
 export function Contact() {
+  const [isLoading, setIsLoading] = useState(false)
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    const fullName = (document.getElementById('fullName') as HTMLInputElement).value
+    const email = (document.getElementById('email') as HTMLInputElement).value
+    const message = (document.getElementById('message') as HTMLInputElement).value
+
+    if (!fullName || !email || !message) {
+      toast.error('Please fill in all fields')
+      return
+    }
+    fetch('/api/mailchimp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ fullName, email, message }),
+    })
+      .then((res) => {
+        console.log(res)
+        if (res.ok) {
+          res.json().then(data => {
+            if(data.message=='OK') {
+              toast.success('Message sent successfully')
+            }else{
+
+              toast.success(data.message)
+            }
+          })
+        } else {
+          toast.error('Failed to send message')
+        }
+      })
+      .catch(() => {
+        toast.error('Failed to send message')
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
+
+  }
   return (
     <section className='max-w-5xl'>
       <div className="px-2 lg:flex justify-center lg:flex-row lg:items-center ">
@@ -10,7 +55,7 @@ export function Contact() {
           <h2 className="text-3xl font-bold  text-white sm:text-2xl lg:text-3xl">
              If you have Questions, Feel free to contact us
               </h2>
-            <form action="#" method="POST" className="mt-8 max-w-xl">
+            <form onSubmit={submit} method="POST" className="mt-8 max-w-xl">
               <div className="flex flex-col justify-center  gap-1">
                 <div className="flex w-full lg:max-w-lg items-center space-x-6">
                   <div className="flex items-center justify-center space-x-1">
@@ -19,6 +64,7 @@ export function Contact() {
                     className="flex h-10 w-full border-b-2 border-white focus:outline-none  bg-transparent px-3 py-2 text-sm text-slate-100"
                     type="text"
                     placeholder="Full Name"
+                    id = "fullName"
                   />
                   </div>
                   <div className="flex items-center justify-center space-x-1">
@@ -27,6 +73,7 @@ export function Contact() {
                     className="flex h-10 w-full border-b-2 border-white focus:outline-none bg-transparent px-3 py-2 text-sm text-slate-100"
                     type="email"
                     placeholder="Email"
+                    id="email"
                   />
                   </div>
                 </div>
@@ -41,13 +88,20 @@ export function Contact() {
                   ></textarea>
                   </div>
                   <button
-                    type="button"
+                    type="submit"
                     style={{
                         background: 'linear-gradient(180deg, rgb(253, 70, 119) 0%, rgb(137.24, 82.95, 222.57) 100%)'
                       }}
+                    disabled={isLoading}
                     className="rounded-3xl w-full md:w-[80%] lg:max-w-lg mt-12 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
                   >
-                    Read More
+                    {isLoading ? (
+                        <>
+                          Sending Msg...
+                        </>
+                      ) : (
+                        'Send Message'
+                      )}
                   </button>
               </div>
             </form>

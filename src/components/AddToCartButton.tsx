@@ -11,7 +11,9 @@ interface Product {
   _id: string
   title: string
   price: number
-  // Add other product properties as needed
+  category: {
+    name: string
+  }
 }
 
 const AddToCartButton = ({ product }: { product: Product }) => {
@@ -66,7 +68,7 @@ const AddToCartButton = ({ product }: { product: Product }) => {
         size='lg'
         className='w-full'
       >
-        Buy Product
+        Buy {product.category.name == 'Services' ? 'Service' : 'Product'}
       </Button>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
