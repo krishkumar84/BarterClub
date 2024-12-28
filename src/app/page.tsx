@@ -19,6 +19,7 @@ const  Home = async () => {
 
   return (
    <>
+   <script src="//code.tidio.co/bh8md3putkqxfjunssu6cqckfhniebqg.js" async></script>
    <section  
     id="home"
     style={{
