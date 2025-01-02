@@ -57,7 +57,7 @@ export default function ContactPage() {
             <div className="lg:col-span-2">
               <div className="bg-black/40 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-pink-500/20">
                 <form 
-                  action="https://formsubmit.co/krish221200867@gmail.com" 
+                  action="https://formsubmit.co/business@barterclub.in" 
                   method="POST" 
                   className="space-y-6"
                 >

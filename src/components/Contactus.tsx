@@ -13,7 +13,7 @@ export function Contact() {
             <h2 className="text-3xl font-bold  text-white sm:text-2xl lg:text-3xl">
               If you have Questions, Feel free to contact us
             </h2>
-            <form action="https://formsubmit.co/krish221200867@gmail.com" 
+            <form action="https://formsubmit.co/business@barterclub.in " 
                   method="POST" className="mt-8 max-w-xl">
                   <input type="hidden" name="_subject" value="New Contact Form Submission" />
                   <input type="hidden" name="_captcha" value="false" />
