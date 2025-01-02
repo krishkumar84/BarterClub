@@ -26,7 +26,7 @@ const menuItems = [
   },
   {
     name: 'Contact',
-    href: '#contact',
+    href: '/contact',
   },
 ]
 import logo from '/public/logo.png'
