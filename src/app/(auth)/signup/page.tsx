@@ -47,7 +47,7 @@ export default function SignUp() {
         unsafeMetadata: {
           gst: gst,
           address: address,
-          plan: plan,
+          plan: 'Free',
         },
       })
 
@@ -79,6 +79,9 @@ export default function SignUp() {
         await setActive({ session: completeSignUp.createdSessionId })
         toast.success("Account created successfully!")
         router.push('/')
+        if(plan != 'Free') {
+          router.push('/#pricing');
+        }
       } else {
         toast.error("Verification failed. Please try again.")
       }
