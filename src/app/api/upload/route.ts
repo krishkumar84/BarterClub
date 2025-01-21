@@ -57,7 +57,8 @@ export async function POST(req:any) {
     });
     try {
       const response = await r2.send(putObjectCommand);
-      const fileUrl = `https://pub-5b7aa644be4a4389bec851ef2147ddce.r2.dev/${fileName}`; 
+      // const fileUrl = `https://pub-5b7aa644be4a4389bec851ef2147ddce.r2.dev/${fileName}`; 
+      const fileUrl = `https://pub-64c1419735be4ed8b942decb6af76e31.r2.dev/${fileName}`; 
        return NextResponse.json({ message: 'File uploaded successfully', url: fileUrl });
     } catch (error) {
       console. log ("error:", error);
