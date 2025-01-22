@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
     }
 
     const email = user.email;
-    const name = user.name;
+    const name = user.Name;
 
     const emailContent = `
       <!DOCTYPE html>

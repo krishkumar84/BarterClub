@@ -4,11 +4,13 @@ import { headers } from "next/headers";
 import { Ratelimit } from "@upstash/ratelimit";
 import createError from '@/lib/createError';
 import User from '@/lib/models/user.model';
-
+import { connect } from '@/lib/db';
 const ratelimit = new Ratelimit({ 
     redis: redis, 
     limiter: Ratelimit.fixedWindow(5, '100s'), 
   });
+
+  connect();
 
 export async function POST(req: Request, res: NextResponse) {
     const ip = headers().get('x-real-ip') || req.headers.get('x-forwarded-for');
