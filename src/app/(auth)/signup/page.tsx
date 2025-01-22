@@ -39,24 +39,24 @@ export default function SignUp() {
     setIsLoading(true)
 
     try {
-      await signUp.create({
-        emailAddress: email,
-        password,
-        firstName: fullName.split(' ')[0],
-        lastName: fullName.split(' ')[1],
-        unsafeMetadata: {
-          PhoneNumber: phone,
-          gst: gst,
-          address: address,
-          plan: 'Free',
-        },
-      })
       console.log(`Phone number being sent: +91${phone}`);
       const phonechek =  await axios.post('/api/checkPhoneNo', { phone: `+91${phone}`})
       if(phonechek.data.status !== 200){
        toast.error(phonechek.data?.message || "An error occurred during sign up.")
        return 
       }
+      await signUp.create({
+        emailAddress: email,
+        password,
+        firstName: fullName.split(' ')[0],
+        lastName: fullName.split(' ')[1],
+        unsafeMetadata: {
+          PhoneNumber: `+91${phone}`,
+          gst: gst,
+          address: address,
+          plan: 'Free',
+        },
+      })
       await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
       console.log(`Phone number being sent: +91${phone}`);
       setPendingVerification(true)
