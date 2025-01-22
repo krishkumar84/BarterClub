@@ -82,6 +82,7 @@ export async function POST(req: Request) {
       console.error("Error creating user in MongoDB:", err);
       // Delete the user from Clerk if creation in MongoDB fails
       await clerkClient.users.deleteUser(id);
+      deleteUser(id);
 
       return new Response("Error occurred while creating user in MongoDB", {
         status: 500,
