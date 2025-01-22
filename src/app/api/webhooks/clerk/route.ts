@@ -57,7 +57,7 @@ export async function POST(req: Request) {
       clerkId: id,
       email: email_addresses[0].email_address,
       Name: `${first_name} ${last_name}`,
-      phone: phone_numbers[0].phone_number,
+      phone: unsafe_metadata.phone_number,
       Gst: unsafe_metadata.gst,
       Address: unsafe_metadata.address,
     };

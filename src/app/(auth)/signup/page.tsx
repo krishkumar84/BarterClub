@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
+import axios from 'axios'
 
 export default function SignUp() {
   const { isLoaded, signUp, setActive } = useSignUp()
@@ -43,15 +44,21 @@ export default function SignUp() {
         password,
         firstName: fullName.split(' ')[0],
         lastName: fullName.split(' ')[1],
-        phoneNumber: phone,
         unsafeMetadata: {
+          PhoneNumber: phone,
           gst: gst,
           address: address,
           plan: 'Free',
         },
       })
-
+      console.log(`Phone number being sent: +91${phone}`);
+      const phonechek =  await axios.post('/api/checkPhoneNo', { phone: `+91${phone}`})
+      if(phonechek.data.status !== 200){
+       toast.error(phonechek.data?.message || "An error occurred during sign up.")
+       return 
+      }
       await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
+      console.log(`Phone number being sent: +91${phone}`);
       setPendingVerification(true)
       toast.success("Verification email sent. Please check your inbox.")
     } catch (err: any) {
@@ -78,6 +85,7 @@ export default function SignUp() {
       if (completeSignUp.status === 'complete') {
         await setActive({ session: completeSignUp.createdSessionId })
         toast.success("Account created successfully!")
+        axios.get('/api/welcomeMail')
         router.push('/')
         if(plan != 'Free') {
           router.push('/#pricing');
@@ -129,7 +137,10 @@ export default function SignUp() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number</Label>
+                      <div className="flex">
+                      <Label htmlFor="phone">Phone Number </Label>
+                      <p className='text-gray-200 text-[12px]'>( without +91)</p>
+                      </div>
                       <Input
                         id="phone"
                         type="tel"
