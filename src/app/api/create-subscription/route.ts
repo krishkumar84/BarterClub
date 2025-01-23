@@ -103,15 +103,15 @@ export async function POST(req:NextRequest, res:NextApiResponse) {
         razorpaySubscriptionId: subscription.id,
       });
 
-      user.subscription = {
-        plan: planType,
-        isActive: true,
-        startDate: new Date(),
-        endDate,
-      };
+      // user.subscription = {
+      //   plan: planType,
+      //   isActive: true,
+      //   startDate: new Date(),
+      //   endDate,
+      // };
 
-      console.log('Saving subscription and user');
-      await user.save();
+      // console.log('Saving subscription and user');
+      // await user.save();
 
       await newSubscription.save();
       return NextResponse.json({

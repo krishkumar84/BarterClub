@@ -85,7 +85,7 @@ export default function SignUp() {
       if (completeSignUp.status === 'complete') {
         await setActive({ session: completeSignUp.createdSessionId })
         toast.success("Account created successfully!")
-        axios.get('/api/welcomeMail')
+        await axios.get('/api/welcomeMail')
         router.push('/')
         if(plan != 'Free') {
           router.push('/#pricing');
