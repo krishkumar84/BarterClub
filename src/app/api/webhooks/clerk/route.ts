@@ -4,9 +4,8 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { Webhook } from "svix";
 
-import { createUser ,updateUser,deleteUser} from "@/lib/actions/user.action";
+import { createUser, updateUser, deleteUser } from "@/lib/actions/user.action";
 import axios from "axios";
-
 
 export async function POST(req: Request) {
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
@@ -52,7 +51,8 @@ export async function POST(req: Request) {
   const eventType = evt.type;
 
   if (eventType === "user.created") {
-    const { id, email_addresses, first_name, last_name,unsafe_metadata } = evt.data;
+    const { id, email_addresses, first_name, last_name, unsafe_metadata } =
+      evt.data;
 
     const user = {
       clerkId: id,
@@ -69,26 +69,53 @@ export async function POST(req: Request) {
       const newUser = await createUser(user);
 
       if (newUser) {
-        await clerkClient.users.updateUserMetadata(id, {
-          publicMetadata: {
-            userId: newUser._id,
-          },
+        try {
+          await clerkClient.users.updateUserMetadata(id, {
+            publicMetadata: {
+              userId: newUser._id,
+            },
+          });
+        } catch (err) {
+          console.error("Error updating Clerk metadata:", err);
+          // Continue execution even if metadata update fails
+        }
+
+        // Use absolute URL for welcome email
+        try {
+          const baseUrl =
+            process.env.NEXT_PUBLIC_APP_URL || "https://barterclub.in";
+          await axios.post(`${baseUrl}/api/welcomeMail`, {
+            body: {
+              email: email_addresses[0].email_address,
+              name: `${first_name} ${last_name}`,
+            },
+          });
+        } catch (err) {
+          console.error("Error sending welcome email:", err);
+        }
+
+        return NextResponse.json({
+          message: "New user created",
+          user: newUser,
         });
-        await axios.post('/api/welcomeMail',{
-          body: {
-            email: email_addresses[0].email_address,
-            name: `${first_name} ${last_name}`,
-          },
-        })
-        return NextResponse.json({ message: "New user created", user: newUser });
       } else {
         throw new Error("Failed to create user in MongoDB");
       }
     } catch (err) {
       console.error("Error creating user in MongoDB:", err);
-      // Delete the user from Clerk if creation in MongoDB fails
-      await clerkClient.users.deleteUser(id);
-      deleteUser(id);
+      try {
+        const clerkUser = await clerkClient.users.getUser(id);
+        if (clerkUser) {
+          await clerkClient.users.deleteUser(id);
+        }
+      } catch (clerkErr) {
+        console.error("Error deleting user from Clerk:", clerkErr);
+      }
+      try {
+        await deleteUser(id);
+      } catch (mongoErr) {
+        console.error("Error deleting user from MongoDB:", mongoErr);
+      }
 
       return new Response("Error occurred while creating user in MongoDB", {
         status: 500,
@@ -96,26 +123,26 @@ export async function POST(req: Request) {
     }
   }
 
-  if (eventType === 'user.updated') {
-    const {id, image_url, first_name, username } = evt.data
+  if (eventType === "user.updated") {
+    const { id, image_url, first_name, username } = evt.data;
 
     const user = {
       Name: first_name,
       username: username!,
       photo: image_url,
-    }
+    };
 
-    const updatedUser = await updateUser(id, user)
+    const updatedUser = await updateUser(id, user);
 
-    return NextResponse.json({ message: 'OK', user: updatedUser })
+    return NextResponse.json({ message: "OK", user: updatedUser });
   }
 
-  if (eventType === 'user.deleted') {
-    const { id } = evt.data
+  if (eventType === "user.deleted") {
+    const { id } = evt.data;
 
-    const deletedUser = await deleteUser(id!)
+    const deletedUser = await deleteUser(id!);
 
-    return NextResponse.json({ message: 'OK', user: deletedUser })
+    return NextResponse.json({ message: "OK", user: deletedUser });
   }
 
   return new Response("", { status: 200 });
