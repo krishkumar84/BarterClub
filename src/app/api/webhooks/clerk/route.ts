@@ -79,19 +79,19 @@ export async function POST(req: Request) {
           console.error("Error updating Clerk metadata:", err);
           // Continue execution even if metadata update fails
         }
-
-        // Use absolute URL for welcome email
         try {
           const baseUrl =
             process.env.NEXT_PUBLIC_APP_URL || "https://barterclub.in";
           await axios.post(`${baseUrl}/api/welcomeMail`, {
-            body: {
-              email: email_addresses[0].email_address,
-              name: `${first_name} ${last_name}`,
-            },
+            email: email_addresses[0].email_address,
+            name: `${first_name} ${last_name}`,
           });
         } catch (err) {
           console.error("Error sending welcome email:", err);
+          if (axios.isAxiosError(err)) {
+            console.error("Response data:", err.response?.data);
+          }
+          // Continue execution even if welcome email fails
         }
 
         return NextResponse.json({
