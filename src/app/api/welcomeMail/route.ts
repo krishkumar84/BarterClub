@@ -1,6 +1,3 @@
-import { connect } from '@/lib/db';
-import { auth } from '@clerk/nextjs/server';
-import User from '@/lib/models/user.model';
 import { NextRequest, NextResponse } from 'next/server';
 import { redis } from "@/lib/ratelimit";
 import { headers } from "next/headers";
@@ -13,9 +10,7 @@ const ratelimit = new Ratelimit({
   limiter: Ratelimit.fixedWindow(5, '100s'),
 });
 
-connect();
-
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   const ip = headers().get('x-real-ip') || req.headers.get('x-forwarded-for');
   const { success } = await ratelimit.limit(ip!);
 
@@ -23,21 +18,14 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(createError(429, 'Too many requests'));
   }
 
-  const { sessionClaims } = auth();
-  const userId = (sessionClaims?.userId as any)?.userId;
+  const { email, name } = await req.json();
 
-  if (!userId) {
-    return NextResponse.json({ message: 'User not found' }, { status: 404 });
+  if (!email || !name) {
+    return NextResponse.json({ message: 'Email and name are required' }, { status: 400 });
   }
 
   try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return NextResponse.json({ message: 'User not found' }, { status: 404 });
-    }
 
-    const email = user.email;
-    const name = user.Name;
 
     const emailContent = `
       <!DOCTYPE html>

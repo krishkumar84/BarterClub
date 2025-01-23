@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { Webhook } from "svix";
 
 import { createUser ,updateUser,deleteUser} from "@/lib/actions/user.action";
+import axios from "axios";
 
 
 export async function POST(req: Request) {
@@ -73,7 +74,12 @@ export async function POST(req: Request) {
             userId: newUser._id,
           },
         });
-
+        await axios.post('/api/welcomeMail',{
+          body: {
+            email: email_addresses[0].email_address,
+            name: `${first_name} ${last_name}`,
+          },
+        })
         return NextResponse.json({ message: "New user created", user: newUser });
       } else {
         throw new Error("Failed to create user in MongoDB");
