@@ -1,16 +1,30 @@
-"use client"
-import { useRouter } from "next/navigation"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { ArrowUpRight, CheckCircle2, XCircle } from "lucide-react"
-import { useEffect,useState } from "react"
-import { set } from "mongoose"
+"use client";
+import { useRouter } from "next/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { ArrowUpRight, CheckCircle2, XCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { set } from "mongoose";
 
 interface User {
   _id: string;
@@ -23,6 +37,7 @@ interface User {
   subscription: {
     isActive: boolean;
     plan: string;
+    startDate: string;
     endDate: string;
   };
   balance: number;
@@ -53,22 +68,23 @@ interface User {
   }[];
 }
 
-
 const formatDate = (dateString: string) => {
-  return new Intl.DateTimeFormat('en-GB', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  }).format(new Date(dateString))
-}
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(new Date(dateString));
+};
 
 export default function UserDetails({ user }: { user: User }) {
-  const [points, setPoints] = useState("")
-  const [getholdPayment, setgetholdPayment] = useState<{ data: string }>({ data: "" })
+  const [points, setPoints] = useState("");
+  const [getholdPayment, setgetholdPayment] = useState<{ data: string }>({
+    data: "",
+  });
 
-  const router = useRouter()
-  console.log("now")
-  console.log(user.subscription)
+  const router = useRouter();
+  console.log("now");
+  console.log(user.subscription);
 
   const handleIncreasePoints = async () => {
     // Implement API call to increase points
@@ -78,27 +94,27 @@ export default function UserDetails({ user }: { user: User }) {
     const res = await fetch("/api/adminAddPoint", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ userId, points,clerkId })
-    })
+      body: JSON.stringify({ userId, points, clerkId }),
+    });
     if (res.ok) {
       router.refresh();
-      setPoints("")
+      setPoints("");
     }
-    const data = await res.json()
-    console.log(data)
-    console.log("Increasing points:", points)
+    const data = await res.json();
+    console.log(data);
+    console.log("Increasing points:", points);
     // After successful API call, refresh the page or update the user state
-  }
+  };
 
   useEffect(() => {
     fetch("/api/esCrowPaymentByUser?userId=" + user._id)
       .then((res) => res.json())
       .then((data) => {
-        setgetholdPayment({ data: data })
-      })
-  }, [])
+        setgetholdPayment({ data: data });
+      });
+  }, []);
 
   return (
     <div className="container mx-auto p-6">
@@ -131,17 +147,39 @@ export default function UserDetails({ user }: { user: User }) {
             </div>
             <div>
               <Label>Subscription Status</Label>
-              <Badge variant={user.subscription.isActive ? "success" : "destructive"}>
+              <Badge
+                variant={user.subscription.isActive ? "success" : "destructive"}
+              >
                 {user.subscription.isActive ? "Active" : "Inactive"}
               </Badge>
-              <p className="text-sm text-muted-foreground">{user.subscription.plan} Plan</p>
-              <p className="text-sm text-muted-foreground">ends on:  {new Date(user.subscription.endDate).toLocaleDateString('en-GB')}</p>
+              <p className="text-sm text-muted-foreground">
+                {user.subscription.plan} Plan
+              </p>
+              {user.subscription.startDate && (
+                <p className="text-sm text-muted-foreground">
+                  starts on:{" "}
+                  {new Date(user.subscription.startDate).toLocaleDateString(
+                    "en-GB"
+                  )}
+                </p>
+              )}
+              {user.subscription.endDate && (
+                <p className="text-sm text-muted-foreground">
+                  ends on:{" "}
+                  {new Date(user.subscription.endDate).toLocaleDateString(
+                    "en-GB"
+                  )}
+                </p>
+              )}
             </div>
             <div>
               <Label>Points Hold in BarterClub</Label>
-              <p className="text-sm text-muted-foreground">points will be added after delivery of product and confirmation by buyer</p>
+              <p className="text-sm text-muted-foreground">
+                points will be added after delivery of product and confirmation
+                by buyer
+              </p>
               <p>{getholdPayment.data} Points</p>
-          </div>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -248,10 +286,15 @@ export default function UserDetails({ user }: { user: User }) {
                     <TableRow key={subscription._id}>
                       <TableCell>{subscription.planType}</TableCell>
                       <TableCell>{subscription.duration}</TableCell>
-                      <TableCell>{new Date(subscription.startDate).toLocaleDateString()}</TableCell>
-                      <TableCell>{new Date(subscription.endDate).toLocaleDateString()}</TableCell>
                       <TableCell>
-                      {subscription.paymentStatus === "Paid" && new Date(subscription.endDate) > new Date() ? (
+                        {new Date(subscription.startDate).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        {new Date(subscription.endDate).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        {subscription.paymentStatus === "Paid" &&
+                        new Date(subscription.endDate) > new Date() ? (
                           <CheckCircle2 className="text-green-500" />
                         ) : (
                           <XCircle className="text-red-500" />
@@ -267,7 +310,11 @@ export default function UserDetails({ user }: { user: User }) {
         <TabsContent value="products">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {user.products.map((product) => (
-              <Card key={product._id} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => router.push(`/product/${product._id}`)}>
+              <Card
+                key={product._id}
+                className="cursor-pointer hover:shadow-lg transition-shadow"
+                onClick={() => router.push(`/product/${product._id}`)}
+              >
                 <CardHeader>
                   <CardTitle className="flex justify-between items-center">
                     {product.title}
@@ -275,8 +322,14 @@ export default function UserDetails({ user }: { user: User }) {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <img src={product.images[0]} alt={product.title} className="w-[80%] h-64 object-fill mb-4 rounded" />
-                  <p className="text-sm text-muted-foreground mb-2">{product.description.substring(0, 100)}...</p>
+                  <img
+                    src={product.images[0]}
+                    alt={product.title}
+                    className="w-[80%] h-64 object-fill mb-4 rounded"
+                  />
+                  <p className="text-sm text-muted-foreground mb-2">
+                    {product.description.substring(0, 100)}...
+                  </p>
                   <p className="font-bold">Price: {product.price} points</p>
                 </CardContent>
               </Card>
@@ -285,5 +338,5 @@ export default function UserDetails({ user }: { user: User }) {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

@@ -33,6 +33,7 @@ interface User {
   subscription: {
     isActive: boolean;
     plan: string;
+    startDate: string;
     endDate: string;
   };
   balance: number;
@@ -170,8 +171,12 @@ const BREADCRUMBS = [
                 {user.subscription.isActive ? "Active" : "Inactive"}
               </Badge>
               <p className="text-sm text-muted-foreground">{user.subscription.plan} Plan</p>
-              <p className="text-sm text-muted-foreground">ends on: {new Date(user.subscription.endDate).toLocaleDateString()}</p>
-            </div>
+              {user.subscription.startDate && (
+                <p className="text-sm text-muted-foreground">starts on: {new Date(user.subscription.startDate).toLocaleDateString('en-GB')}</p>
+              )}
+              {user.subscription.endDate && (
+                <p className="text-sm text-muted-foreground">ends on: {new Date(user.subscription.endDate).toLocaleDateString('en-GB')}</p>
+              )}            </div>
            <div>
               <Label>Points Hold in BarterClub</Label>
               <p className="text-sm text-muted-foreground">points will be added after delivery of product and confirmation by buyer</p>
