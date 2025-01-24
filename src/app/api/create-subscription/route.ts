@@ -122,17 +122,17 @@ export async function POST(req:NextRequest, res:NextApiResponse) {
         status: 200,
       }
     );
-    }else{
-        user.subscription = {
-            plan: 'Free',
-            isActive: true,
-            startDate: new Date(),
-            endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
-          };
-          await user.save();
+         }else{
+        // user.subscription = {
+        //     plan: 'Free',
+        //     isActive: true,
+        //     startDate: new Date(),
+        //     endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+        //   };
+        //   await user.save();
     
           return NextResponse.json({
-            message: 'Subscribed to Free Plan',
+            message: 'Currently Subscribed to Free Plan',
           },{
             status: 200, 
           });

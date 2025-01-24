@@ -1,10 +1,10 @@
-"use client"
+"use client";
 import axios from "axios";
 import Image from "next/image";
-import { useState,useEffect } from "react";
-import { useAuth } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
+import { useState, useEffect } from "react";
+import { useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
 const pricingData = [
   {
@@ -14,7 +14,7 @@ const pricingData = [
     isSelected: false,
     monthlyPrice: 0,
     yerlyPrice: 0,
-    color : "bg-[#FD4677]",
+    color: "bg-[#FD4677]",
     logo: "/pricing1.png",
     getIn: [
       {
@@ -52,7 +52,8 @@ const pricingData = [
     secondTitle: "Standard",
     monthlyPrice: 499,
     yerlyPrice: 4999,
-    infoNote: "Ideal for small business owners, free lancers and service providers.",
+    infoNote:
+      "Ideal for small business owners, free lancers and service providers.",
     isSelected: true,
     logo: "/pricing3.png",
     getIn: [
@@ -97,7 +98,7 @@ const pricingData = [
     isSelected: false,
     monthlyPrice: 999,
     yerlyPrice: 9999,
-    color : "bg-[#FD4677]",
+    color: "bg-[#FD4677]",
     logo: "/pricing2.png",
     getIn: [
       {
@@ -140,114 +141,147 @@ const Pricing = () => {
   const [monthPrice, setMonthPrice] = useState(true);
   const [isChecked, setIsChecked] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [loadingStates, setLoadingStates] = useState<{ [key: number]: boolean }>({});
-  const { isSignedIn} = useAuth();
+  const [loadingStates, setLoadingStates] = useState<{
+    [key: number]: boolean;
+  }>({});
+  const { isSignedIn } = useAuth();
   const router = useRouter();
-  const { user, isLoaded } = useUser(); 
-  const [currentUser, setCurrentUser] = useState<any>(null); 
+  const { user, isLoaded } = useUser();
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
-  console.log("🚀 ~ Pricing ~ currentUser:", currentUser)
+  console.log("🚀 ~ Pricing ~ currentUser:", currentUser);
 
   useEffect(() => {
     if (isLoaded) {
-      setCurrentUser(user || null); 
-      console.log('UserContext: ', user);
+      setCurrentUser(user || null);
+      console.log("UserContext: ", user);
     }
   }, [isLoaded, user]);
-  
 
   const handleCheckboxChange = () => {
-    setIsChecked(!isChecked)
-    setMonthPrice(!monthPrice)
-  }
-  
-  const createSubscription = async(planType: string, duration: string, index: number) => {
+    setIsChecked(!isChecked);
+    setMonthPrice(!monthPrice);
+  };
+
+  const createSubscription = async (
+    planType: string,
+    duration: string,
+    index: number
+  ) => {
     if (!isSignedIn) {
-      router.push('/signin');
+      router.push("/signin");
+      return;
+    }
+    if(planType == "Basic"){
+      toast.error("You are already subscribed to Free Plan");
+      setLoadingStates((prevState) => ({ ...prevState, [index]: false }));
       return;
     }
     // setLoading(true)
     setLoadingStates((prevState) => ({ ...prevState, [index]: true }));
-    if(!currentUser?.publicMetadata.userId){
-      toast.error('User ID not found');
+    if (!currentUser?.publicMetadata.userId) {
+      toast.error("User ID not found");
       // setLoading(false);
       setLoadingStates((prevState) => ({ ...prevState, [index]: false }));
       return;
     }
 
-    const { data } = await axios.get(`/api/checkSubscriptionStatus?userId=${currentUser?.publicMetadata.userId}`);
+    const { data } = await axios.get(
+      `/api/checkSubscriptionStatus?userId=${currentUser?.publicMetadata.userId}`
+    );
 
-    if (data.message === 'Subscription expired, plan reverted to Free' || 'No active subscription found, default plan is Free') {
+    if (
+      data.message === "Subscription expired, plan reverted to Free" ||
+      "No active subscription found, default plan is Free"
+    ) {
       // Proceed with creating Razorpay account as the subscription is expired
       try {
-        const response = await axios.post('/api/create-subscription', {
+        const response = await axios.post("/api/create-subscription", {
           userId: currentUser?.publicMetadata.userId, // Ensure user ID is correctly fetched
           planType,
           duration,
         });
 
-        if (response.data.message === 'User already has an active subscription') {
-          toast.success('User already has an active subscription');
+        if (
+          response.data.message === "User already has an active subscription"
+        ) {
+          toast.success("User already has an active subscription");
           setLoading(false);
           return;
         }
-  
+
         const { razorpaySubscriptionId, planName, message } = response.data;
-  
-        if (message === 'Subscribed to Free Plan') {
-          toast.success('Subscribed to Free Plan');
+
+        if (message === "Subscribed to Free Plan") {
+          toast.success("Subscribed to Free Plan");
           setLoading(false);
           return;
         }
-  
-        // Initialize Razorpay Checkout
+
+        // Modify the Razorpay initialization and handling
         const options = {
-          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Public key
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
           subscription_id: razorpaySubscriptionId,
           name: "Barter Club",
           currency: "INR",
           description: `${planName} Plan Subscription`,
           image: "/logo.png",
           handler: async (response: any) => {
-            // After payment, Razorpay will handle via webhook
-            // Optionally, you can show a success message
-            toast.success('Payment successful! Your subscription is active.');
-            // setLoading(false);
+            toast.success("Payment successful! Your subscription is active.");
             setLoadingStates((prevState) => ({ ...prevState, [index]: false }));
           },
           prefill: {
             name: currentUser?.fullName,
-            email: currentUser?.primaryEmailAddress.emailAddress ,
+            email: currentUser?.primaryEmailAddress.emailAddress,
           },
           theme: {
             color: "#FD4677",
           },
+          modal: {
+            backdropClose: false, // Prevent closing on backdrop click
+            escape: false, // Prevent closing on ESC key
+            confirm_close: true, // Enable confirmation before closing
+            animation: true, // Smooth animation
+            ondismiss: function () {
+              toast.error("Payment cancelled");
+              setLoadingStates((prevState) => ({ ...prevState, [index]: false }));
+            },
+          },
         };
+
         // @ts-ignore
         const rzp = new window.Razorpay(options);
-        rzp.on('payment.failed', (response: any) => {
-          toast.error('Payment failed');
-          // setLoading(false);
+
+        // Add event listeners for all possible payment scenarios
+        rzp.on("modal.closed", () => {
+          toast.error("Payment cancelled");
           setLoadingStates((prevState) => ({ ...prevState, [index]: false }));
         });
+
+        rzp.on("payment.failed", (response: any) => {
+          toast.error("Payment failed. Please try again");
+          setLoadingStates((prevState) => ({ ...prevState, [index]: false }));
+        });
+
+        rzp.on("payment.cancel", (response: any) => {
+          toast.error("Payment cancelled");
+          setLoadingStates((prevState) => ({ ...prevState, [index]: false }));
+        });
+
         rzp.open();
       } catch (error: any) {
-        console.error('Error creating subscription:', error);
-        toast.error(error.response?.data?.message || 'An error occurred');
+        console.error("Error creating subscription:", error);
+        toast.error(error.response?.data?.message || "An error occurred");
         // setLoading(false);
         setLoadingStates((prevState) => ({ ...prevState, [index]: false }));
-
       }
-    } else if (data.message == 'Subscription is still active') {
+    } else if (data.message == "Subscription is still active") {
       // Show a toast message indicating the subscription is still active
-     toast.success('Subscription is still active');
-    //  setLoading(false);
-    setLoadingStates((prevState) => ({ ...prevState, [index]: false }));
-
+      toast.success("Subscription is still active");
+      //  setLoading(false);
+      setLoadingStates((prevState) => ({ ...prevState, [index]: false }));
     }
-  }
-
-
+  };
 
   return (
     <section className="flex flex-col justify-center items-center py-3 min-h-screen">
@@ -255,73 +289,88 @@ const Pricing = () => {
       {/* heading section  */}
       <div className="flex flex-col w-auto px-6 text-center text-2xl sm:text-3xl md:text-4xl">
         <span className="font-bold text-slate-300 text-xl">Pricing</span>
-        <span
-          className="text-3xl  text-slate-200 font-bold sm:text-2xl lg:text-4xl "
-        >
+        <span className="text-3xl  text-slate-200 font-bold sm:text-2xl lg:text-4xl ">
           Simple, Transparent Pricing
         </span>
         <span className="text-base leading-relaxed text-slate-300 mt-4">
           Chose a plan that&apos;s right for you
         </span>
         <div className="text-base mb-8 sm:mt-5 gap-4 flex items-center justify-center pl-5">
-        <label className='themeSwitcherTwo relative inline-flex cursor-pointer select-none items-center'>
-        <input
-          type='checkbox'
-          checked={isChecked}
-          onChange={handleCheckboxChange}
-          className='sr-only'
-        />
-        <span className='label flex items-center text-sm font-medium text-slate-300'>
-          Monthly
-        </span>
-        <span
-          className={`slider mx-4 flex h-8 w-[60px] items-center rounded-full p-1 duration-200 ${
-            isChecked ? 'bg-gray-700 border border-[#FD4677]' : 'bg-[#CCCCCE]'
-          }`}
-        >
-          <span
-            className={`dot h-6 w-6 rounded-full  duration-200 ${
-              isChecked ? 'translate-x-[28px] bg-[#FD4677]' : 'bg-white'
-            }`}
-          ></span>
-        </span>
-        <span className='label flex items-center text-sm font-medium text-slate-300'>
-          Anually
-        </span>
-      </label>
+          <label className="themeSwitcherTwo relative inline-flex cursor-pointer select-none items-center">
+            <input
+              type="checkbox"
+              checked={isChecked}
+              onChange={handleCheckboxChange}
+              className="sr-only"
+            />
+            <span className="label flex items-center text-sm font-medium text-slate-300">
+              Monthly
+            </span>
+            <span
+              className={`slider mx-4 flex h-8 w-[60px] items-center rounded-full p-1 duration-200 ${
+                isChecked
+                  ? "bg-gray-700 border border-[#FD4677]"
+                  : "bg-[#CCCCCE]"
+              }`}
+            >
+              <span
+                className={`dot h-6 w-6 rounded-full  duration-200 ${
+                  isChecked ? "translate-x-[28px] bg-[#FD4677]" : "bg-white"
+                }`}
+              ></span>
+            </span>
+            <span className="label flex items-center text-sm font-medium text-slate-300">
+              Anually
+            </span>
+          </label>
         </div>
       </div>
       {/* pricing section   */}
       <div className="flex flex-col lg:flex-row gap-6 h-full px-5">
         {pricingData.map((data, index) => (
           <div
-          style={{
-            background: data?.isSelected  ? 'linear-gradient(180deg, rgb(253, 70, 119) 0%, rgb(137.24, 82.95, 222.57) 100%) mt-12':''
-          }}
+            style={{
+              background: data?.isSelected
+                ? "linear-gradient(180deg, rgb(253, 70, 119) 0%, rgb(137.24, 82.95, 222.57) 100%) mt-12"
+                : "",
+            }}
             className={`flex flex-col h-full  max-w-[378px] py-6 px-5 sm:px-10 lg:w-auto xl:w-[378px] rounded-3xl ${
               data?.isSelected
                 ? `bg-gradient-to-b from-[#FD4677] to-[#6557FF] text-white `
                 : "bg-[#1A1A1A] text-white mt-4 sm:mt-12"
-            }`
-        }
-        
+            }`}
             key={index}
           >
             <div className="flex mt-6 flex-col text-left">
               <div className="flex flex-col gap-3">
                 <div className="flex flex-row items-center gap-2">
-                 <Image alt="pricing-loco" src={data?.logo} width={56} height={56}/>  
-                 <div className="flex flex-col">
-                <span className="text-lg text-slate-100">{data?.mainTitle}</span>
-                <span className="text-xl text-white">{data?.secondTitle}</span>
-                </div>
-                 {data?.secondTitle =="Pro" && <button className="bg-white bg-opacity-10 px-3 py-2 ml-7 rounded-xl">popular</button> }   
+                  <Image
+                    alt="pricing-loco"
+                    src={data?.logo}
+                    width={56}
+                    height={56}
+                  />
+                  <div className="flex flex-col">
+                    <span className="text-lg text-slate-100">
+                      {data?.mainTitle}
+                    </span>
+                    <span className="text-xl text-white">
+                      {data?.secondTitle}
+                    </span>
+                  </div>
+                  {data?.secondTitle == "Pro" && (
+                    <button className="bg-white bg-opacity-10 px-3 py-2 ml-7 rounded-xl">
+                      popular
+                    </button>
+                  )}
                 </div>
                 <span>{data?.infoNote}</span>
               </div>
               <div className="flex items-center gap-3 my-4">
-                <span className={`text-6xl font-semibold`}
-                 style={{ color: data?.color ? '#FD4677' : 'inherit' }}>
+                <span
+                  className={`text-6xl font-semibold`}
+                  style={{ color: data?.color ? "#FD4677" : "inherit" }}
+                >
                   ₹{monthPrice ? data?.monthlyPrice : data?.yerlyPrice}
                 </span>
                 <span className="font-light">
@@ -333,7 +382,21 @@ const Pricing = () => {
                 {data?.getIn?.map((description, index) => (
                   <div className="flex items-center gap-4 max-w-xs" key={index}>
                     <div className="w-5  h-5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="lucide lucide-circle-check"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="m9 12 2 2 4-4" />
+                      </svg>
                     </div>
                     <span className="font-medium text-base">
                       {description?.description}
@@ -342,8 +405,14 @@ const Pricing = () => {
                 ))}
               </div>
               <button
-              disabled={loading}
-              onClick={() => createSubscription(data?.secondTitle, monthPrice ? 'Monthly' : 'Yearly', index)}
+                disabled={loading}
+                onClick={() =>
+                  createSubscription(
+                    data?.secondTitle,
+                    monthPrice ? "Monthly" : "Yearly",
+                    index
+                  )
+                }
                 className={`w-full border-[1px] flex items-center justify-center gap-2 mt-5 mb-4 rounded-3xl py-2.5 ${
                   data?.isSelected
                     ? "bg-transparent"
@@ -352,9 +421,23 @@ const Pricing = () => {
               >
                 <span className="text-base font-medium">
                   {/* {loading ? 'Loading...' : 'Get Started'} */}
-                  {loadingStates[index] ? 'Loading...' : 'Get Started'}
+                  {loadingStates[index] ? "Loading..." : "Get Started"}
                 </span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-arrow-right"
+                >
+                  <path d="M5 12h14" />
+                  <path d="m12 5 7 7-7 7" />
+                </svg>
               </button>
             </div>
           </div>

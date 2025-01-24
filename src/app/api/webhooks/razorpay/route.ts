@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
       break;
    }
 
-   case 'subscription.activated': {
+      case 'subscription.activated': {
         console.log("subscription.activated")
         const subscriptionData = body.payload.subscription.entity;
         const subscription = await Subscription.findOne({ razorpaySubscriptionId: subscriptionData.id });
@@ -83,8 +83,9 @@ export async function POST(req: NextRequest) {
       case 'subscription.charged': {
         console.log("subscription.charged")
         const subscriptionData = body.payload.subscription.entity;
+        console.log(subscriptionData,"subscriptionData")
         const payment = body.payload.payment.entity;
-        
+        console.log(payment,"payment")
         const subscription = await Subscription.findOne({ razorpaySubscriptionId: subscriptionData.id });
         if (subscription) {
           if (payment.status === 'captured') {
@@ -96,6 +97,10 @@ export async function POST(req: NextRequest) {
                 if (user) {
                   user.balance += subscription.barterPoints;
                   user.purchasedPoints += subscription.barterPoints;
+                  user.subscription.planType = subscription.planType;
+                  user.subscription.isActive = true;
+                  user.subscription.startDate = new Date(subscriptionData.start_at * 1000);
+                  user.subscription.endDate = new Date(subscriptionData.end_at * 1000);
                   const orderId = payment.order_id;
                   const invoiceId = payment.invoice_id;
                   const description = payment.description;

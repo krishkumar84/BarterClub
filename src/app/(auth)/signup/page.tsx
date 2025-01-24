@@ -89,6 +89,9 @@ export default function SignUp() {
         if(plan != 'Free') {
           router.push('/#pricing');
         }
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } else {
         toast.error("Verification failed. Please try again.")
       }
