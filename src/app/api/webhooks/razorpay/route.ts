@@ -97,10 +97,10 @@ export async function POST(req: NextRequest) {
                 if (user) {
                   user.balance += subscription.barterPoints;
                   user.purchasedPoints += subscription.barterPoints;
-                  user.subscription.planType = subscription.planType;
+                  user.subscription.plan = subscription.planType;
                   user.subscription.isActive = true;
-                  user.subscription.startDate = new Date(subscriptionData.start_at * 1000);
-                  user.subscription.endDate = new Date(subscriptionData.end_at * 1000);
+                  user.subscription.startDate = subscription.startDate;
+                  user.subscription.endDate = subscription.endDate;
                   const orderId = payment.order_id;
                   const invoiceId = payment.invoice_id;
                   const description = payment.description;
