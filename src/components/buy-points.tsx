@@ -53,7 +53,7 @@ export default function BuyPoints() {
         amount: amountInINR * 100, // Amount in paise
         currency: "INR",
         name: "Barter Club",
-        description: `Buy ${amountInINR * 100} Barter Points`,
+        description: `Buy ${amountInINR} Barter Points`,
         order_id: orderId, // Order ID created by the server
         notes: {
             userId: currentUser?.publicMetadata.userId, // Ensure you set the userId here
