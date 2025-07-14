@@ -109,12 +109,12 @@ export async function POST(req: NextRequest) {
                       Start exploring the community, discover amazing barter opportunities, and connect with like-minded
                       individuals. Click below to log in and begin your journey.
                   </p>
-                  <a href="https://barterclub.com/login" class="button">Get Started</a>
+                  <a href="https://barterclub.in/login" class="button">Get Started</a>
               </div>
               <div class="footer">
                   <p>
-                      Need help? Visit our <a href="https://barterclub.com/support">Support Center</a> or contact us at
-                      <a href="mailto:support@barterclub.com">support@barterclub.com</a>.
+                      Need help? Visit our <a href="https://barterclub.in/support">Support Center</a> or contact us at
+                      <a href="mailto:support@barterclub.in">support@barterclub.in</a>.
                   </p>
               </div>
           </div>
